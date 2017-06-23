@@ -226,6 +226,7 @@
     <Compile Include="Areas\UserInfo\UserInfoAreaRegistration.cs" />
     <Compile Include="Areas\Vacation\Controllers\VacationController.cs" />
     <Compile Include="Areas\Vacation\VacationAreaRegistration.cs" />
+    <Compile Include="Common\ApiBaseResult.cs" />
     <Compile Include="Common\PublicMethod.cs" />
     <Compile Include="Content\DataTableHelper.cs" />
     <Compile Include="Controllers\AccountController.cs" />
@@ -259,6 +260,12 @@
     <Compile Include="Models\T_Batch.cs">
       <DependentUpon>qingjia.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\T_BatchLeave.cs">
+      <DependentUpon>qingjia.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\T_ChangeBatch.cs">
+      <DependentUpon>qingjia.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\T_Class.cs">
       <DependentUpon>qingjia.tt</DependentUpon>
     </Compile>
@@ -289,6 +296,9 @@
     <Compile Include="Models\T_RoleMenu.cs">
       <DependentUpon>qingjia.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\T_Statistic.cs">
+      <DependentUpon>qingjia.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\T_Student.cs">
       <DependentUpon>qingjia.tt</DependentUpon>
     </Compile>
@@ -298,6 +308,9 @@
     <Compile Include="Models\T_Type.cs">
       <DependentUpon>qingjia.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\T_Vacation.cs">
+      <DependentUpon>qingjia.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\vw_ClassBatch.cs">
       <DependentUpon>qingjia.tt</DependentUpon>
     </Compile>
@@ -305,6 +318,9 @@
       <DependentUpon>qingjia.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\vw_NightNameList.cs">
+      <DependentUpon>qingjia.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Models\vw_StudenBatch.cs">
       <DependentUpon>qingjia.tt</DependentUpon>
     </Compile>
     <Compile Include="Models\vw_Student.cs">
@@ -2444,6 +2460,7 @@
     <Content Include="Areas\Vacation\Views\Vacation\Index.cshtml" />
     <Content Include="Areas\Vacation\Views\_ViewStart.cshtml" />
     <Content Include="Areas\Vacation\Views\Vacation\_tablePartial.cshtml" />
+    <Content Include="Areas\Leave\Views\AuditForm\ModifyLL.cshtml" />
     <EntityDeploy Include="Models\qingjia.edmx">
       <Generator>EntityModelCodeGenerator</Generator>
       <LastGenOutput>qingjia.Designer.cs</LastGenOutput>
@@ -2461,7 +2478,6 @@
       <DependentUpon>qingjia.edmx</DependentUpon>
       <LastGenOutput>qingjia.cs</LastGenOutput>
     </Content>
-    <Content Include="Areas\Leave\Views\AuditForm\ModifyLL.cshtml" />
     <None Include="Properties\PublishProfiles\text.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />

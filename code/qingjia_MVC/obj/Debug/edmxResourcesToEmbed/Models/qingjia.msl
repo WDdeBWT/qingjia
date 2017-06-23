@@ -8,6 +8,8 @@
           <ScalarProperty Name="Psd" ColumnName="Psd" />
           <ScalarProperty Name="RoleID" ColumnName="RoleID" />
           <ScalarProperty Name="Wechat" ColumnName="Wechat" />
+          <ScalarProperty Name="YiBanID" ColumnName="YiBanID" />
+          <ScalarProperty Name="YB_AccessToken" ColumnName="YB_AccessToken" />
           <ScalarProperty Name="Q1" ColumnName="Q1" />
           <ScalarProperty Name="A1" ColumnName="A1" />
           <ScalarProperty Name="Q2" ColumnName="Q2" />
@@ -25,6 +27,41 @@
           <ScalarProperty Name="Batch" ColumnName="Batch" />
           <ScalarProperty Name="TeacherID" ColumnName="TeacherID" />
           <ScalarProperty Name="Datetime" ColumnName="Datetime" />
+          <ScalarProperty Name="Location" ColumnName="Location" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="T_BatchLeave">
+      <EntityTypeMapping TypeName="imaw_qingjiaModel.T_BatchLeave">
+        <MappingFragment StoreEntitySet="T_BatchLeave">
+          <ScalarProperty Name="ID" ColumnName="ID" />
+          <ScalarProperty Name="TypeID" ColumnName="TypeID" />
+          <ScalarProperty Name="TypeChildID" ColumnName="TypeChildID" />
+          <ScalarProperty Name="Reason" ColumnName="Reason" />
+          <ScalarProperty Name="SubmitTime" ColumnName="SubmitTime" />
+          <ScalarProperty Name="StateLeave" ColumnName="StateLeave" />
+          <ScalarProperty Name="StateBack" ColumnName="StateBack" />
+          <ScalarProperty Name="TimeLeave" ColumnName="TimeLeave" />
+          <ScalarProperty Name="TimeBack" ColumnName="TimeBack" />
+          <ScalarProperty Name="AuditTeacherID" ColumnName="AuditTeacherID" />
+          <ScalarProperty Name="Notes" ColumnName="Notes" />
+          <ScalarProperty Name="StudentsID" ColumnName="StudentsID" />
+          <ScalarProperty Name="LeaveInfo" ColumnName="LeaveInfo" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="T_ChangeBatch">
+      <EntityTypeMapping TypeName="imaw_qingjiaModel.T_ChangeBatch">
+        <MappingFragment StoreEntitySet="T_ChangeBatch">
+          <ScalarProperty Name="ID" ColumnName="ID" />
+          <ScalarProperty Name="StudentID" ColumnName="StudentID" />
+          <ScalarProperty Name="Batch" ColumnName="Batch" />
+          <ScalarProperty Name="Datetime" ColumnName="Datetime" />
+          <ScalarProperty Name="TeacherID" ColumnName="TeacherID" />
+          <ScalarProperty Name="Reason" ColumnName="Reason" />
+          <ScalarProperty Name="SubmitTime" ColumnName="SubmitTime" />
+          <ScalarProperty Name="AuditState" ColumnName="AuditState" />
+          <ScalarProperty Name="AuditTeacherID" ColumnName="AuditTeacherID" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
@@ -144,6 +181,20 @@
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
+    <EntitySetMapping Name="T_Statistic">
+      <EntityTypeMapping TypeName="imaw_qingjiaModel.T_Statistic">
+        <MappingFragment StoreEntitySet="T_Statistic">
+          <ScalarProperty Name="ID" ColumnName="ID" />
+          <ScalarProperty Name="TotalNum" ColumnName="TotalNum" />
+          <ScalarProperty Name="VacationNum" ColumnName="VacationNum" />
+          <ScalarProperty Name="LongNum" ColumnName="LongNum" />
+          <ScalarProperty Name="ShortNum" ColumnName="ShortNum" />
+          <ScalarProperty Name="NightNum" ColumnName="NightNum" />
+          <ScalarProperty Name="SelfStudyNum" ColumnName="SelfStudyNum" />
+          <ScalarProperty Name="ClassNum" ColumnName="ClassNum" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
     <EntitySetMapping Name="T_Student">
       <EntityTypeMapping TypeName="imaw_qingjiaModel.T_Student">
         <MappingFragment StoreEntitySet="T_Student">
@@ -184,6 +235,21 @@
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
+    <EntitySetMapping Name="T_Vacation">
+      <EntityTypeMapping TypeName="imaw_qingjiaModel.T_Vacation">
+        <MappingFragment StoreEntitySet="T_Vacation">
+          <ScalarProperty Name="ID" ColumnName="ID" />
+          <ScalarProperty Name="Name" ColumnName="Name" />
+          <ScalarProperty Name="Grade" ColumnName="Grade" />
+          <ScalarProperty Name="TeacherID" ColumnName="TeacherID" />
+          <ScalarProperty Name="StartTime" ColumnName="StartTime" />
+          <ScalarProperty Name="EndTime" ColumnName="EndTime" />
+          <ScalarProperty Name="SubmitTime" ColumnName="SubmitTime" />
+          <ScalarProperty Name="AutoAudit" ColumnName="AutoAudit" />
+          <ScalarProperty Name="Remark" ColumnName="Remark" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
     <EntitySetMapping Name="T_NightNameList">
       <EntityTypeMapping TypeName="imaw_qingjiaModel.T_NightNameList">
         <MappingFragment StoreEntitySet="T_NightNameList">
@@ -209,6 +275,7 @@
           <ScalarProperty Name="Batch" ColumnName="Batch" />
           <ScalarProperty Name="Datetime" ColumnName="Datetime" />
           <ScalarProperty Name="TeacherID" ColumnName="TeacherID" />
+          <ScalarProperty Name="Location" ColumnName="Location" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
@@ -237,6 +304,7 @@
           <ScalarProperty Name="ST_TeacherID" ColumnName="ST_TeacherID" />
           <ScalarProperty Name="ST_Teacher" ColumnName="ST_Teacher" />
           <ScalarProperty Name="StudentID" ColumnName="StudentID" />
+          <ScalarProperty Name="Type" ColumnName="Type" />
           <ScalarProperty Name="LeaveType" ColumnName="LeaveType" />
           <ScalarProperty Name="ST_Dor" ColumnName="ST_Dor" />
           <ScalarProperty Name="ContactOne" ColumnName="ContactOne" />
@@ -256,6 +324,21 @@
           <ScalarProperty Name="State" ColumnName="State" />
           <ScalarProperty Name="ST_Teacher" ColumnName="ST_Teacher" />
           <ScalarProperty Name="Datetime" ColumnName="Datetime" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="vw_StudenBatch">
+      <EntityTypeMapping TypeName="imaw_qingjiaModel.vw_StudenBatch">
+        <MappingFragment StoreEntitySet="vw_StudenBatch">
+          <ScalarProperty Name="ID" ColumnName="ID" />
+          <ScalarProperty Name="StudentID" ColumnName="StudentID" />
+          <ScalarProperty Name="ST_Name" ColumnName="ST_Name" />
+          <ScalarProperty Name="ST_Class" ColumnName="ST_Class" />
+          <ScalarProperty Name="Datetime" ColumnName="Datetime" />
+          <ScalarProperty Name="Reason" ColumnName="Reason" />
+          <ScalarProperty Name="TeacherID" ColumnName="TeacherID" />
+          <ScalarProperty Name="AuditState" ColumnName="AuditState" />
+          <ScalarProperty Name="Batch" ColumnName="Batch" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>

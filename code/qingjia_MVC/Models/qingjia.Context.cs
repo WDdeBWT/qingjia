@@ -29,6 +29,8 @@ namespace qingjia_MVC.Models
     
         public virtual DbSet<T_Account> T_Account { get; set; }
         public virtual DbSet<T_Batch> T_Batch { get; set; }
+        public virtual DbSet<T_BatchLeave> T_BatchLeave { get; set; }
+        public virtual DbSet<T_ChangeBatch> T_ChangeBatch { get; set; }
         public virtual DbSet<T_Class> T_Class { get; set; }
         public virtual DbSet<T_Deadline> T_Deadline { get; set; }
         public virtual DbSet<T_Holiday> T_Holiday { get; set; }
@@ -37,27 +39,31 @@ namespace qingjia_MVC.Models
         public virtual DbSet<T_LeaveList> T_LeaveList { get; set; }
         public virtual DbSet<T_Menu> T_Menu { get; set; }
         public virtual DbSet<T_RoleMenu> T_RoleMenu { get; set; }
+        public virtual DbSet<T_Statistic> T_Statistic { get; set; }
         public virtual DbSet<T_Student> T_Student { get; set; }
         public virtual DbSet<T_Teacher> T_Teacher { get; set; }
         public virtual DbSet<T_Type> T_Type { get; set; }
+        public virtual DbSet<T_Vacation> T_Vacation { get; set; }
         public virtual DbSet<T_NightNameList> T_NightNameList { get; set; }
         public virtual DbSet<T_Role> T_Role { get; set; }
         public virtual DbSet<vw_ClassBatch> vw_ClassBatch { get; set; }
         public virtual DbSet<vw_LeaveList> vw_LeaveList { get; set; }
         public virtual DbSet<vw_NightNameList> vw_NightNameList { get; set; }
+        public virtual DbSet<vw_StudenBatch> vw_StudenBatch { get; set; }
         public virtual DbSet<vw_Student> vw_Student { get; set; }
     
-        public virtual ObjectResult<string> sp_getNightNameList(Nullable<System.DateTime> time, string teacherID)
+        public virtual ObjectResult<string> sp_getNightNameList(string teacherID)
         {
-            var timeParameter = time.HasValue ?
-                new ObjectParameter("Time", time) :
-                new ObjectParameter("Time", typeof(System.DateTime));
-    
             var teacherIDParameter = teacherID != null ?
                 new ObjectParameter("TeacherID", teacherID) :
                 new ObjectParameter("TeacherID", typeof(string));
     
-            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<string>("sp_getNightNameList", timeParameter, teacherIDParameter);
+            return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<string>("sp_getNightNameList", teacherIDParameter);
+        }
+
+        internal void sp_getNightNameList(DateTime date, string teacherid)
+        {
+            throw new NotImplementedException();
         }
     }
 }

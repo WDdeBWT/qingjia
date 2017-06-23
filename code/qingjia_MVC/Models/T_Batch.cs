@@ -18,5 +18,6 @@ namespace qingjia_MVC.Models
         public int Batch { get; set; }
         public string TeacherID { get; set; }
         public System.DateTime Datetime { get; set; }
+        public string Location { get; set; }
     }
 }

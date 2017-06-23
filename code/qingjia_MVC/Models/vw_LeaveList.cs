@@ -36,6 +36,7 @@ namespace qingjia_MVC.Models
         public string ST_TeacherID { get; set; }
         public string ST_Teacher { get; set; }
         public string StudentID { get; set; }
+        public string Type { get; set; }
         public string LeaveType { get; set; }
         public string ST_Dor { get; set; }
         public string ContactOne { get; set; }
