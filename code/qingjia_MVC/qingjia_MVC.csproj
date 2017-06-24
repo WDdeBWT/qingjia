@@ -231,6 +231,7 @@
     <Compile Include="Content\DataTableHelper.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\API\OauthController.cs" />
+    <Compile Include="Controllers\BaseApiController.cs" />
     <Compile Include="Controllers\BaseController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Global.asax.cs">
@@ -2517,6 +2518,7 @@
     <Content Include="Views\Home\Default_T.cshtml" />
     <Content Include="Views\Home\Default_ST.cshtml" />
     <Content Include="Views\_ViewStart.cshtml" />
+    <Content Include="Views\BaseAPI\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -2543,7 +2545,6 @@
     <Folder Include="res\images\loading\" />
     <Folder Include="res\images\snapshot\" />
     <Folder Include="res\images\themes\border\" />
-    <Folder Include="Views\BaseAPI\" />
     <Folder Include="Views\Manage\" />
   </ItemGroup>
   <ItemGroup>

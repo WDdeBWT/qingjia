@@ -1,0 +1,70 @@
+﻿@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <script src="~/Scripts/jquery-1.10.2.min.js"></script>
+    <meta name="viewport" content="width=device-width" />
+    <script src="~/Scripts/bootstrap.min.js"></script>
+    <title>API 接口测试</title>
+    <script>
+        $(document).ready(function () {
+            $('#btnOauthAuthorize').click(function (e) {
+                alert('Api接口测试：Oauth');
+                var data = { "UserID": "0121403490106", "UserPsd": "490106", "YiBan": "123" };
+                //此处的数据格式，只要有一个参数对应后台API接口可接受的数据模型的一个属性，即可接收到参数，否则，接受参数为空
+                AjaxRequestPost('api/oauth/Authorize', data);
+            });
+        });
+
+        //Get请求
+        function AjaxRequestGet(uri) {
+            var server = 'http://localhost:12516/';
+            var url = server + uri;
+            $.ajax({
+                type: 'GET',
+                contentType: 'application/json',
+                dataType: 'json',
+                url: url,
+                success: function (response) {
+                    console.log(response);
+                },
+                error: function () {
+                    console.log('Ajax请求失败！');
+                }
+            });
+        }
+
+        //Post请求
+        function AjaxRequestPost(uri, data) {
+            var server = 'http://localhost:12516/';
+            var url = server + uri;
+            $.ajax({
+                type: 'POST',
+                //contentType: 'application/json',
+                dataType: 'json',
+                data: data,
+                url: url,
+                success: function (response) {
+                    console.log(response);
+                },
+                error: function () {
+                    console.log('Ajax请求失败！');
+                }
+            });
+        }
+    </script>
+</head>
+<body>
+    <div>
+        <h1>API 接口测试：</h1>
+        <br />
+        <h3>权限接口测试：</h3>
+        <input type="button" value="Authorize" id="btnOauthAuthorize" />
+        <br />
+    </div>
+</body>
+</html>
