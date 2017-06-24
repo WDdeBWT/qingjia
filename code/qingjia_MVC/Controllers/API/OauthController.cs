@@ -64,6 +64,12 @@ namespace qingjia_MVC.Controllers
                     UserID = user_login_info.UserID;
                     UserPSd = user_login_info.UserPsd;
                     YiBanID = user_login_info.YiBanID;
+                    if (UserID == null || UserPSd == null || YiBanID == null)
+                    {
+                        result.result = "error";
+                        result.messages = "参数格式错误或缺少参数！";
+                        return result;
+                    }
                 }
                 catch
                 {
