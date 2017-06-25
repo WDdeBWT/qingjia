@@ -12,11 +12,36 @@
     <title>API 接口测试</title>
     <script>
         $(document).ready(function () {
+            var access_token = '0121403490106_bc36bfb5-acc8-48ea-8b2b-21c5dfb1297c';
+
             $('#btnOauthAuthorize').click(function (e) {
-                alert('Api接口测试：Oauth');
                 var data = { "UserID": "0121403490106", "UserPsd": "490106", "YiBanID": "123" };
                 //此处的数据格式，只要有一个参数对应后台API接口可接受的数据模型的一个属性，即可接收到参数，否则，接受参数为空
                 AjaxRequestPost('api/oauth/Authorize', data);
+            });
+
+            $('#btnOauthAccess_Token').click(function (e) {
+                //var data = { "UserID": "0121403490106", "UserPsd": "490106", "YiBanID": "123" };
+                //此处的数据格式，只要有一个参数对应后台API接口可接受的数据模型的一个属性，即可接收到参数，否则，接受参数为空
+                AjaxRequestGet('api/oauth/access_token?YiBanID=123');
+            });
+
+            $('#btnStudentMe').click(function (e) {
+                //var data = { "UserID": "0121403490106", "UserPsd": "490106", "YiBanID": "123" };
+                //此处的数据格式，只要有一个参数对应后台API接口可接受的数据模型的一个属性，即可接收到参数，否则，接受参数为空
+                AjaxRequestGet('api/student/me?access_token=' + access_token);
+            });
+
+            $('#btnstudentNight').click(function (e) {
+                //var data = { "UserID": "0121403490106", "UserPsd": "490106", "YiBanID": "123" };
+                //此处的数据格式，只要有一个参数对应后台API接口可接受的数据模型的一个属性，即可接收到参数，否则，接受参数为空
+                AjaxRequestGet('api/student/night?access_token=' + access_token);
+            });
+
+            $('#btnstudentHoliday').click(function (e) {
+                //var data = { "UserID": "0121403490106", "UserPsd": "490106", "YiBanID": "123" };
+                //此处的数据格式，只要有一个参数对应后台API接口可接受的数据模型的一个属性，即可接收到参数，否则，接受参数为空
+                AjaxRequestGet('api/student/holiday?access_token=' + access_token);
             });
         });
 
@@ -64,6 +89,16 @@
         <br />
         <h3>权限接口测试：</h3>
         <input type="button" value="Authorize" id="btnOauthAuthorize" />
+        <br />
+        <input type="button" value="Access_Token" id="btnOauthAccess_Token" />
+        <br />
+        <input type="button" value="Me" id="btnStudentMe" />
+        <br />
+        <input type="button" value="Night" id="btnstudentNight" />
+        <br />
+        <input type="button" value="Holiday" id="btnstudentHoliday" />
+        <br />
+        <input type="button" value="PassWord" id="btnstudentPassWord" />
         <br />
     </div>
 </body>
