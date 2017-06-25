@@ -25,11 +25,19 @@ namespace qingjia_MVC.Controllers.API
         public string DeadLine { get; set; }
     }
 
+    public class ChangePsdModel
+    {
+        public string old_psd { get; set; }
+        public string new_psd { get; set; }
+        public string access_token { get; set; }
+    }
+
     #endregion
 
     [RoutePrefix("api/student")]
     public class StudentController : ApiController
     {
+        //实例化数据库
         private imaw_qingjiaEntities db = new imaw_qingjiaEntities();
 
         /// <summary>
@@ -209,18 +217,38 @@ namespace qingjia_MVC.Controllers.API
         /// <param name="access_token"></param>
         /// <returns></returns>
         [HttpPost, Route("password")]
-        public ApiBaseResult PassWord(string old_psd, string new_psd, string access_token)
+        public ApiBaseResult PassWord([FromBody]ChangePsdModel PsdModel)
         {
-            ApiBaseResult result = Check(access_token);
+            ApiBaseResult result;
+
+            if (PsdModel != null)
+            {
+                if (PsdModel.old_psd == null || PsdModel.new_psd == null || PsdModel.access_token == null)
+                {
+                    result = new ApiBaseResult();
+                    result.result = "error";
+                    result.messages = "参数格式错误或缺少参数！";
+                    return result;
+                }
+            }
+            else
+            {
+                result = new ApiBaseResult();
+                result.result = "error";
+                result.messages = "参数格式错误或缺少参数！";
+                return result;
+            }
+
+            result = Check(PsdModel.access_token);
             if (result == null)
             {
                 result = new ApiBaseResult();
 
-                string StudentID = access_token.Substring(0, access_token.IndexOf("_"));
+                string StudentID = PsdModel.access_token.Substring(0, PsdModel.access_token.IndexOf("_"));
                 T_Account account = db.T_Account.Find(StudentID);
-                if (account.Psd == old_psd)
+                if (account.Psd == PsdModel.old_psd)
                 {
-                    account.Psd = new_psd;
+                    account.Psd = PsdModel.new_psd;
                     db.SaveChanges();
 
                     result.result = "success";
