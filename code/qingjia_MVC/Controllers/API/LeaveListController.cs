@@ -27,11 +27,18 @@ namespace qingjia_MVC.Controllers.API
 
         public bool Check()
         {
-            if (this.access_token == null || this.leave_type == null || this.leave_date == null || this.leave_time == null || this.back_date == null || this.back_time == null || this.leave_way == null || this.back_way == null || this.address == null)
+            if (this.access_token == null || this.leave_type == null || this.leave_date == null || this.leave_time == null || this.back_date == null || this.back_time == null || this.leave_reason == null || this.leave_way == null || this.back_way == null || this.address == null)
             {
                 return false;
             }
-            return true;
+            else
+            {
+                if (leave_type == "短期请假" || leave_type == "长期请假" || leave_type == "节假日请假")
+                {
+                    return true;
+                }
+            }
+            return false;
         }
     }
 
@@ -39,24 +46,56 @@ namespace qingjia_MVC.Controllers.API
     {
         public string access_token { get; set; }
         public string leave_type { get; set; }
-        public string leave_child_type{get;set;}
+        public string leave_child_type { get; set; }
         public string leave_date { get; set; }
         public string leave_time { get; set; }
         public string back_date { get; set; }
         public string back_time { get; set; }
         public string leave_reason { get; set; }
+
+        public bool Check()
+        {
+            if (this.access_token == null || this.leave_type == null || this.leave_child_type == null || this.leave_date == null || this.leave_time == null || this.back_date == null || this.back_time == null || this.leave_reason == null)
+            {
+                return false;
+            }
+            else
+            {
+                if (leave_type == "晚点名请假" || leave_type == "早晚自习请假")
+                {
+                    if (leave_child_type == "公假" || leave_child_type == "事假" || leave_child_type == "病假")
+                    {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
     }
 
     public class LeaveClassModel
     {
         public string access_token { get; set; }
-        public string leave_type{get;set;}
-        public string leave_child_type{get;set;}
-        public string leave_date{get;set;}
-        public string leave_time{get;set;}
-        public string back_date{get;set;}
-        public string back_time{get;set;}
-        public string leave_reason{get;set;}
+        public string leave_child_type { get; set; }
+        public string leave_date { get; set; }
+        public string leave_reason { get; set; }
+        public string teacher_name { get; set; }
+        public string lesson { get; set; }
+
+        public bool Check()
+        {
+            if (this.access_token == null || this.leave_child_type == null || this.leave_date == null || this.leave_reason == null || this.teacher_name == null || this.lesson == null)
+            {
+                if (leave_child_type == "公假" || leave_child_type == "事假" || leave_child_type == "病假")
+                {
+                    if (lesson == "1" || lesson == "2" || lesson == "3" || lesson == "4" || lesson == "5")
+                    {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
     }
 
     #endregion
@@ -108,6 +147,14 @@ namespace qingjia_MVC.Controllers.API
             }
         }
 
+        /// <summary>
+        /// GET
+        /// 
+        /// 学生删除待审核请假记录
+        /// </summary>
+        /// <param name="leavelistID"></param>
+        /// <param name="access_token"></param>
+        /// <returns></returns>
         [HttpGet, Route("revoke")]
         public ApiBaseResult Revoke(string leavelistID, string access_token)
         {
@@ -127,10 +174,11 @@ namespace qingjia_MVC.Controllers.API
 
                 string UserID = access_token.Substring(0, access_token.IndexOf("_"));
 
-                T_LeaveList ll = db.T_LeaveList.Find(leavelistID);
+                var list = from T_LeaveList in db.T_LeaveList where ((T_LeaveList.StudentID == UserID) && (T_LeaveList.ID == leavelistID)) select T_LeaveList;//注意，不能删除其他人的请假记录
 
-                if (ll != null)
+                if (list.Any())
                 {
+                    T_LeaveList ll = db.T_LeaveList.Find(leavelistID);
                     if (ll.StateBack == "0" && ll.StateLeave == "0")
                     {
                         db.T_LeaveList.Remove(ll);
@@ -188,7 +236,7 @@ namespace qingjia_MVC.Controllers.API
                 {
                     result = new ApiBaseResult();
                     result.result = "error";
-                    result.messages = "";
+                    result.messages = "参数格式错误或缺少参数！";
                     return result;
                 }
             }
@@ -196,7 +244,91 @@ namespace qingjia_MVC.Controllers.API
             {
                 result = new ApiBaseResult();
                 result.result = "error";
-                result.messages = "";
+                result.messages = "参数错误！";
+                return result;
+            }
+        }
+
+        /// <summary>
+        /// POST
+        /// 
+        /// 学生特殊请假
+        /// </summary>
+        /// <param name="data"></param>
+        /// <returns></returns>
+        [HttpPost, Route("leavespecial")]
+        public ApiBaseResult LeaveSpecial([FromBody]LeaveSpecialModel data)
+        {
+            ApiBaseResult result;
+            if (data != null)
+            {
+                if (data.Check())
+                {
+                    result = Check(data.access_token);
+                    if (result == null)
+                    {
+                        return leaveSpecial(data);
+                    }
+                    else
+                    {
+                        return result;
+                    }
+                }
+                else
+                {
+                    result = new ApiBaseResult();
+                    result.result = "error";
+                    result.messages = "参数格式错误或缺少参数！";
+                    return result;
+                }
+            }
+            else
+            {
+                result = new ApiBaseResult();
+                result.result = "error";
+                result.messages = "参数错误！";
+                return result;
+            }
+        }
+
+        /// <summary>
+        /// POST
+        /// 
+        /// 学生上课请假备案
+        /// </summary>
+        /// <param name="data"></param>
+        /// <returns></returns>
+        [HttpPost, Route("leavelesson")]
+        public ApiBaseResult LeaveLesson([FromBody]LeaveClassModel data)
+        {
+            ApiBaseResult result;
+            if (data != null)
+            {
+                if (data.Check())
+                {
+                    result = Check(data.access_token);
+                    if (result == null)
+                    {
+                        return leaveClass(data);
+                    }
+                    else
+                    {
+                        return result;
+                    }
+                }
+                else
+                {
+                    result = new ApiBaseResult();
+                    result.result = "error";
+                    result.messages = "参数格式错误或缺少参数！";
+                    return result;
+                }
+            }
+            else
+            {
+                result = new ApiBaseResult();
+                result.result = "error";
+                result.messages = "参数错误！";
                 return result;
             }
         }
@@ -245,98 +377,158 @@ namespace qingjia_MVC.Controllers.API
             }
         }
 
-        public ApiBaseResult leaveSchool(LeaveSchoolModel data)
+        //是否可以请假 存在bug
+        #region 学生请假操作
+
+        private ApiBaseResult leaveSchool(LeaveSchoolModel data)
         {
             ApiBaseResult result = new ApiBaseResult();
 
-            string access_token = data.access_token;
-            string ST_Num = access_token.Substring(0, access_token.IndexOf("_"));
-            string LL_Type = data.leave_type;
-            string leaveDate = data.leave_date;
-            string leaveTime = data.leave_time;
-            string backDate = data.back_date;
-            string backTime = data.back_time;
-            string leaveReason = data.leave_reason;
-            string leaveWay = data.leave_way;
-            string backWay = data.back_way;
-            string address = data.leave_reason;
-            string holidayType = data.leave_reason;//节假日请假的原因只能为三种
-
-            //节假日请假时，请假原因为节假日请假的类型
-            if (LL_Type == "节假日请假")
+            try
             {
-                leaveReason = data.leave_reason;
-            }
+                #region 请假操作
+                string access_token = data.access_token;
+                string ST_Num = access_token.Substring(0, access_token.IndexOf("_"));
+                string LL_Type = data.leave_type;
+                string leaveDate = data.leave_date;
+                string leaveTime = data.leave_time;
+                string backDate = data.back_date;
+                string backTime = data.back_time;
+                string leaveReason = data.leave_reason;
+                string leaveWay = data.leave_way;
+                string backWay = data.back_way;
+                string address = data.leave_reason;
+                string holidayType = data.leave_reason;//节假日请假的原因只能为三种
 
-            string LV_Time_Go = leaveDate + " " + leaveTime + ":00";
-            string LV_Time_Back = backDate + " " + backTime + ":00";
-
-            if (Convert.ToDateTime(LV_Time_Go) < Convert.ToDateTime(LV_Time_Back))
-            {
-                DateTime time_go = Convert.ToDateTime(LV_Time_Go);
-                DateTime time_back = Convert.ToDateTime(LV_Time_Back);
-                TimeSpan time_days = time_back - time_go;
-                int days = time_days.Days;
-
-                if (LL_Type == "短期请假")
+                //节假日请假时，请假原因为节假日请假的类型
+                if (LL_Type == "节假日请假")
                 {
-                    if (days < 3)//短期请假小于三天
-                    {
-                        //生成请假单号
-                        string LV_NUM = DateTime.Now.ToString("yyMMdd");
-                        var exist = from T_LeaveList in db.T_LeaveList where (T_LeaveList.StudentID == ST_Num) && (((T_LeaveList.TimeLeave >= time_go) && (T_LeaveList.TimeLeave <= time_back)) || ((T_LeaveList.TimeBack >= time_go) && (T_LeaveList.TimeBack <= time_back)) || ((T_LeaveList.TimeLeave <= time_go) && (T_LeaveList.TimeBack >= time_back))) select T_LeaveList;
+                    leaveReason = data.leave_reason;
+                }
 
-                        if (exist.Any())
+                string LV_Time_Go = leaveDate + " " + leaveTime + ":00";
+                string LV_Time_Back = backDate + " " + backTime + ":00";
+
+                if (Convert.ToDateTime(LV_Time_Go) < Convert.ToDateTime(LV_Time_Back))
+                {
+                    DateTime time_go = Convert.ToDateTime(LV_Time_Go);
+                    DateTime time_back = Convert.ToDateTime(LV_Time_Back);
+                    TimeSpan time_days = time_back - time_go;
+                    int days = time_days.Days;
+
+                    if (LL_Type == "短期请假")
+                    {
+                        if (days < 3)//短期请假小于三天
                         {
-                            foreach (qingjia_MVC.Models.T_LeaveList leaveList in exist.ToList())
+                            //生成请假单号
+                            string LV_NUM = DateTime.Now.ToString("yyMMdd");
+                            var exist = from T_LeaveList in db.T_LeaveList where (T_LeaveList.StudentID == ST_Num) && (((T_LeaveList.TimeLeave >= time_go) && (T_LeaveList.TimeLeave <= time_back)) || ((T_LeaveList.TimeBack >= time_go) && (T_LeaveList.TimeBack <= time_back)) || ((T_LeaveList.TimeLeave <= time_go) && (T_LeaveList.TimeBack >= time_back))) select T_LeaveList;
+
+                            if (exist.Any())
                             {
-                                if (leaveList.StateBack == "0")
+                                foreach (qingjia_MVC.Models.T_LeaveList leaveList in exist.ToList())
                                 {
-                                    result.result = "error";
-                                    result.messages = "您已提交过此时间段的请假申请，请不要重复提交！";
-                                    break;
-                                }
-                                else
-                                {
-                                    //插入数据库操作
-                                    if (Insert_LeaveList(LV_NUM, ST_Num, LL_Type, time_go, time_back, leaveReason, leaveWay, backWay, address, holidayType, null, null, null) == 1)
+                                    if (leaveList.StateBack == "0")
                                     {
-                                        result.result = "success";
-                                        result.messages = "请假申请成功！";
+                                        result.result = "error";
+                                        result.messages = "您已提交过此时间段的请假申请，请不要重复提交！";
+                                        break;
                                     }
                                     else
                                     {
-                                        result.result = "error";
-                                        result.messages = "数据库提交失败，请重新尝试!";
+                                        //插入数据库操作
+                                        if (Insert_LeaveList(LV_NUM, ST_Num, LL_Type, time_go, time_back, leaveReason, leaveWay, backWay, address, holidayType, null, null, null) == 1)
+                                        {
+                                            result.result = "success";
+                                            result.messages = "请假申请成功！";
+                                        }
+                                        else
+                                        {
+                                            result.result = "error";
+                                            result.messages = "数据库提交失败，请重新尝试!";
+                                        }
+                                        break;
                                     }
-                                    break;
+                                }
+                            }
+                            else
+                            {
+                                //插入数据库操作
+                                if (Insert_LeaveList(LV_NUM, ST_Num, LL_Type, time_go, time_back, leaveReason, leaveWay, backWay, address, holidayType, null, null, null) == 1)
+                                {
+                                    result.result = "success";
+                                    result.messages = "请假申请成功!";
+                                }
+                                else
+                                {
+                                    result.result = "error";
+                                    result.messages = "数据库提交失败，请重新尝试!";
                                 }
                             }
                         }
                         else
                         {
-                            //插入数据库操作
-                            if (Insert_LeaveList(LV_NUM, ST_Num, LL_Type, time_go, time_back, leaveReason, leaveWay, backWay, address, holidayType, null, null, null) == 1)
+                            result.result = "error";
+                            result.messages = "短期请假不能超过3天!";
+                        }
+                    }
+                    else if (LL_Type == "长期请假")
+                    {
+                        if (days >= 3)//长期请假
+                        {
+                            //生成请假单号
+                            string LV_NUM = DateTime.Now.ToString("yyMMdd");
+                            var exist = from T_LeaveList in db.T_LeaveList where (T_LeaveList.StudentID == ST_Num) && (((T_LeaveList.TimeLeave >= time_go) && (T_LeaveList.TimeLeave <= time_back)) || ((T_LeaveList.TimeBack >= time_go) && (T_LeaveList.TimeBack <= time_back)) || ((T_LeaveList.TimeLeave <= time_go) && (T_LeaveList.TimeBack >= time_back))) select T_LeaveList;
+
+                            if (exist.Any())
                             {
-                                result.result = "success";
-                                result.messages = "请假申请成功!";
+                                foreach (qingjia_MVC.Models.T_LeaveList leaveList in exist.ToList())
+                                {
+                                    if (leaveList.StateBack == "0")
+                                    {
+                                        result.result = "error";
+                                        result.messages = "您已提交过此时间段的请假申请，请不要重复提交！";
+                                        break;
+                                    }
+                                    else
+                                    {
+                                        //插入数据库操作
+                                        if (Insert_LeaveList(LV_NUM, ST_Num, LL_Type, time_go, time_back, leaveReason, leaveWay, backWay, address, holidayType, null, null, null) == 1)
+                                        {
+                                            result.result = "success";
+                                            result.messages = "请假申请成功!";
+                                        }
+                                        else
+                                        {
+                                            result.result = "error";
+                                            result.messages = "数据库提交失败，请重新尝试!";
+                                        }
+                                        break;
+                                    }
+                                }
                             }
                             else
                             {
-                                result.result = "error";
-                                result.messages = "数据库提交失败，请重新尝试!";
+                                //插入数据库操作
+                                if (Insert_LeaveList(LV_NUM, ST_Num, LL_Type, time_go, time_back, leaveReason, leaveWay, backWay, address, holidayType, null, null, null) == 1)
+                                {
+                                    result.result = "success";
+                                    result.messages = "请假申请成功!";
+                                }
+                                else
+                                {
+                                    result.result = "error";
+                                    result.messages = "数据库提交失败，请重新尝试!";
+                                }
                             }
                         }
+                        else
+                        {
+                            result.result = "error";
+                            result.messages = "长期请假短期请假不能少于3天!";
+                        }
                     }
-                    else
-                    {
-                        result.result = "error";
-                        result.messages = "短期请假不能超过3天!";
-                    }
-                }
-                else if (LL_Type == "长期请假")
-                {
-                    if (days >= 3)//长期请假
+                    else if (LL_Type == "节假日请假")
                     {
                         //生成请假单号
                         string LV_NUM = DateTime.Now.ToString("yyMMdd");
@@ -386,15 +578,53 @@ namespace qingjia_MVC.Controllers.API
                     }
                     else
                     {
-                        result.result = "error";
-                        result.messages = "长期请假短期请假不能少于3天!";
+                        //非离校请假类型
                     }
                 }
-                else if (LL_Type == "节假日请假")
+                else
                 {
-                    //生成请假单号
-                    string LV_NUM = DateTime.Now.ToString("yyMMdd");
-                    var exist = from T_LeaveList in db.T_LeaveList where (T_LeaveList.StudentID == ST_Num) && (((T_LeaveList.TimeLeave >= time_go) && (T_LeaveList.TimeLeave <= time_back)) || ((T_LeaveList.TimeBack >= time_go) && (T_LeaveList.TimeBack <= time_back)) || ((T_LeaveList.TimeLeave <= time_go) && (T_LeaveList.TimeBack >= time_back))) select T_LeaveList;
+                    result.result = "error";
+                    result.messages = "请假开始时间不能小于结束时间!";
+                }
+                #endregion
+            }
+            catch
+            {
+                result.result = "error";
+                result.messages = "请假失败，请检查参数格式是否符合要求！";
+            }
+
+            return result;
+        }
+
+        private ApiBaseResult leaveSpecial(LeaveSpecialModel data)
+        {
+            ApiBaseResult result = new ApiBaseResult();
+
+            try
+            {
+                #region 请假操作
+                string access_token = data.access_token;
+                string ST_Num = access_token.Substring(0, access_token.IndexOf("_"));
+                string LL_Type = data.leave_type + data.leave_child_type;
+                string leaveDate = data.leave_date;
+                string leaveTime = data.leave_time;
+                string backDate = data.back_date;
+                string backTime = data.leave_time;
+                string leaveReason = data.leave_reason;
+                string leaveWay = null;
+                string backWay = null;
+                string address = null;
+                string holidayType = null;
+
+
+                if (data.leave_type == "晚点名请假")
+                {
+                    string LV_NUM = DateTime.Now.ToString("yyMMdd");//流水号生成
+                    string studytime_sp = leaveDate + " " + leaveTime + ":00";
+                    DateTime time_go = Convert.ToDateTime(studytime_sp);
+                    DateTime time_back = time_go;
+                    var exist = from T_LeaveList in db.T_LeaveList where ((T_LeaveList.StudentID == ST_Num) && (T_LeaveList.TimeLeave == time_go) && (T_LeaveList.TypeID == 2)) select T_LeaveList;
 
                     if (exist.Any())
                     {
@@ -412,7 +642,7 @@ namespace qingjia_MVC.Controllers.API
                                 if (Insert_LeaveList(LV_NUM, ST_Num, LL_Type, time_go, time_back, leaveReason, leaveWay, backWay, address, holidayType, null, null, null) == 1)
                                 {
                                     result.result = "success";
-                                    result.messages = "请假申请成功!";
+                                    result.messages = "请假申请成功！";
                                 }
                                 else
                                 {
@@ -429,7 +659,7 @@ namespace qingjia_MVC.Controllers.API
                         if (Insert_LeaveList(LV_NUM, ST_Num, LL_Type, time_go, time_back, leaveReason, leaveWay, backWay, address, holidayType, null, null, null) == 1)
                         {
                             result.result = "success";
-                            result.messages = "请假申请成功!";
+                            result.messages = "请假申请成功！";
                         }
                         else
                         {
@@ -438,44 +668,116 @@ namespace qingjia_MVC.Controllers.API
                         }
                     }
                 }
-                else
+                else if (data.leave_type == "早晚自习请假")
                 {
-                    //非离校请假类型
+                    string LV_NUM = DateTime.Now.ToString("yyMMdd");//流水号生成
+                    string studytime_sp = leaveDate + " " + leaveTime + ":00";
+                    DateTime time_go = Convert.ToDateTime(studytime_sp);
+                    DateTime time_back = time_go;
+                    var exist = from T_LeaveList in db.T_LeaveList where ((T_LeaveList.StudentID == ST_Num) && (T_LeaveList.TimeLeave == time_go) && (T_LeaveList.TypeID == 2)) select T_LeaveList;
+
+                    if (exist.Any())
+                    {
+                        foreach (qingjia_MVC.Models.T_LeaveList leaveList in exist.ToList())
+                        {
+                            if (leaveList.StateBack == "0")
+                            {
+                                result.result = "error";
+                                result.messages = "您已提交过此时间段的请假申请，请不要重复提交！";
+                                break;
+                            }
+                            else
+                            {
+                                //插入数据库操作
+                                if (Insert_LeaveList(LV_NUM, ST_Num, LL_Type, time_go, time_back, leaveReason, leaveWay, backWay, address, holidayType, null, null, null) == 1)
+                                {
+                                    result.result = "success";
+                                    result.messages = "请假申请成功！";
+                                }
+                                else
+                                {
+                                    result.result = "error";
+                                    result.messages = "数据库提交失败，请重新尝试!";
+                                }
+                                break;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        //插入数据库操作
+                        if (Insert_LeaveList(LV_NUM, ST_Num, LL_Type, time_go, time_back, leaveReason, leaveWay, backWay, address, holidayType, null, null, null) == 1)
+                        {
+                            result.result = "success";
+                            result.messages = "请假申请成功！";
+                        }
+                        else
+                        {
+                            result.result = "error";
+                            result.messages = "数据库提交失败，请重新尝试!";
+                        }
+                    }
                 }
+                #endregion
             }
-            else
+            catch
             {
                 result.result = "error";
-                result.messages = "请假开始时间不能小于结束时间!";
+                result.messages = "请假失败，请检查参数格式是否符合要求！";
             }
+
             return result;
         }
 
-        public ApiBaseResult leaveSpecial(LeaveSpecialModel data)
+        private ApiBaseResult leaveClass(LeaveClassModel data)
         {
             ApiBaseResult result = new ApiBaseResult();
 
-            string access_token = data.access_token;
-            string ST_Num = access_token.Substring(0, access_token.IndexOf("_"));
-            string LL_Type = data.leave_type + data.leave_child_type;
-            string leaveDate = data.leave_date;
-            string leaveTime = data.leave_time;
-            string backDate = data.back_date;
-            string backTime = data.leave_time;
-            string leaveReason = data.leave_reason;
-            string leaveWay = null;
-            string backWay = null;
-            string address = null;
-            string holidayType = null;
-
-
-            if (data.leave_type == "晚点名请假")
+            try
             {
+                #region 请假操作
+                string access_token = data.access_token;
+                string ST_Num = access_token.Substring(0, access_token.IndexOf("_"));
+                string LL_Type = "上课请假备案(" + data.leave_child_type + ")";
+                string leaveDate = data.leave_date;
+                string leaveTime = "";
+                string backDate = data.leave_date;
+                string backTime = "";
+                string leaveReason = data.leave_reason;
+                string lesson = data.lesson;
+
+                if (lesson == "1")
+                {
+                    leaveTime = "08:00";
+                    backTime = "09:40";
+                }
+                if (lesson == "2")
+                {
+                    leaveTime = "10:10";
+                    backTime = "11:50";
+                }
+                if (lesson == "3")
+                {
+                    leaveTime = "14:00";
+                    backTime = "15:40";
+                }
+                if (lesson == "4")
+                {
+                    leaveTime = "16:00";
+                    backTime = "17:40";
+                }
+                if (lesson == "5")
+                {
+                    leaveTime = "18:30";
+                    backTime = "21:00";
+                }
+                string teacher = data.teacher_name;
+
                 string LV_NUM = DateTime.Now.ToString("yyMMdd");//流水号生成
-                string studytime_sp = leaveDate + " " + leaveTime + ":00";
-                DateTime time_go = Convert.ToDateTime(studytime_sp);
-                DateTime time_back = time_go;
-                var exist = from T_LeaveList in db.T_LeaveList where ((T_LeaveList.StudentID == ST_Num) && (T_LeaveList.TimeLeave == time_go) && (T_LeaveList.TypeID == 2)) select T_LeaveList;
+                DateTime time_go = Convert.ToDateTime(leaveDate + " " + leaveTime + ":00");
+                DateTime time_back = Convert.ToDateTime(backDate + " " + backTime + ":00");
+
+                var exist = from T_LeaveList in db.T_LeaveList where ((T_LeaveList.StudentID == ST_Num) && (T_LeaveList.Lesson == lesson) && (T_LeaveList.TypeID == 3) && (T_LeaveList.TimeLeave == time_go)) select T_LeaveList;
 
                 if (exist.Any())
                 {
@@ -490,7 +792,7 @@ namespace qingjia_MVC.Controllers.API
                         else
                         {
                             //插入数据库操作
-                            if (Insert_LeaveList(LV_NUM, ST_Num, LL_Type, time_go, time_back, leaveReason, leaveWay, backWay, address, holidayType, null, null, null) == 1)
+                            if (Insert_LeaveList(LV_NUM, ST_Num, LL_Type, time_go, time_back, leaveReason, null, null, null, null, null, lesson, teacher) == 1)
                             {
                                 result.result = "success";
                                 result.messages = "请假申请成功！";
@@ -507,10 +809,10 @@ namespace qingjia_MVC.Controllers.API
                 else
                 {
                     //插入数据库操作
-                    if (Insert_LeaveList(LV_NUM, ST_Num, LL_Type, time_go, time_back, leaveReason, leaveWay, backWay, address, holidayType, null, null, null) == 1)
+                    if (Insert_LeaveList(LV_NUM, ST_Num, LL_Type, time_go, time_back, leaveReason, null, null, null, null, null, lesson, teacher) == 1)
                     {
                         result.result = "success";
-                        result.messages = "请假申请成功！";
+                        result.messages = "请假申请成功";
                     }
                     else
                     {
@@ -518,148 +820,18 @@ namespace qingjia_MVC.Controllers.API
                         result.messages = "数据库提交失败，请重新尝试!";
                     }
                 }
+                #endregion
             }
-            else if (data.leave_type == "早晚自习请假")
+            catch
             {
-                string LV_NUM = DateTime.Now.ToString("yyMMdd");//流水号生成
-                string studytime_sp = leaveDate + " " + leaveTime + ":00";
-                DateTime time_go = Convert.ToDateTime(studytime_sp);
-                DateTime time_back = time_go;
-                var exist = from T_LeaveList in db.T_LeaveList where ((T_LeaveList.StudentID == ST_Num) && (T_LeaveList.TimeLeave == time_go) && (T_LeaveList.TypeID == 2)) select T_LeaveList;
-
-                if (exist.Any())
-                {
-                    foreach (qingjia_MVC.Models.T_LeaveList leaveList in exist.ToList())
-                    {
-                        if (leaveList.StateBack == "0")
-                        {
-                            result.result = "error";
-                            result.messages = "您已提交过此时间段的请假申请，请不要重复提交！";
-                            break;
-                        }
-                        else
-                        {
-                            //插入数据库操作
-                            if (Insert_LeaveList(LV_NUM, ST_Num, LL_Type, time_go, time_back, leaveReason, leaveWay, backWay, address, holidayType, null, null, null) == 1)
-                            {
-                                result.result = "success";
-                                result.messages = "请假申请成功！";
-                            }
-                            else
-                            {
-                                result.result = "error";
-                                result.messages = "数据库提交失败，请重新尝试!";
-                            }
-                            break;
-                        }
-                    }
-                }
-                else
-                {
-                    //插入数据库操作
-                    if (Insert_LeaveList(LV_NUM, ST_Num, LL_Type, time_go, time_back, leaveReason, leaveWay, backWay, address, holidayType, null, null, null) == 1)
-                    {
-                        result.result = "success";
-                                result.messages = "请假申请成功！";
-                    }
-                    else
-                    {
-                        result.result = "error";
-                                result.messages = "数据库提交失败，请重新尝试!";
-                    }
-                }
+                result.result = "error";
+                result.messages = "请假失败，请检查参数格式";
             }
+
             return result;
         }
 
-        public ApiBaseResult leaveClass(LeaveClassModel data)
-        {
-           string access_token = data.access_token;
-            string ST_Num = access_token.Substring(0, access_token.IndexOf("_"));
-            string LL_Type = "上课请假备案(" + data.leave_child_type + ")";
-            string leaveDate = data.leave_date;
-            string leaveTime = formInfo["LL_Type"].ToString().Substring(5, 5);
-            string backDate = formInfo["leaveDate"];
-            string backTime = formInfo["LL_Type"].ToString().Substring(11, 5);
-            string leaveReason = formInfo["leaveReason"];
-            string lesson = "";
-
-            //string lesson = formInfo["LL_Type"];
-            if (formInfo["LL_Type"].ToString().Contains("第一大节"))
-            {
-                lesson = "1";
-            }
-            else if (formInfo["LL_Type"].ToString().Contains("第二大节"))
-            {
-                lesson = "2";
-            }
-            else if (formInfo["LL_Type"].ToString().Contains("第三大节"))
-            {
-                lesson = "3";
-            }
-            else if (formInfo["LL_Type"].ToString().Contains("第四大节"))
-            {
-                lesson = "4";
-            }
-            else if (formInfo["LL_Type"].ToString().Contains("第五大节"))
-            {
-                lesson = "5";
-            }
-            else
-            {
-                lesson = "";
-            }
-
-            string teacher = formInfo["txbTeacher"];
-
-            string LV_NUM = DateTime.Now.ToString("yyMMdd");//流水号生成
-            DateTime time_go = Convert.ToDateTime(leaveDate + " " + leaveTime + ":00");
-            DateTime time_back = Convert.ToDateTime(backDate + " " + backTime + ":00");
-
-            var exist = from T_LeaveList in db.T_LeaveList where ((T_LeaveList.StudentID == ST_Num) && (T_LeaveList.Lesson == lesson) && (T_LeaveList.TypeID == 3) && (T_LeaveList.TimeLeave == time_go)) select T_LeaveList;
-
-            if (exist.Any())
-            {
-                foreach (qingjia_MVC.Models.T_LeaveList leaveList in exist.ToList())
-                {
-                    if (leaveList.StateBack == "0")
-                    {
-                        alertInfo("错误提示", "您已提交过此时间段的请假申请，请不要重复提交！", "Information");
-                        break;
-                    }
-                    else
-                    {
-                        //插入数据库操作
-                        if (Insert_LeaveList(LV_NUM, ST_Num, LL_Type, time_go, time_back, leaveReason, null, null, null, null, null, lesson, teacher) == 1)
-                        {
-                            string script = String.Format("alert('请假申请成功！');");
-                            PageContext.RegisterStartupScript(ActiveWindow.GetHideRefreshReference() +
-                                script);
-                        }
-                        else
-                        {
-                            alertInfo("提交失败", "数据库提交失败，请重新尝试!", "Information");
-                        }
-                        break;
-                    }
-                }
-            }
-            else
-            {
-                //插入数据库操作
-                if (Insert_LeaveList(LV_NUM, ST_Num, LL_Type, time_go, time_back, leaveReason, null, null, null, null, null, lesson, teacher) == 1)
-                {
-                    string script = String.Format("alert('请假申请成功');");
-                    PageContext.RegisterStartupScript(ActiveWindow.GetHideRefreshReference() +
-                        script);
-                }
-                else
-                {
-                    alertInfo("提交失败", "数据库提交失败，请重新尝试!", "Information");
-                }
-            }
-            return UIHelper.Result();
-        }
+        #endregion
 
         #region 插入T_LeaveList表
 
@@ -680,7 +852,7 @@ namespace qingjia_MVC.Controllers.API
         /// <param name="lesson">课程</param>
         /// <param name="teacher">老师</param>
         /// <returns>插入数据库结果</returns>
-        protected int Insert_LeaveList(string LV_Num, string ST_Num, string LL_Type, DateTime TimeLeave, DateTime TimeBack, string LeaveReason, string leaveWay, string backWay, string leaveAddress, string holidayType, string notes, string lesson, string teacher)
+        private int Insert_LeaveList(string LV_Num, string ST_Num, string LL_Type, DateTime TimeLeave, DateTime TimeBack, string LeaveReason, string leaveWay, string backWay, string leaveAddress, string holidayType, string notes, string lesson, string teacher)
         {
             string endString = "0001";
             var leavelist = from T_LeaveList in db.T_LeaveList where (T_LeaveList.ID.StartsWith(LV_Num)) orderby T_LeaveList.ID descending select T_LeaveList.ID;

@@ -55,6 +55,56 @@
                 //此处的数据格式，只要有一个参数对应后台API接口可接受的数据模型的一个属性，即可接收到参数，否则，接受参数为空
                 AjaxRequestGet('api/leavelist/getlist?access_token=' + access_token);
             });
+
+            $('#btnLeavelistRevoke').click(function (e) {
+                //var data = { "UserID": "0121403490106", "UserPsd": "490106", "YiBanID": "123" };
+                //此处的数据格式，只要有一个参数对应后台API接口可接受的数据模型的一个属性，即可接收到参数，否则，接受参数为空
+                AjaxRequestGet('api/leavelist/revoke?access_token=' + access_token + '&leavelistID=' + '1706280002');
+            });
+
+            $('#btnLeavelistLeaveschool').click(function (e) {
+                var data = {
+                    "access_token": "0121403490106_bc36bfb5-acc8-48ea-8b2b-21c5dfb1297c",
+                    "leave_type": "长期请假",
+                    "leave_date": "2017-01-04",
+                    "leave_time": "12:00",
+                    "back_date": "2017-07-10",
+                    "back_time": "12:00",
+                    "leave_reason": "测试数据",
+                    "leave_way": "测试数据",
+                    "back_way": "测试数据",
+                    "address": "测试数据"
+                };
+                //此处的数据格式，只要有一个参数对应后台API接口可接受的数据模型的一个属性，即可接收到参数，否则，接受参数为空
+                AjaxRequestPost('api/leavelist/leaveschool', data);
+            });
+
+            $('#btnLeavelistLeavespecial').click(function (e) {
+                var data = {
+                    "access_token": "0121403490106_bc36bfb5-acc8-48ea-8b2b-21c5dfb1297c",
+                    "leave_type": "",
+                    "leave_child_type": "",
+                    "leave_date": "",
+                    "leave_time": "",
+                    "back_date": "",
+                    "back_time": "",
+                    "leave_reason": ""
+                };
+                //此处的数据格式，只要有一个参数对应后台API接口可接受的数据模型的一个属性，即可接收到参数，否则，接受参数为空
+                AjaxRequestPost('api/leavelist/leavespecial', data);
+            });
+
+            $('#btnLeavelistLeavelesson').click(function (e) {
+                var data = {
+                    "access_token": "0121403490106_bc36bfb5-acc8-48ea-8b2b-21c5dfb1297c",
+                    "leave_date": "",
+                    "leave_reason": "",
+                    "teacher_name": "",
+                    "lesson": ""
+                };
+                //此处的数据格式，只要有一个参数对应后台API接口可接受的数据模型的一个属性，即可接收到参数，否则，接受参数为空
+                AjaxRequestPost('api/leavelist/leavelesson', data);
+            });
         });
 
         //Get请求
@@ -121,7 +171,19 @@
         <br />
         <br />
         <h3>请假接口测试：</h3>
-        <input type="button" value="LeaveList" id="btnLeavelistGetList" />
+        <input type="button" value="GetList" id="btnLeavelistGetList" />
+        <br />
+        <br />
+        <input type="button" value="Revoke" id="btnLeavelistRevoke" />
+        <br />
+        <br />
+        <input type="button" value="leaveschool" id="btnLeavelistLeaveschool" />
+        <br />
+        <br />
+        <input type="button" value="leavespecial" id="btnLeavelistLeavespecial" />
+        <br />
+        <br />
+        <input type="button" value="leavelesson" id="btnLeavelistLeavelesson" />
         <br />
         <br />
     </div>
