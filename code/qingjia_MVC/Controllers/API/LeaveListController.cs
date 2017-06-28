@@ -572,11 +572,12 @@ namespace qingjia_MVC.Controllers.API
             return result;
         }
 
-        public ApiBaseResult leaveClass(FormCollection formInfo)
+        public ApiBaseResult leaveClass(LeaveClassModel data)
         {
-            string ST_Num = Session["UserID"].ToString();
-            string LL_Type = "上课请假备案(" + formInfo["LL_Type_Child"] + ")";
-            string leaveDate = formInfo["leaveDate"];
+           string access_token = data.access_token;
+            string ST_Num = access_token.Substring(0, access_token.IndexOf("_"));
+            string LL_Type = "上课请假备案(" + data.leave_child_type + ")";
+            string leaveDate = data.leave_date;
             string leaveTime = formInfo["LL_Type"].ToString().Substring(5, 5);
             string backDate = formInfo["leaveDate"];
             string backTime = formInfo["LL_Type"].ToString().Substring(11, 5);
