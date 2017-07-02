@@ -1424,6 +1424,5 @@ C:\Users\Wong Jianming\Desktop\qingjia\code\qingjia_MVC\bin\zh-Hans\Microsoft.Ow
 C:\Users\Wong Jianming\Desktop\qingjia\code\qingjia_MVC\bin\zh-Hans\Microsoft.Owin.Security.Google.resources.dll
 C:\Users\Wong Jianming\Desktop\qingjia\code\qingjia_MVC\bin\zh-Hans\Microsoft.Owin.Security.Twitter.resources.dll
 C:\Users\Wong Jianming\Desktop\qingjia\code\qingjia_MVC\bin\zh-Hans\Microsoft.Owin.Security.MicrosoftAccount.resources.dll
-C:\Users\Wong Jianming\Desktop\qingjia\code\qingjia_MVC\obj\Debug\qingjia_MVC.csprojResolveAssemblyReference.cache
 C:\Users\Wong Jianming\Desktop\qingjia\code\qingjia_MVC\obj\Debug\qingjia_MVC.dll
 C:\Users\Wong Jianming\Desktop\qingjia\code\qingjia_MVC\obj\Debug\qingjia_MVC.pdb

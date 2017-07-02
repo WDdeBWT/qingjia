@@ -19,8 +19,6 @@ namespace qingjia_MVC.Areas.Leave.Controllers
         //实例化数据库
         private imaw_qingjiaEntities db = new imaw_qingjiaEntities();
         private string staticLeaveType = "total";
-        //private string staticST_Class = "total";//代表全部班级
-        //private string RoleID = "";
 
         #region Index
         // GET: Leave/LeaveList
@@ -306,28 +304,33 @@ namespace qingjia_MVC.Areas.Leave.Controllers
 
                         if (exist.Any())
                         {
+                            bool flag = true;
                             foreach (qingjia_MVC.Models.T_LeaveList leaveList in exist.ToList())
                             {
                                 if (leaveList.StateBack == "0")
                                 {
-                                    alertInfo("错误提示", "您已提交过此时间段的请假申请，请不要重复提交！", "Information");
+                                    flag = false;
                                     break;
+                                }
+
+                            }
+                            if (flag)
+                            {
+                                //插入数据库操作
+                                if (Insert_LeaveList(LV_NUM, ST_Num, LL_Type, time_go, time_back, leaveReason, leaveWay, backWay, address, holidayType, null, null, null) == 1)
+                                {
+                                    string script = String.Format("alert('请假申请成功！');");
+                                    PageContext.RegisterStartupScript(ActiveWindow.GetHideRefreshReference() +
+                                        script);
                                 }
                                 else
                                 {
-                                    //插入数据库操作
-                                    if (Insert_LeaveList(LV_NUM, ST_Num, LL_Type, time_go, time_back, leaveReason, leaveWay, backWay, address, holidayType, null, null, null) == 1)
-                                    {
-                                        string script = String.Format("alert('请假申请成功！');");
-                                        PageContext.RegisterStartupScript(ActiveWindow.GetHideRefreshReference() +
-                                            script);
-                                    }
-                                    else
-                                    {
-                                        alertInfo("提交失败", "数据库提交失败，请重新尝试!", "Information");
-                                    }
-                                    break;
+                                    alertInfo("提交失败", "数据库提交失败，请重新尝试!", "Information");
                                 }
+                            }
+                            else
+                            {
+                                alertInfo("错误提示", "您已提交过此时间段的请假申请，请不要重复提交！", "Information");
                             }
                         }
                         else
@@ -360,28 +363,32 @@ namespace qingjia_MVC.Areas.Leave.Controllers
 
                         if (exist.Any())
                         {
+                            bool flag = true;
                             foreach (qingjia_MVC.Models.T_LeaveList leaveList in exist.ToList())
                             {
                                 if (leaveList.StateBack == "0")
                                 {
-                                    alertInfo("错误提示", "您已提交过此时间段的请假申请，请不要重复提交！", "Information");
+                                    flag = false;
                                     break;
+                                }
+                            }
+                            if (flag)
+                            {
+                                //插入数据库操作
+                                if (Insert_LeaveList(LV_NUM, ST_Num, LL_Type, time_go, time_back, leaveReason, leaveWay, backWay, address, holidayType, null, null, null) == 1)
+                                {
+                                    string script = String.Format("alert('请假申请成功');");
+                                    PageContext.RegisterStartupScript(ActiveWindow.GetHideRefreshReference() +
+                                        script);
                                 }
                                 else
                                 {
-                                    //插入数据库操作
-                                    if (Insert_LeaveList(LV_NUM, ST_Num, LL_Type, time_go, time_back, leaveReason, leaveWay, backWay, address, holidayType, null, null, null) == 1)
-                                    {
-                                        string script = String.Format("alert('请假申请成功');");
-                                        PageContext.RegisterStartupScript(ActiveWindow.GetHideRefreshReference() +
-                                            script);
-                                    }
-                                    else
-                                    {
-                                        alertInfo("提交失败", "数据库提交失败，请重新尝试!", "Information");
-                                    }
-                                    break;
+                                    alertInfo("提交失败", "数据库提交失败，请重新尝试!", "Information");
                                 }
+                            }
+                            else
+                            {
+                                alertInfo("错误提示", "您已提交过此时间段的请假申请，请不要重复提交！", "Information");
                             }
                         }
                         else
@@ -412,28 +419,32 @@ namespace qingjia_MVC.Areas.Leave.Controllers
 
                     if (exist.Any())
                     {
+                        bool flag = true;
                         foreach (qingjia_MVC.Models.T_LeaveList leaveList in exist.ToList())
                         {
                             if (leaveList.StateBack == "0")
                             {
-                                alertInfo("错误提示", "您已提交过此时间段的请假申请，请不要重复提交！", "Information");
+                                flag = false;
                                 break;
+                            }
+                        }
+                        if (flag)
+                        {
+                            //插入数据库操作
+                            if (Insert_LeaveList(LV_NUM, ST_Num, LL_Type, time_go, time_back, leaveReason, leaveWay, backWay, address, holidayType, null, null, null) == 1)
+                            {
+                                string script = String.Format("alert('请假申请成功');");
+                                PageContext.RegisterStartupScript(ActiveWindow.GetHideRefreshReference() +
+                                    script);
                             }
                             else
                             {
-                                //插入数据库操作
-                                if (Insert_LeaveList(LV_NUM, ST_Num, LL_Type, time_go, time_back, leaveReason, leaveWay, backWay, address, holidayType, null, null, null) == 1)
-                                {
-                                    string script = String.Format("alert('请假申请成功');");
-                                    PageContext.RegisterStartupScript(ActiveWindow.GetHideRefreshReference() +
-                                        script);
-                                }
-                                else
-                                {
-                                    alertInfo("提交失败", "数据库提交失败，请重新尝试!", "Information");
-                                }
-                                break;
+                                alertInfo("提交失败", "数据库提交失败，请重新尝试!", "Information");
                             }
+                        }
+                        else
+                        {
+                            alertInfo("错误提示", "您已提交过此时间段的请假申请，请不要重复提交！", "Information");
                         }
                     }
                     else
@@ -527,28 +538,32 @@ namespace qingjia_MVC.Areas.Leave.Controllers
 
                 if (exist.Any())
                 {
+                    bool flag = true;
                     foreach (qingjia_MVC.Models.T_LeaveList leaveList in exist.ToList())
                     {
                         if (leaveList.StateBack == "0")
                         {
-                            alertInfo("错误提示", "您已提交过此时间段的请假申请，请不要重复提交！", "Information");
+                            flag = false;
                             break;
+                        }
+                    }
+                    if (flag)
+                    {
+                        //插入数据库操作
+                        if (Insert_LeaveList(LV_NUM, ST_Num, LL_Type, time_go, time_back, leaveReason, leaveWay, backWay, address, holidayType, null, null, null) == 1)
+                        {
+                            string script = String.Format("alert('请假申请成功！');");
+                            PageContext.RegisterStartupScript(ActiveWindow.GetHideRefreshReference() +
+                                script);
                         }
                         else
                         {
-                            //插入数据库操作
-                            if (Insert_LeaveList(LV_NUM, ST_Num, LL_Type, time_go, time_back, leaveReason, leaveWay, backWay, address, holidayType, null, null, null) == 1)
-                            {
-                                string script = String.Format("alert('请假申请成功！');");
-                                PageContext.RegisterStartupScript(ActiveWindow.GetHideRefreshReference() +
-                                    script);
-                            }
-                            else
-                            {
-                                alertInfo("提交失败", "数据库提交失败，请重新尝试!", "Information");
-                            }
-                            break;
+                            alertInfo("提交失败", "数据库提交失败，请重新尝试!", "Information");
                         }
+                    }
+                    else
+                    {
+                        alertInfo("错误提示", "您已提交过此时间段的请假申请，请不要重复提交！", "Information");
                     }
                 }
                 else
@@ -576,28 +591,32 @@ namespace qingjia_MVC.Areas.Leave.Controllers
 
                 if (exist.Any())
                 {
+                    bool flag = true;
                     foreach (qingjia_MVC.Models.T_LeaveList leaveList in exist.ToList())
                     {
                         if (leaveList.StateBack == "0")
                         {
-                            alertInfo("错误提示", "您已提交过此时间段的请假申请，请不要重复提交！", "Information");
+                            flag = false;
                             break;
+                        }
+                    }
+                    if (flag)
+                    {
+                        //插入数据库操作
+                        if (Insert_LeaveList(LV_NUM, ST_Num, LL_Type, time_go, time_back, leaveReason, leaveWay, backWay, address, holidayType, null, null, null) == 1)
+                        {
+                            string script = String.Format("alert('请假申请成功！');");
+                            PageContext.RegisterStartupScript(ActiveWindow.GetHideRefreshReference() +
+                                script);
                         }
                         else
                         {
-                            //插入数据库操作
-                            if (Insert_LeaveList(LV_NUM, ST_Num, LL_Type, time_go, time_back, leaveReason, leaveWay, backWay, address, holidayType, null, null, null) == 1)
-                            {
-                                string script = String.Format("alert('请假申请成功！');");
-                                PageContext.RegisterStartupScript(ActiveWindow.GetHideRefreshReference() +
-                                    script);
-                            }
-                            else
-                            {
-                                alertInfo("提交失败", "数据库提交失败，请重新尝试!", "Information");
-                            }
-                            break;
+                            alertInfo("提交失败", "数据库提交失败，请重新尝试!", "Information");
                         }
+                    }
+                    else
+                    {
+                        alertInfo("错误提示", "您已提交过此时间段的请假申请，请不要重复提交！", "Information");
                     }
                 }
                 else
@@ -705,28 +724,32 @@ namespace qingjia_MVC.Areas.Leave.Controllers
 
             if (exist.Any())
             {
+                bool flag = true;
                 foreach (qingjia_MVC.Models.T_LeaveList leaveList in exist.ToList())
                 {
                     if (leaveList.StateBack == "0")
                     {
-                        alertInfo("错误提示", "您已提交过此时间段的请假申请，请不要重复提交！", "Information");
+                        flag = false;
                         break;
+                    }
+                }
+                if (flag)
+                {
+                    //插入数据库操作
+                    if (Insert_LeaveList(LV_NUM, ST_Num, LL_Type, time_go, time_back, leaveReason, null, null, null, null, null, lesson, teacher) == 1)
+                    {
+                        string script = String.Format("alert('请假申请成功！');");
+                        PageContext.RegisterStartupScript(ActiveWindow.GetHideRefreshReference() +
+                            script);
                     }
                     else
                     {
-                        //插入数据库操作
-                        if (Insert_LeaveList(LV_NUM, ST_Num, LL_Type, time_go, time_back, leaveReason, null, null, null, null, null, lesson, teacher) == 1)
-                        {
-                            string script = String.Format("alert('请假申请成功！');");
-                            PageContext.RegisterStartupScript(ActiveWindow.GetHideRefreshReference() +
-                                script);
-                        }
-                        else
-                        {
-                            alertInfo("提交失败", "数据库提交失败，请重新尝试!", "Information");
-                        }
-                        break;
+                        alertInfo("提交失败", "数据库提交失败，请重新尝试!", "Information");
                     }
+                }
+                else
+                {
+                    alertInfo("错误提示", "您已提交过此时间段的请假申请，请不要重复提交！", "Information");
                 }
             }
             else

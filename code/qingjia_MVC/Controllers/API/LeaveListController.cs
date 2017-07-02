@@ -426,29 +426,33 @@ namespace qingjia_MVC.Controllers.API
 
                             if (exist.Any())
                             {
+                                bool flag = true;
                                 foreach (qingjia_MVC.Models.T_LeaveList leaveList in exist.ToList())
                                 {
                                     if (leaveList.StateBack == "0")
                                     {
-                                        result.result = "error";
-                                        result.messages = "您已提交过此时间段的请假申请，请不要重复提交！";
+                                        flag = false;
                                         break;
+                                    }
+                                }
+                                if (flag)
+                                {
+                                    //插入数据库操作
+                                    if (Insert_LeaveList(LV_NUM, ST_Num, LL_Type, time_go, time_back, leaveReason, leaveWay, backWay, address, holidayType, null, null, null) == 1)
+                                    {
+                                        result.result = "success";
+                                        result.messages = "请假申请成功！";
                                     }
                                     else
                                     {
-                                        //插入数据库操作
-                                        if (Insert_LeaveList(LV_NUM, ST_Num, LL_Type, time_go, time_back, leaveReason, leaveWay, backWay, address, holidayType, null, null, null) == 1)
-                                        {
-                                            result.result = "success";
-                                            result.messages = "请假申请成功！";
-                                        }
-                                        else
-                                        {
-                                            result.result = "error";
-                                            result.messages = "数据库提交失败，请重新尝试!";
-                                        }
-                                        break;
+                                        result.result = "error";
+                                        result.messages = "数据库提交失败，请重新尝试!";
                                     }
+                                }
+                                else
+                                {
+                                    result.result = "error";
+                                    result.messages = "您已提交过此时间段的请假申请，请不要重复提交！";
                                 }
                             }
                             else
@@ -482,29 +486,33 @@ namespace qingjia_MVC.Controllers.API
 
                             if (exist.Any())
                             {
+                                bool flag = true;
                                 foreach (qingjia_MVC.Models.T_LeaveList leaveList in exist.ToList())
                                 {
                                     if (leaveList.StateBack == "0")
                                     {
-                                        result.result = "error";
-                                        result.messages = "您已提交过此时间段的请假申请，请不要重复提交！";
+                                        flag = false;
                                         break;
+                                    }
+                                }
+                                if (flag)
+                                {
+                                    //插入数据库操作
+                                    if (Insert_LeaveList(LV_NUM, ST_Num, LL_Type, time_go, time_back, leaveReason, leaveWay, backWay, address, holidayType, null, null, null) == 1)
+                                    {
+                                        result.result = "success";
+                                        result.messages = "请假申请成功!";
                                     }
                                     else
                                     {
-                                        //插入数据库操作
-                                        if (Insert_LeaveList(LV_NUM, ST_Num, LL_Type, time_go, time_back, leaveReason, leaveWay, backWay, address, holidayType, null, null, null) == 1)
-                                        {
-                                            result.result = "success";
-                                            result.messages = "请假申请成功!";
-                                        }
-                                        else
-                                        {
-                                            result.result = "error";
-                                            result.messages = "数据库提交失败，请重新尝试!";
-                                        }
-                                        break;
+                                        result.result = "error";
+                                        result.messages = "数据库提交失败，请重新尝试!";
                                     }
+                                }
+                                else
+                                {
+                                    result.result = "error";
+                                    result.messages = "您已提交过此时间段的请假申请，请不要重复提交！";
                                 }
                             }
                             else
@@ -536,29 +544,33 @@ namespace qingjia_MVC.Controllers.API
 
                         if (exist.Any())
                         {
+                            bool flag = true;
                             foreach (qingjia_MVC.Models.T_LeaveList leaveList in exist.ToList())
                             {
                                 if (leaveList.StateBack == "0")
                                 {
-                                    result.result = "error";
-                                    result.messages = "您已提交过此时间段的请假申请，请不要重复提交！";
+                                    flag = false;
                                     break;
+                                }
+                            }
+                            if (flag)
+                            {
+                                //插入数据库操作
+                                if (Insert_LeaveList(LV_NUM, ST_Num, LL_Type, time_go, time_back, leaveReason, leaveWay, backWay, address, holidayType, null, null, null) == 1)
+                                {
+                                    result.result = "success";
+                                    result.messages = "请假申请成功!";
                                 }
                                 else
                                 {
-                                    //插入数据库操作
-                                    if (Insert_LeaveList(LV_NUM, ST_Num, LL_Type, time_go, time_back, leaveReason, leaveWay, backWay, address, holidayType, null, null, null) == 1)
-                                    {
-                                        result.result = "success";
-                                        result.messages = "请假申请成功!";
-                                    }
-                                    else
-                                    {
-                                        result.result = "error";
-                                        result.messages = "数据库提交失败，请重新尝试!";
-                                    }
-                                    break;
+                                    result.result = "error";
+                                    result.messages = "数据库提交失败，请重新尝试!";
                                 }
+                            }
+                            else
+                            {
+                                result.result = "error";
+                                result.messages = "您已提交过此时间段的请假申请，请不要重复提交！";
                             }
                         }
                         else
@@ -628,29 +640,33 @@ namespace qingjia_MVC.Controllers.API
 
                     if (exist.Any())
                     {
+                        bool flag = true;
                         foreach (qingjia_MVC.Models.T_LeaveList leaveList in exist.ToList())
                         {
                             if (leaveList.StateBack == "0")
                             {
-                                result.result = "error";
-                                result.messages = "您已提交过此时间段的请假申请，请不要重复提交！";
+                                flag = false;
                                 break;
+                            }
+                        }
+                        if (flag)
+                        {
+                            //插入数据库操作
+                            if (Insert_LeaveList(LV_NUM, ST_Num, LL_Type, time_go, time_back, leaveReason, leaveWay, backWay, address, holidayType, null, null, null) == 1)
+                            {
+                                result.result = "success";
+                                result.messages = "请假申请成功！";
                             }
                             else
                             {
-                                //插入数据库操作
-                                if (Insert_LeaveList(LV_NUM, ST_Num, LL_Type, time_go, time_back, leaveReason, leaveWay, backWay, address, holidayType, null, null, null) == 1)
-                                {
-                                    result.result = "success";
-                                    result.messages = "请假申请成功！";
-                                }
-                                else
-                                {
-                                    result.result = "error";
-                                    result.messages = "数据库提交失败，请重新尝试!";
-                                }
-                                break;
+                                result.result = "error";
+                                result.messages = "数据库提交失败，请重新尝试!";
                             }
+                        }
+                        else
+                        {
+                            result.result = "error";
+                            result.messages = "您已提交过此时间段的请假申请，请不要重复提交！";
                         }
                     }
                     else
@@ -678,29 +694,33 @@ namespace qingjia_MVC.Controllers.API
 
                     if (exist.Any())
                     {
+                        bool flag = true;
                         foreach (qingjia_MVC.Models.T_LeaveList leaveList in exist.ToList())
                         {
                             if (leaveList.StateBack == "0")
                             {
-                                result.result = "error";
-                                result.messages = "您已提交过此时间段的请假申请，请不要重复提交！";
+                                flag = false;
                                 break;
+                            }
+                        }
+                        if (flag)
+                        {
+                            //插入数据库操作
+                            if (Insert_LeaveList(LV_NUM, ST_Num, LL_Type, time_go, time_back, leaveReason, leaveWay, backWay, address, holidayType, null, null, null) == 1)
+                            {
+                                result.result = "success";
+                                result.messages = "请假申请成功！";
                             }
                             else
                             {
-                                //插入数据库操作
-                                if (Insert_LeaveList(LV_NUM, ST_Num, LL_Type, time_go, time_back, leaveReason, leaveWay, backWay, address, holidayType, null, null, null) == 1)
-                                {
-                                    result.result = "success";
-                                    result.messages = "请假申请成功！";
-                                }
-                                else
-                                {
-                                    result.result = "error";
-                                    result.messages = "数据库提交失败，请重新尝试!";
-                                }
-                                break;
+                                result.result = "error";
+                                result.messages = "数据库提交失败，请重新尝试!";
                             }
+                        }
+                        else
+                        {
+                            result.result = "error";
+                            result.messages = "您已提交过此时间段的请假申请，请不要重复提交！";
                         }
                     }
                     else
@@ -781,29 +801,33 @@ namespace qingjia_MVC.Controllers.API
 
                 if (exist.Any())
                 {
+                    bool flag = true;
                     foreach (qingjia_MVC.Models.T_LeaveList leaveList in exist.ToList())
                     {
                         if (leaveList.StateBack == "0")
                         {
-                            result.result = "error";
-                            result.messages = "您已提交过此时间段的请假申请，请不要重复提交！";
+                            flag = false;
                             break;
+                        }
+                    }
+                    if (flag)
+                    {
+                        //插入数据库操作
+                        if (Insert_LeaveList(LV_NUM, ST_Num, LL_Type, time_go, time_back, leaveReason, null, null, null, null, null, lesson, teacher) == 1)
+                        {
+                            result.result = "success";
+                            result.messages = "请假申请成功！";
                         }
                         else
                         {
-                            //插入数据库操作
-                            if (Insert_LeaveList(LV_NUM, ST_Num, LL_Type, time_go, time_back, leaveReason, null, null, null, null, null, lesson, teacher) == 1)
-                            {
-                                result.result = "success";
-                                result.messages = "请假申请成功！";
-                            }
-                            else
-                            {
-                                result.result = "error";
-                                result.messages = "数据库提交失败，请重新尝试!";
-                            }
-                            break;
+                            result.result = "error";
+                            result.messages = "数据库提交失败，请重新尝试!";
                         }
+                    }
+                    else
+                    {
+                        result.result = "error";
+                        result.messages = "您已提交过此时间段的请假申请，请不要重复提交！";
                     }
                 }
                 else
