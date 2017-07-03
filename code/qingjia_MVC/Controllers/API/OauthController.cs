@@ -169,32 +169,5 @@ namespace qingjia_MVC.Controllers
             return result;
         }
 
-
-        //Demo代码
-        //[HttpGet, Route("GetValue")]
-        //public int value()
-        //{
-        //    return 2;
-        //}
-
-        //[HttpGet, Route("GetValue")]
-        //public ApiBaseResult value(string code)
-        //{
-        //    ApiBaseResult result = new ApiBaseResult();
-        //    result.result = "error";
-
-        //    User_Login loginInfo = new User_Login();
-        //    loginInfo.UserID = "0121403490106";
-        //    loginInfo.UserPsd = "123456";
-        //    loginInfo.YiBanID = "123456";
-
-        //    result.data = loginInfo;
-
-        //    if (code != null && code == "2")
-        //    {
-        //        result.result = "succcess";
-        //    }
-        //    return result;
-        //}
     }
 }

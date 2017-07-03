@@ -266,6 +266,7 @@ namespace qingjia_MVC.Controllers.API
             }
         }
 
+        #region 检查Access_Token
         /// <summary>
         /// 检查Access_Token
         /// </summary>
@@ -309,6 +310,7 @@ namespace qingjia_MVC.Controllers.API
                 return result;
             }
         }
+        #endregion
 
     }
 }
