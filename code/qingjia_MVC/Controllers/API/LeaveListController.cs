@@ -7,6 +7,7 @@ using System.Web.Http;
 using qingjia_MVC.Common;
 using qingjia_MVC.Models;
 using System.Data.Entity.Validation;
+using qingjia_MVC.Models.API;
 
 namespace qingjia_MVC.Controllers.API
 {
@@ -128,8 +129,36 @@ namespace qingjia_MVC.Controllers.API
                 var leavelist = from vw_LeaveList in db.vw_LeaveList where ((vw_LeaveList.StudentID == UserID) && (vw_LeaveList.StateBack == "0")) select vw_LeaveList;
                 if (leavelist.Any())
                 {
+                    List<LeaveList> data = new List<LeaveList>();
+                    foreach (vw_LeaveList item in leavelist)
+                    {
+                        LeaveList ll = new LeaveList();
+                        ll.ID = item.ID;
+                        ll.Reasoon = item.Reason;
+                        ll.SubmitTime = item.Reason;
+                        ll.Type = item.LeaveType;
+                        ll.State = "";
+                        ll.TimeLeave = (DateTime)item.TimeLeave;
+                        ll.TimeBack = (DateTime)item.TimeBack;
+                        if (item.StateLeave == "0")
+                        {
+                            ll.State = "待审核";
+                        }
+                        if (item.StateLeave == "1")
+                        {
+                            ll.State = "待销假";
+                        }
+                        ll.RejectNote = (item.Notes == null) ? "" : item.Notes;
+                        ll.LeaveWay = (item.LeaveWay == null) ? "" : item.LeaveWay;
+                        ll.BackWay = (item.BackWay == null) ? "" : item.BackWay;
+                        ll.LeaveAddress = (item.Address == null) ? "" : item.Address;
+                        ll.Lesson = (item.Lesson == null) ? "" : item.Lesson;
+                        ll.TeacherName = (item.Teacher == null) ? "" : item.Teacher;
+
+                        data.Add(ll);
+                    }
                     result.result = "success";
-                    result.data = leavelist.ToList();
+                    result.data = data;
                 }
                 else
                 {
@@ -332,6 +361,8 @@ namespace qingjia_MVC.Controllers.API
                 return result;
             }
         }
+
+        #region 其他方法
 
         /// <summary>
         /// 检查Access_Token
@@ -924,6 +955,8 @@ namespace qingjia_MVC.Controllers.API
                 return 0;
             }
         }
+
+        #endregion
 
         #endregion
     }

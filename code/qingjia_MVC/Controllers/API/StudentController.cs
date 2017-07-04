@@ -6,24 +6,11 @@ using System.Net.Http;
 using System.Web.Http;
 using qingjia_MVC.Models;
 using qingjia_MVC.Common;
+using qingjia_MVC.Models.API;
 
 namespace qingjia_MVC.Controllers.API
 {
-    #region 数据模型
-
-    public class NightInfoModel
-    {
-        public string TeacherID { get; set; }
-        public string TeacherName { get; set; }
-        public string BatchTime { get; set; }
-        public string DeadLine { get; set; }
-    }
-
-    public class HolidayModel
-    {
-        public string TeacherID { get; set; }
-        public string DeadLine { get; set; }
-    }
+    #region 接受数据模型
 
     public class ChangePsdModel
     {
@@ -63,8 +50,25 @@ namespace qingjia_MVC.Controllers.API
                 if (studentInfo.Any())
                 {
                     vw_Student student = studentInfo.ToList().First();
+
+                    //创建数据模型
+                    UserInfo userInfo = new UserInfo();
+                    userInfo.UserID = student.ST_Num;
+                    userInfo.UserName = student.ST_Name;
+                    userInfo.UserClass = student.ST_Class;
+                    userInfo.UserYear = student.ST_Grade;
+                    userInfo.UserTeacherID = student.ST_TeacherID;
+                    userInfo.UserTeacherName = student.ST_Teacher;
+                    userInfo.UserTel = (student.ST_Tel == null) ? "" : student.ST_Tel;
+                    userInfo.UserQQ = (student.ST_QQ == null) ? "" : student.ST_QQ;
+                    userInfo.UserEmail = (student.ST_Email == null) ? "" : student.ST_Email;
+                    userInfo.UserSex = (student.ST_Sex == null) ? "" : student.ST_Sex;
+                    userInfo.UserDoor = (student.ST_Dor == null) ? "" : student.ST_Dor;
+                    userInfo.ContactName = (student.ContactOne == null) ? "" : student.ContactOne;
+                    userInfo.ContactTel = (student.OneTel == null) ? "" : student.OneTel;
+
                     result.result = "success";
-                    result.data = student;
+                    result.data = userInfo;
                 }
                 else
                 {
@@ -101,7 +105,7 @@ namespace qingjia_MVC.Controllers.API
 
                 string UserID = access_token.Substring(0, access_token.IndexOf("_"));
 
-                NightInfoModel nightInfo = new NightInfoModel();
+                NightInfo nightInfo = new NightInfo();
 
                 var studentInfo = from vw_Student in db.vw_Student where (vw_Student.ST_Num == UserID) select vw_Student;
                 if (studentInfo.Any())
@@ -169,7 +173,7 @@ namespace qingjia_MVC.Controllers.API
 
                 #region 获取数据
 
-                HolidayModel holiday = new HolidayModel();
+                Holiday holiday = new Holiday();
 
                 string UserID = access_token.Substring(0, access_token.IndexOf("_"));
                 var studentInfo = from vw_Student in db.vw_Student where (vw_Student.ST_Num == UserID) select vw_Student;

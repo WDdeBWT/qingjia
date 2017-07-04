@@ -6,6 +6,7 @@ using System.Net.Http;
 using System.Web.Http;
 using qingjia_MVC.Models;
 using qingjia_MVC.Common;
+using qingjia_MVC.Models.API;
 
 namespace qingjia_MVC.Controllers
 {
@@ -16,11 +17,6 @@ namespace qingjia_MVC.Controllers
         public string UserID { get; set; }
         public string UserPsd { get; set; }
         public string YiBanID { get; set; }
-    }
-
-    public class AuthorizeModel
-    {
-        public string access_token { get; set; }
     }
 
     #endregion
@@ -105,7 +101,7 @@ namespace qingjia_MVC.Controllers
                         account.YB_AccessToken = GuidString;
                         db.SaveChanges();
 
-                        AuthorizeModel authorizeModel = new AuthorizeModel();
+                        AccessToken authorizeModel = new AccessToken();
                         authorizeModel.access_token = access_token;
                         result.result = "success";
                         result.data = authorizeModel;
@@ -155,7 +151,7 @@ namespace qingjia_MVC.Controllers
                 account.YB_AccessToken = GuidString;
                 db.SaveChanges();
 
-                AuthorizeModel authorizeModel = new AuthorizeModel();
+                AccessToken authorizeModel = new AccessToken();
                 authorizeModel.access_token = access_token;
                 result.result = "success";
                 result.data = authorizeModel;
@@ -168,6 +164,5 @@ namespace qingjia_MVC.Controllers
             }
             return result;
         }
-
     }
 }
