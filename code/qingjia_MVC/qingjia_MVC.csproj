@@ -240,6 +240,11 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\AccountViewModels.cs" />
+    <Compile Include="Models\API\AccessToken.cs" />
+    <Compile Include="Models\API\Holiday.cs" />
+    <Compile Include="Models\API\LeaveList.cs" />
+    <Compile Include="Models\API\NightInfo.cs" />
+    <Compile Include="Models\API\UserInfo.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
     <Compile Include="Models\qingjia.Context.cs">

@@ -1574,16 +1574,20 @@ namespace qingjia_MVC.Areas.Leave.Controllers
         public ActionResult btnCancelClick(FormCollection formInfo, JArray fields, string sortField, string sortDirection)
         {
             string type = Session["AuditLeaveType"].ToString();
+
             string reason = formInfo["Reason"].ToString();
             T_LeaveList LL = db.T_LeaveList.Find(Session["LL_NUM"].ToString());
             LL.Notes = reason;
             LL.StateLeave = "2";
             LL.StateBack = "1";
             db.SaveChanges();
-            UIHelper.Grid("gridLeaveList").DataSource(Get_LL_DataTable(type, sortField, sortDirection), fields);
             UIHelper.Window("cancelWindow").Close();
-            //PageContext.RegisterStartupScript(ActiveWindow.GetHideRefreshReference());
             ShowNotify(String.Format("驳回请假成功！"));
+            //绑定Grid数据
+            UIHelper.Grid("gridLeaveList_Leave").DataSource(Get_LL_DataTable(type, sortField, sortDirection), fields);
+            //绑定Button数据
+            LL_Count_Leave();
+
             return UIHelper.Result();
         }
 
@@ -1624,9 +1628,10 @@ namespace qingjia_MVC.Areas.Leave.Controllers
             return UIHelper.Result();
         }
 
-
         #region 根据按钮名称检索请假记录
         //更新Grid数据
+
+        #region 请假审批界面 请假类型按钮
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult btnTotal_ReloadData_Leave(JArray fields)
@@ -1636,6 +1641,8 @@ namespace qingjia_MVC.Areas.Leave.Controllers
             //staticLeaveType = "total";
             Session["AuditLeaveType"] = "total";
             UIHelper.Grid("gridLeaveList_Leave").DataSource(Get_LL_DataTable(Session["AuditState"].ToString()), fields);
+            //绑定Button数据
+            LL_Count_Leave();
             return UIHelper.Result();
         }
 
@@ -1648,6 +1655,8 @@ namespace qingjia_MVC.Areas.Leave.Controllers
             //staticLeaveType = "btnShort";
             Session["AuditLeaveType"] = "btnShort";
             UIHelper.Grid("gridLeaveList_Leave").DataSource(Get_LL_DataTable(Session["AuditLeaveType"].ToString()), fields);
+            //绑定Button数据
+            LL_Count_Leave();
             return UIHelper.Result();
         }
 
@@ -1660,6 +1669,8 @@ namespace qingjia_MVC.Areas.Leave.Controllers
             //staticLeaveType = "btnLong";
             Session["AuditLeaveType"] = "btnLong";
             UIHelper.Grid("gridLeaveList_Leave").DataSource(Get_LL_DataTable(Session["AuditLeaveType"].ToString()), fields);
+            //绑定Button数据
+            LL_Count_Leave();
             return UIHelper.Result();
         }
 
@@ -1672,6 +1683,8 @@ namespace qingjia_MVC.Areas.Leave.Controllers
             //staticLeaveType = "btnHoliday";
             Session["AuditLeaveType"] = "btnHoliday";
             UIHelper.Grid("gridLeaveList_Leave").DataSource(Get_LL_DataTable(Session["AuditLeaveType"].ToString()), fields);
+            //绑定Button数据
+            LL_Count_Leave();
             return UIHelper.Result();
         }
 
@@ -1684,6 +1697,8 @@ namespace qingjia_MVC.Areas.Leave.Controllers
             //staticLeaveType = "btnCall";
             Session["AuditLeaveType"] = "btnCall";
             UIHelper.Grid("gridLeaveList_Leave").DataSource(Get_LL_DataTable(Session["AuditLeaveType"].ToString()), fields);
+            //绑定Button数据
+            LL_Count_Leave();
             return UIHelper.Result();
         }
 
@@ -1693,13 +1708,15 @@ namespace qingjia_MVC.Areas.Leave.Controllers
         {
             UIHelper.Grid("gridLeaveList_Leave").Title("上课请假备案");
             Session["AuditState"] = "leave";
-            //staticLeaveType = "btnClass";
             Session["AuditLeaveType"] = "btnClass";
             UIHelper.Grid("gridLeaveList_Leave").DataSource(Get_LL_DataTable(Session["AuditLeaveType"].ToString()), fields);
+            //绑定Button数据
+            LL_Count_Leave();
             return UIHelper.Result();
         }
+        #endregion
 
-
+        #region 销假审批界面 请假类型按钮
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult btnTotal_ReloadData_Back(JArray fields)
@@ -1709,6 +1726,8 @@ namespace qingjia_MVC.Areas.Leave.Controllers
             //staticLeaveType = "total";
             Session["AuditBackType"] = "total";
             UIHelper.Grid("gridLeaveList_Back").DataSource(Get_LL_DataTable(Session["AuditBackType"].ToString()), fields);
+            //绑定Button数据
+            LL_Count_Back();
             return UIHelper.Result();
         }
 
@@ -1721,6 +1740,8 @@ namespace qingjia_MVC.Areas.Leave.Controllers
             //staticLeaveType = "btnShort";
             Session["AuditBackType"] = "btnShort";
             UIHelper.Grid("gridLeaveList_Back").DataSource(Get_LL_DataTable(Session["AuditBackType"].ToString()), fields);
+            //绑定Button数据
+            LL_Count_Back();
             return UIHelper.Result();
         }
 
@@ -1733,6 +1754,8 @@ namespace qingjia_MVC.Areas.Leave.Controllers
             //staticLeaveType = "btnLong";
             Session["AuditBackType"] = "btnLong";
             UIHelper.Grid("gridLeaveList_Back").DataSource(Get_LL_DataTable(Session["AuditBackType"].ToString()), fields);
+            //绑定Button数据
+            LL_Count_Back();
             return UIHelper.Result();
         }
 
@@ -1745,6 +1768,8 @@ namespace qingjia_MVC.Areas.Leave.Controllers
             //staticLeaveType = "btnHoliday";
             Session["AuditBackType"] = "btnHoliday";
             UIHelper.Grid("gridLeaveList_Back").DataSource(Get_LL_DataTable(Session["AuditBackType"].ToString()), fields);
+            //绑定Button数据
+            LL_Count_Back();
             return UIHelper.Result();
         }
 
@@ -1757,6 +1782,8 @@ namespace qingjia_MVC.Areas.Leave.Controllers
             staticLeaveType = "btnCall";
             Session["AuditBackType"] = "btnCall";
             UIHelper.Grid("gridLeaveList_Back").DataSource(Get_LL_DataTable(Session["AuditBackType"].ToString()), fields);
+            //绑定Button数据
+            LL_Count_Back();
             return UIHelper.Result();
         }
 
@@ -1769,8 +1796,12 @@ namespace qingjia_MVC.Areas.Leave.Controllers
             staticLeaveType = "btnClass";
             Session["AuditBackType"] = "btnClass";
             UIHelper.Grid("gridLeaveList_Back").DataSource(Get_LL_DataTable(Session["AuditBackType"].ToString()), fields);
+            //绑定Button数据
+            LL_Count_Back();
             return UIHelper.Result();
         }
+        #endregion
+
         #endregion
 
         #region 根据搜索条件检索请假记录

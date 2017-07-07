@@ -6,6 +6,7 @@ using System.Net.Http;
 using System.Web.Http;
 using qingjia_MVC.Models;
 using qingjia_MVC.Common;
+using qingjia_MVC.Models.API;
 
 namespace qingjia_MVC.Controllers
 {
@@ -16,11 +17,6 @@ namespace qingjia_MVC.Controllers
         public string UserID { get; set; }
         public string UserPsd { get; set; }
         public string YiBanID { get; set; }
-    }
-
-    public class AuthorizeModel
-    {
-        public string access_token { get; set; }
     }
 
     #endregion
@@ -105,7 +101,7 @@ namespace qingjia_MVC.Controllers
                         account.YB_AccessToken = GuidString;
                         db.SaveChanges();
 
-                        AuthorizeModel authorizeModel = new AuthorizeModel();
+                        AccessToken authorizeModel = new AccessToken();
                         authorizeModel.access_token = access_token;
                         result.result = "success";
                         result.data = authorizeModel;
@@ -155,7 +151,7 @@ namespace qingjia_MVC.Controllers
                 account.YB_AccessToken = GuidString;
                 db.SaveChanges();
 
-                AuthorizeModel authorizeModel = new AuthorizeModel();
+                AccessToken authorizeModel = new AccessToken();
                 authorizeModel.access_token = access_token;
                 result.result = "success";
                 result.data = authorizeModel;
@@ -168,33 +164,5 @@ namespace qingjia_MVC.Controllers
             }
             return result;
         }
-
-
-        //Demo代码
-        //[HttpGet, Route("GetValue")]
-        //public int value()
-        //{
-        //    return 2;
-        //}
-
-        //[HttpGet, Route("GetValue")]
-        //public ApiBaseResult value(string code)
-        //{
-        //    ApiBaseResult result = new ApiBaseResult();
-        //    result.result = "error";
-
-        //    User_Login loginInfo = new User_Login();
-        //    loginInfo.UserID = "0121403490106";
-        //    loginInfo.UserPsd = "123456";
-        //    loginInfo.YiBanID = "123456";
-
-        //    result.data = loginInfo;
-
-        //    if (code != null && code == "2")
-        //    {
-        //        result.result = "succcess";
-        //    }
-        //    return result;
-        //}
     }
 }
