@@ -13,6 +13,7 @@ namespace qingjia_MVC.Controllers.API
 {
     #region 数据模型
 
+    //离校请假数据模型
     public class LeaveSchoolModel
     {
         public string access_token { get; set; }
@@ -26,7 +27,7 @@ namespace qingjia_MVC.Controllers.API
         public string back_way { get; set; }
         public string address { get; set; }
 
-        public bool Check()
+        public bool Check()//此处验证存在问题
         {
             if (this.access_token == null || this.leave_type == null || this.leave_date == null || this.leave_time == null || this.back_date == null || this.back_time == null || this.leave_reason == null || this.leave_way == null || this.back_way == null || this.address == null)
             {

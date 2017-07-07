@@ -8,7 +8,7 @@ namespace qingjia_MVC.Common
     public class ApiBaseResult
     {
         /// <summary>
-        /// 返回结果success或failure
+        /// 返回结果success或error
         /// </summary>
         public string result { get; set; }
         /// <summary>
