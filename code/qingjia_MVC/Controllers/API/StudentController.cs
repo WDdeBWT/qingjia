@@ -19,6 +19,34 @@ namespace qingjia_MVC.Controllers.API
         public string access_token { get; set; }
     }
 
+    public class ChangeInfoModel
+    {
+        public string access_token { get; set; }
+        public string ST_Tel { get; set; }
+        public string ST_QQ { get; set; }
+        public string ST_Guardian { get; set; }
+        public string ST_GuardianName { get; set; }
+        public string ST_GuardianTel { get; set; }
+        public bool CheckInfo()
+        {
+            if (this.access_token == null || this.ST_Tel == null || this.ST_QQ == null || this.ST_Guardian == null || this.ST_GuardianName == null || this.ST_GuardianTel == null)
+            {
+                return false;
+            }
+            else
+            {
+                if (ST_Guardian == "父亲" || ST_Guardian == "母亲" || ST_Guardian == "其他")
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+        }
+    }
+
     #endregion
 
     [RoutePrefix("api/student")]
@@ -77,6 +105,59 @@ namespace qingjia_MVC.Controllers.API
                 }
 
                 #endregion
+
+                return result;
+            }
+            else
+            {
+                return result;
+            }
+        }
+
+        /// <summary>
+        /// POST
+        /// 
+        /// 学生修改个人信息
+        /// </summary>
+        /// <param name="changeInfo"></param>
+        /// <returns></returns>
+        [HttpPost, Route("changeinfo")]
+        public ApiBaseResult ChangeInfo([FromBody]ChangeInfoModel changeInfo)
+        {
+            ApiBaseResult result;
+
+            if (changeInfo != null)
+            {
+                if (!changeInfo.CheckInfo())
+                {
+                    result = new ApiBaseResult();
+                    result.result = "error";
+                    result.messages = "参数格式错误或缺少参数！";
+                    return result;
+                }
+            }
+            else
+            {
+                result = new ApiBaseResult();
+                result.result = "error";
+                result.messages = "参数格式错误或缺少参数！";
+                return result;
+            }
+
+            result = Check(changeInfo.access_token);
+            if (result == null)
+            {
+                result = new ApiBaseResult();
+
+                string StudentID = changeInfo.access_token.Substring(0, changeInfo.access_token.IndexOf("_"));
+                T_Student student = db.T_Student.Find(StudentID);
+                student.Tel = changeInfo.ST_Tel;
+                student.QQ = changeInfo.ST_QQ;
+                student.ContactOne = changeInfo.ST_Guardian + "-" + changeInfo.ST_GuardianName;
+                student.OneTel = changeInfo.ST_GuardianTel;
+                db.SaveChanges();
+
+                result.result = "success";
 
                 return result;
             }
