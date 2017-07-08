@@ -27,17 +27,34 @@ namespace qingjia_MVC.Controllers.API
         public string back_way { get; set; }
         public string address { get; set; }
 
-        public bool Check()//此处验证存在问题
+        public bool Check()
         {
-            if (this.access_token == null || this.leave_type == null || this.leave_date == null || this.leave_time == null || this.back_date == null || this.back_time == null || this.leave_reason == null || this.leave_way == null || this.back_way == null || this.address == null)
+            if (this.access_token == null || this.leave_type == null || this.leave_date == null || this.leave_time == null || this.back_date == null || this.back_time == null || this.leave_reason == null)
             {
                 return false;
             }
-            else
+            if (leave_type == "短期请假" || leave_type == "长期请假" || leave_type == "节假日请假")
             {
-                if (leave_type == "短期请假" || leave_type == "长期请假" || leave_type == "节假日请假")
+                if (leave_type == "短期请假")
                 {
+                    leave_way = "";
+                    back_way = "";
+                    address = "";
                     return true;
+                }
+                if (leave_type == "长期请假")
+                {
+                    leave_way = "";
+                    back_way = "";
+                    address = "";
+                    return true;
+                }
+                if (leave_type == "节假日请假")
+                {
+                    if (leave_reason == "回家" || leave_reason == "旅游" || leave_reason == "因公外出" || leave_reason == "其他")
+                    {
+                        return true;
+                    }
                 }
             }
             return false;
