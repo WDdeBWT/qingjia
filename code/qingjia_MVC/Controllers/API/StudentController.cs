@@ -7,6 +7,7 @@ using System.Web.Http;
 using qingjia_MVC.Models;
 using qingjia_MVC.Common;
 using qingjia_MVC.Models.API;
+using System.Configuration;
 
 namespace qingjia_MVC.Controllers.API
 {
@@ -94,6 +95,7 @@ namespace qingjia_MVC.Controllers.API
                     userInfo.UserDoor = (student.ST_Dor == null) ? "" : student.ST_Dor;
                     userInfo.ContactName = (student.ContactOne == null) ? "" : student.ContactOne;
                     userInfo.ContactTel = (student.OneTel == null) ? "" : student.OneTel;
+                    userInfo.IsFreshman = (ConfigurationManager.AppSettings["FreshmanYear"].ToString() == student.ST_Grade) ? "true" : "false";
 
                     result.result = "success";
                     result.data = userInfo;
