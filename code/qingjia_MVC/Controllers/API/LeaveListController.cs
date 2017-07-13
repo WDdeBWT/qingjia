@@ -105,6 +105,10 @@ namespace qingjia_MVC.Controllers.API
         {
             if (this.access_token == null || this.leave_child_type == null || this.leave_date == null || this.leave_reason == null || this.teacher_name == null || this.lesson == null)
             {
+                return false;
+            }
+            else
+            {
                 if (leave_child_type == "公假" || leave_child_type == "事假" || leave_child_type == "病假")
                 {
                     if (lesson == "1" || lesson == "2" || lesson == "3" || lesson == "4" || lesson == "5")
@@ -455,8 +459,10 @@ namespace qingjia_MVC.Controllers.API
                     leaveReason = data.leave_reason;
                 }
 
-                string LV_Time_Go = leaveDate + " " + leaveTime + ":00";
-                string LV_Time_Back = backDate + " " + backTime + ":00";
+                //string LV_Time_Go = leaveDate + " " + leaveTime + ":00";
+                //string LV_Time_Back = backDate + " " + backTime + ":00";
+                string LV_Time_Go = leaveDate + " " + leaveTime;
+                string LV_Time_Back = backDate + " " + backTime;
 
                 if (Convert.ToDateTime(LV_Time_Go) < Convert.ToDateTime(LV_Time_Back))
                 {
@@ -682,7 +688,7 @@ namespace qingjia_MVC.Controllers.API
                 if (data.leave_type == "晚点名请假")
                 {
                     string LV_NUM = DateTime.Now.ToString("yyMMdd");//流水号生成
-                    string studytime_sp = leaveDate + " " + leaveTime + ":00";
+                    string studytime_sp = leaveDate + " " + leaveTime;
                     DateTime time_go = Convert.ToDateTime(studytime_sp);
                     DateTime time_back = time_go;
                     var exist = from T_LeaveList in db.T_LeaveList where ((T_LeaveList.StudentID == ST_Num) && (T_LeaveList.TimeLeave == time_go) && (T_LeaveList.TypeID == 2)) select T_LeaveList;
@@ -736,7 +742,7 @@ namespace qingjia_MVC.Controllers.API
                 else if (data.leave_type == "早晚自习请假")
                 {
                     string LV_NUM = DateTime.Now.ToString("yyMMdd");//流水号生成
-                    string studytime_sp = leaveDate + " " + leaveTime + ":00";
+                    string studytime_sp = leaveDate + " " + leaveTime;
                     DateTime time_go = Convert.ToDateTime(studytime_sp);
                     DateTime time_back = time_go;
                     var exist = from T_LeaveList in db.T_LeaveList where ((T_LeaveList.StudentID == ST_Num) && (T_LeaveList.TimeLeave == time_go) && (T_LeaveList.TypeID == 2)) select T_LeaveList;
@@ -843,8 +849,10 @@ namespace qingjia_MVC.Controllers.API
                 string teacher = data.teacher_name;
 
                 string LV_NUM = DateTime.Now.ToString("yyMMdd");//流水号生成
-                DateTime time_go = Convert.ToDateTime(leaveDate + " " + leaveTime + ":00");
-                DateTime time_back = Convert.ToDateTime(backDate + " " + backTime + ":00");
+                //DateTime time_go = Convert.ToDateTime(leaveDate + " " + leaveTime + ":00");
+                //DateTime time_back = Convert.ToDateTime(backDate + " " + backTime + ":00");
+                DateTime time_go = Convert.ToDateTime(leaveDate + " " + leaveTime);
+                DateTime time_back = Convert.ToDateTime(backDate + " " + backTime);
 
                 var exist = from T_LeaveList in db.T_LeaveList where ((T_LeaveList.StudentID == ST_Num) && (T_LeaveList.Lesson == lesson) && (T_LeaveList.TypeID == 3) && (T_LeaveList.TimeLeave == time_go)) select T_LeaveList;
 
