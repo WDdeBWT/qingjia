@@ -7,6 +7,9 @@ using System.Web.Http;
 using qingjia_MVC.Models;
 using qingjia_MVC.Common;
 using qingjia_MVC.Models.API;
+using System.IO;
+using System.Configuration;
+using System.Web.Http.Controllers;
 
 namespace qingjia_MVC.Controllers
 {
@@ -136,25 +139,68 @@ namespace qingjia_MVC.Controllers
         [HttpGet, Route("access_token")]
         public ApiBaseResult Access_Token(string YiBanID)
         {
+            //存在问题：Access_Token会被访问两次，未找到原因
+
             ApiBaseResult result = new ApiBaseResult();
 
             var userList = from T_Account in db.T_Account where (T_Account.YiBanID == YiBanID) select T_Account;
             if (userList.Any())
             {
-                //验证通过
-                string GuidString = Guid.NewGuid().ToString();
-                string access_token = "";
-                string UserID = userList.ToList().First().ID;
-                T_Account account = db.T_Account.Find(UserID);
-                access_token = account.ID + "_" + GuidString;
-                account.YiBanID = YiBanID;
-                account.YB_AccessToken = GuidString;
-                db.SaveChanges();
+                //3分钟内已获得access_token
+                if (userList.ToList().First().LoginTime != null)
+                {
+                    TimeSpan ts = DateTime.Now - (DateTime)userList.ToList().First().LoginTime;
+                    if (ts.Minutes < 1)
+                    {
+                        AccessToken authorizeModel = new AccessToken();
+                        string access_token = userList.ToList().First().ID + "_" + userList.ToList().First().YB_AccessToken;
+                        authorizeModel.access_token = access_token;
+                        result.result = "success";
+                        result.data = authorizeModel;
 
-                AccessToken authorizeModel = new AccessToken();
-                authorizeModel.access_token = access_token;
-                result.result = "success";
-                result.data = authorizeModel;
+                        WriteLog("Old access_token", access_token);
+                    }
+                    else
+                    {
+                        //验证通过
+                        string GuidString = Guid.NewGuid().ToString();
+                        string access_token = "";
+                        string UserID = userList.ToList().First().ID;
+                        T_Account account = db.T_Account.Find(UserID);
+                        account.LoginTime = DateTime.Now;
+                        access_token = account.ID + "_" + GuidString;
+                        account.YiBanID = YiBanID;
+                        account.YB_AccessToken = GuidString;
+                        db.SaveChanges();
+
+                        AccessToken authorizeModel = new AccessToken();
+                        authorizeModel.access_token = access_token;
+                        result.result = "success";
+                        result.data = authorizeModel;
+
+                        WriteLog("New access_token", access_token);
+                    }
+                }
+                else
+                {
+                    //验证通过
+                    string GuidString = Guid.NewGuid().ToString();
+                    string access_token = "";
+                    string UserID = userList.ToList().First().ID;
+                    T_Account account = db.T_Account.Find(UserID);
+                    account.LoginTime = DateTime.Now;
+                    access_token = account.ID + "_" + GuidString;
+                    account.YiBanID = YiBanID;
+                    account.YB_AccessToken = GuidString;
+                    db.SaveChanges();
+
+                    AccessToken authorizeModel = new AccessToken();
+                    authorizeModel.access_token = access_token;
+                    result.result = "success";
+                    result.data = authorizeModel;
+
+                    WriteLog("New access_token", access_token);
+                }
             }
             else
             {
@@ -163,6 +209,28 @@ namespace qingjia_MVC.Controllers
                 result.messages = "尚未绑定账号的易班ID，通过Authorize接口实现易班账号绑定。";
             }
             return result;
+        }
+
+        private void WriteLog(string name, string value)
+        {
+            try
+            {
+                string logPath = ConfigurationManager.AppSettings["logPath"].ToString();
+                string path = logPath + @"\log.txt";
+
+                FileStream fs = new FileStream(path, FileMode.Append);
+                string time = DateTime.Now.ToString();
+                string content = name + ":" + time + "   " + "value:" + value + "Host:" + RequestContext.Url.Request.Headers.Host.ToString() + "\n\n" + ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n\n";
+                StreamWriter sw = new StreamWriter(fs);
+                sw.WriteLine(content);
+                sw.Close();
+                fs.Close();
+                RequestContext.Url.Request.Headers.Host.ToString();
+            }
+            catch
+            {
+
+            }
         }
     }
 }
