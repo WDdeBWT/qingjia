@@ -771,14 +771,35 @@ namespace qingjia_MVC.Areas.Leave.Controllers
 
         #endregion
 
-        #region 通知方法
+        #region 实习请假
+        //GET:Leave/LeaveList/leaveinternship
+        public ActionResult leaveinternship()
+        {
+            leaveinternship_LoadData();
+            return View();
+        }
 
-        /// <summary>
-        /// Alert.MessageBoxIcon可设置提示框图标样式,可选样式：None无 Information消息 Warning警告 Question问题 Error错误 Success成功,Alert.Target可设置显示提示框的位置,可选样式：Self当前页面 Parent父页面 Top顶层页面
-        /// </summary>
-        /// <param name="title">标题</param>
-        /// <param name="message">信息</param>
-        /// <param name="icon">Icon类型</param>
+        //leaveinternship 加载数据
+        protected void leaveinternship_LoadData()
+        {
+            string ST_Num = Session["UserID"].ToString();
+            var ST_Info = from vw_Student in db.vw_Student where (vw_Student.ST_Num == ST_Num) select vw_Student;
+            if (ST_Info.Any())
+            {
+                ViewData["LL_ST_Info"] = ST_Info.ToList().First();
+            }
+        }
+
+        #endregion
+
+            #region 通知方法
+
+            /// <summary>
+            /// Alert.MessageBoxIcon可设置提示框图标样式,可选样式：None无 Information消息 Warning警告 Question问题 Error错误 Success成功,Alert.Target可设置显示提示框的位置,可选样式：Self当前页面 Parent父页面 Top顶层页面
+            /// </summary>
+            /// <param name="title">标题</param>
+            /// <param name="message">信息</param>
+            /// <param name="icon">Icon类型</param>
         public void alertInfo(string title, string message, string icon)
         {
             Alert alert = new Alert();

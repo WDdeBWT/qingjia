@@ -2486,6 +2486,7 @@
       <DependentUpon>qingjia.edmx</DependentUpon>
       <LastGenOutput>qingjia.cs</LastGenOutput>
     </Content>
+    <Content Include="Areas\Leave\Views\LeaveList\leaveinternship.cshtml" />
     <None Include="Properties\PublishProfiles\text.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
