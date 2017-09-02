@@ -87,6 +87,36 @@
                 ),
             F.FormRow()
                 .Items(
+                    F.TextBox()
+                        .Label("实习单位")
+                        .EmptyText("")
+                        .ID("tbxUserName")
+                        .Required(true)
+                        .ShowRedStar(true),
+                    F.TextBox()
+                        .Label("实习地址")
+                        .EmptyText("")
+                        .ID("tbxUserName")
+                        .Required(true)
+                        .ShowRedStar(true)
+                ),
+             F.FormRow()
+                .Items(
+                    F.TextBox()
+                        .Label("联系人")
+                        .EmptyText("")
+                        .ID("tbxUserName")
+                        .Required(true)
+                        .ShowRedStar(true),
+                    F.TextBox()
+                        .Label("联系方式")
+                        .EmptyText("")
+                        .ID("tbxUserName")
+                        .Required(true)
+                        .ShowRedStar(true)
+                ),
+            F.FormRow()
+                .Items(
                     F.TextArea()
                         .ID("leavedescription")
                         .EmptyText("请输入实习相关信息。（30字以内）")
@@ -95,6 +125,7 @@
                         .AutoGrowHeight(true)
                         .AutoGrowHeightMin(100)
                         .AutoGrowHeightMax(200)
+                        .ShowRedStar(true)
                 ),
             F.FormRow()
                 .Items(
@@ -137,6 +168,58 @@
                         .MaxTimeText("23:30")
                         .Required(true)
                         .EmptyText("请选择返校时间")
+                ),
+            F.FormRow()
+                .Items(
+                    F.Label()
+                ),
+            F.FormRow()
+                .Items(
+                    F.Image()
+                        .ID("imgPhoto1")
+                        .CssClass("photo")
+                        .ImageUrl(Url.Content("~/res/images/blank.png"))
+                        .ShowEmptyLabel(true),
+                    F.Image()
+                        .ID("imgPhoto2")
+                        .CssClass("photo")
+                        .ImageUrl(Url.Content("~/res/images/blank.png"))
+                        .ShowEmptyLabel(true),
+                    F.Image()
+                        .ID("imgPhoto3")
+                        .CssClass("photo")
+                        .ImageUrl(Url.Content("~/res/images/blank.png"))
+                        .ShowEmptyLabel(true)
+                ),
+            F.FormRow()
+                .Items(
+                    F.FileUpload()
+                        .ID("filePhoto1")
+                        .ShowRedStar(false)
+                        .ShowEmptyLabel(true)
+                        .ButtonText("上传材料1")
+                        .ButtonOnly(true)
+                        .Required(false)
+                        .ButtonIcon(Icon.ImageAdd)
+                        .OnFileSelected(Url.Action("filePhoto_FileSelected", new {flag = 1}), "filePhoto1"),
+                    F.FileUpload()
+                        .ID("filePhoto2")
+                        .ShowRedStar(false)
+                        .ShowEmptyLabel(true)
+                        .ButtonText("上传材料2")
+                        .ButtonOnly(true)
+                        .Required(false)
+                        .ButtonIcon(Icon.ImageAdd)
+                        .OnFileSelected(Url.Action("filePhoto_FileSelected", new { flag = 2 }), "filePhoto2"),
+                    F.FileUpload()
+                        .ID("filePhoto3")
+                        .ShowRedStar(false)
+                        .ShowEmptyLabel(true)
+                        .ButtonText("上传材料3")
+                        .ButtonOnly(true)
+                        .Required(false)
+                        .ButtonIcon(Icon.ImageAdd)
+                        .OnFileSelected(Url.Action("filePhoto_FileSelected", new { flag = 3 }), "filePhoto3")
                 )
         )
     )

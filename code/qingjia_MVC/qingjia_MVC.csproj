@@ -352,7 +352,9 @@
     <Content Include="Content\css\main.css" />
     <Content Include="Content\css\Style.css" />
     <Content Include="Content\XML\Class.xml" />
-    <Content Include="Content\XML\Student.xml" />
+    <Content Include="Content\XML\Student.xml">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="Content\XML\Teacher.xml" />
     <Content Include="favicon.ico" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
@@ -2550,6 +2552,7 @@
     <Folder Include="Areas\Vacation\Models\" />
     <Folder Include="Areas\Vacation\Views\Shared\" />
     <Folder Include="res\images\fa_png\" />
+    <Folder Include="res\images\internship\" />
     <Folder Include="res\images\loading\" />
     <Folder Include="res\images\snapshot\" />
     <Folder Include="res\images\themes\border\" />
