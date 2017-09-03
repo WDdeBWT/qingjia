@@ -76,7 +76,9 @@ namespace qingjia_MVC.Areas.CallName.Controllers
             SimpleDateFormat formart = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
             DateTime date = formart.Parse(time);
 
-            db.sp_getNightNameList(date, teacherid);
+            //db.sp_getNightNameList(date, teacherid);
+            //此处存疑，2017.9.3日重新生成model时，此行报错，提示存储过程找不到两个参数的重载，故删去date。但再重新生成model之前时不报错的，所以可能还会有bug
+            db.sp_getNightNameList(teacherid);
             return getExcel(date);
         }
         

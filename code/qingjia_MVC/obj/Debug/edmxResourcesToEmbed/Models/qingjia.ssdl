@@ -8,8 +8,6 @@
     <Property Name="Psd" Type="varchar" MaxLength="64" Nullable="false" />
     <Property Name="RoleID" Type="varchar" MaxLength="64" Nullable="false" />
     <Property Name="Wechat" Type="varchar" MaxLength="64" />
-    <Property Name="YiBanID" Type="varchar" MaxLength="64" />
-    <Property Name="YB_AccessToken" Type="varchar" MaxLength="200" />
     <Property Name="Q1" Type="nvarchar" MaxLength="64" />
     <Property Name="A1" Type="nvarchar" MaxLength="64" />
     <Property Name="Q2" Type="nvarchar" MaxLength="64" />
@@ -17,6 +15,8 @@
     <Property Name="Q3" Type="nvarchar" MaxLength="64" />
     <Property Name="A3" Type="nvarchar" MaxLength="64" />
     <Property Name="LoginTime" Type="datetime" />
+    <Property Name="YiBanID" Type="varchar" MaxLength="64" />
+    <Property Name="YB_AccessToken" Type="varchar" MaxLength="200" />
   </EntityType>
   <EntityType Name="T_Batch">
     <Key>
@@ -127,6 +127,26 @@
     <Property Name="InfoEight" Type="nvarchar" MaxLength="64" />
     <Property Name="InfoNine" Type="nvarchar" MaxLength="64" />
     <Property Name="InfoTen" Type="nvarchar" MaxLength="64" />
+  </EntityType>
+  <EntityType Name="T_LeaveIntership">
+    <Key>
+      <PropertyRef Name="ID" />
+    </Key>
+    <Property Name="ID" Type="varchar" MaxLength="50" Nullable="false" />
+    <Property Name="StudentID" Type="varchar" MaxLength="50" Nullable="false" />
+    <Property Name="SubmitTime" Type="datetime" Nullable="false" />
+    <Property Name="StateLeave" Type="char" MaxLength="1" />
+    <Property Name="StateBack" Type="char" MaxLength="1" />
+    <Property Name="TimeLeave" Type="datetime" Nullable="false" />
+    <Property Name="TimeBack" Type="datetime" Nullable="false" />
+    <Property Name="IntershipCompany" Type="nvarchar" MaxLength="256" Nullable="false" />
+    <Property Name="IntershipAddress" Type="nvarchar" MaxLength="256" Nullable="false" />
+    <Property Name="PrincipalName" Type="nvarchar" MaxLength="50" Nullable="false" />
+    <Property Name="PrincipalTel" Type="nvarchar" MaxLength="50" Nullable="false" />
+    <Property Name="Note" Type="nvarchar" MaxLength="256" />
+    <Property Name="Evidence1" Type="varchar" MaxLength="256" />
+    <Property Name="Evidence2" Type="varchar" MaxLength="256" />
+    <Property Name="Evidence3" Type="varchar" MaxLength="256" />
   </EntityType>
   <EntityType Name="T_LeaveList">
     <Key>
@@ -397,6 +417,7 @@
     <EntitySet Name="T_Holiday" EntityType="Self.T_Holiday" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="T_Info" EntityType="Self.T_Info" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="T_InfoDetail" EntityType="Self.T_InfoDetail" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="T_LeaveIntership" EntityType="Self.T_LeaveIntership" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="T_LeaveList" EntityType="Self.T_LeaveList" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="T_Menu" EntityType="Self.T_Menu" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="T_RoleMenu" EntityType="Self.T_RoleMenu" Schema="dbo" store:Type="Tables" />

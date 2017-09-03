@@ -13,6 +13,23 @@
 
 }
 
+@section head {
+
+    <style>
+        .photo {
+            height: 150px;
+            line-height: 150px;
+            overflow: hidden;
+        }
+
+            .photo img {
+                height: 150px;
+                vertical-align: middle;
+            }
+    </style>
+
+}
+
 @section body {
 
     @{
@@ -90,13 +107,13 @@
                     F.TextBox()
                         .Label("实习单位")
                         .EmptyText("")
-                        .ID("tbxUserName")
+                        .ID("IntershipCompany")
                         .Required(true)
                         .ShowRedStar(true),
                     F.TextBox()
                         .Label("实习地址")
                         .EmptyText("")
-                        .ID("tbxUserName")
+                        .ID("IntershipAddress")
                         .Required(true)
                         .ShowRedStar(true)
                 ),
@@ -105,20 +122,20 @@
                     F.TextBox()
                         .Label("联系人")
                         .EmptyText("")
-                        .ID("tbxUserName")
+                        .ID("PrincipalName")
                         .Required(true)
                         .ShowRedStar(true),
                     F.TextBox()
                         .Label("联系方式")
                         .EmptyText("")
-                        .ID("tbxUserName")
+                        .ID("PrincipalTel")
                         .Required(true)
                         .ShowRedStar(true)
                 ),
             F.FormRow()
                 .Items(
                     F.TextArea()
-                        .ID("leavedescription")
+                        .ID("Note")
                         .EmptyText("请输入实习相关信息。（30字以内）")
                         .Required(true)
                         .Label("实习描述")
@@ -201,7 +218,14 @@
                         .ButtonOnly(true)
                         .Required(false)
                         .ButtonIcon(Icon.ImageAdd)
-                        .OnFileSelected(Url.Action("filePhoto_FileSelected", new {flag = 1}), "filePhoto1"),
+                        .OnFileSelected(Url.Action("filePhoto_FileSelected1"), "filePhoto1"),
+                    F.TextBox()
+                        //用于保存图片1url
+                        .Label("imgUrl")
+                        .EmptyText("")
+                        .ID("imgUrl1")
+                        .Required(false)
+                        .Hidden(true),
                     F.FileUpload()
                         .ID("filePhoto2")
                         .ShowRedStar(false)
@@ -210,7 +234,14 @@
                         .ButtonOnly(true)
                         .Required(false)
                         .ButtonIcon(Icon.ImageAdd)
-                        .OnFileSelected(Url.Action("filePhoto_FileSelected", new { flag = 2 }), "filePhoto2"),
+                        .OnFileSelected(Url.Action("filePhoto_FileSelected2"), "filePhoto2"),
+                    F.TextBox()
+                        //用于保存图片2url
+                        .Label("imgUrl")
+                        .EmptyText("")
+                        .ID("imgUrl2")
+                        .Required(false)
+                        .Hidden(true),
                     F.FileUpload()
                         .ID("filePhoto3")
                         .ShowRedStar(false)
@@ -219,7 +250,14 @@
                         .ButtonOnly(true)
                         .Required(false)
                         .ButtonIcon(Icon.ImageAdd)
-                        .OnFileSelected(Url.Action("filePhoto_FileSelected", new { flag = 3 }), "filePhoto3")
+                        .OnFileSelected(Url.Action("filePhoto_FileSelected3"), "filePhoto3"),
+                    F.TextBox()
+                        //用于保存图片3url
+                        .Label("imgUrl")
+                        .EmptyText("")
+                        .ID("imgUrl3")
+                        .Required(false)
+                        .Hidden(true)
                 )
         )
     )

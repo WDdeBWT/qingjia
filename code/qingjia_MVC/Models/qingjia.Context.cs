@@ -36,6 +36,7 @@ namespace qingjia_MVC.Models
         public virtual DbSet<T_Holiday> T_Holiday { get; set; }
         public virtual DbSet<T_Info> T_Info { get; set; }
         public virtual DbSet<T_InfoDetail> T_InfoDetail { get; set; }
+        public virtual DbSet<T_LeaveIntership> T_LeaveIntership { get; set; }
         public virtual DbSet<T_LeaveList> T_LeaveList { get; set; }
         public virtual DbSet<T_Menu> T_Menu { get; set; }
         public virtual DbSet<T_RoleMenu> T_RoleMenu { get; set; }
@@ -59,11 +60,6 @@ namespace qingjia_MVC.Models
                 new ObjectParameter("TeacherID", typeof(string));
     
             return ((IObjectContextAdapter)this).ObjectContext.ExecuteFunction<string>("sp_getNightNameList", teacherIDParameter);
-        }
-
-        internal void sp_getNightNameList(DateTime date, string teacherid)
-        {
-            throw new NotImplementedException();
         }
     }
 }

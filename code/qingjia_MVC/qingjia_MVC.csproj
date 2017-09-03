@@ -289,6 +289,9 @@
     <Compile Include="Models\T_InfoDetail.cs">
       <DependentUpon>qingjia.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\T_LeaveIntership.cs">
+      <DependentUpon>qingjia.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\T_LeaveList.cs">
       <DependentUpon>qingjia.tt</DependentUpon>
     </Compile>
@@ -360,6 +363,16 @@
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
+    <Content Include="Models\qingjia.Context.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>qingjia.edmx</DependentUpon>
+      <LastGenOutput>qingjia.Context.cs</LastGenOutput>
+    </Content>
+    <Content Include="Models\qingjia.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>qingjia.edmx</DependentUpon>
+      <LastGenOutput>qingjia.cs</LastGenOutput>
+    </Content>
     <Content Include="res\css\common.css" />
     <Content Include="res\css\default.css" />
     <Content Include="res\google-code-prettify\lang-apollo.js" />
@@ -2471,24 +2484,14 @@
     <Content Include="Areas\Vacation\Views\_ViewStart.cshtml" />
     <Content Include="Areas\Vacation\Views\Vacation\_tablePartial.cshtml" />
     <Content Include="Areas\Leave\Views\AuditForm\ModifyLL.cshtml" />
+    <Content Include="Areas\Leave\Views\LeaveList\leaveinternship.cshtml" />
     <EntityDeploy Include="Models\qingjia.edmx">
       <Generator>EntityModelCodeGenerator</Generator>
       <LastGenOutput>qingjia.Designer.cs</LastGenOutput>
     </EntityDeploy>
-    <Content Include="Models\qingjia.Context.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <DependentUpon>qingjia.edmx</DependentUpon>
-      <LastGenOutput>qingjia.Context.cs</LastGenOutput>
-    </Content>
     <Content Include="Models\qingjia.edmx.diagram">
       <DependentUpon>qingjia.edmx</DependentUpon>
     </Content>
-    <Content Include="Models\qingjia.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <DependentUpon>qingjia.edmx</DependentUpon>
-      <LastGenOutput>qingjia.cs</LastGenOutput>
-    </Content>
-    <Content Include="Areas\Leave\Views\LeaveList\leaveinternship.cshtml" />
     <None Include="Properties\PublishProfiles\text.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />

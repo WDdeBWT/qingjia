@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
-  <EntityContainerMapping StorageEntityContainer="imaw_qingjiaModelStoreContainer" CdmEntityContainer="Entities">
+  <EntityContainerMapping StorageEntityContainer="imaw_qingjiaModelStoreContainer" CdmEntityContainer="imaw_qingjiaEntities1">
     <EntitySetMapping Name="T_Account">
       <EntityTypeMapping TypeName="imaw_qingjiaModel.T_Account">
         <MappingFragment StoreEntitySet="T_Account">
@@ -8,8 +8,6 @@
           <ScalarProperty Name="Psd" ColumnName="Psd" />
           <ScalarProperty Name="RoleID" ColumnName="RoleID" />
           <ScalarProperty Name="Wechat" ColumnName="Wechat" />
-          <ScalarProperty Name="YiBanID" ColumnName="YiBanID" />
-          <ScalarProperty Name="YB_AccessToken" ColumnName="YB_AccessToken" />
           <ScalarProperty Name="Q1" ColumnName="Q1" />
           <ScalarProperty Name="A1" ColumnName="A1" />
           <ScalarProperty Name="Q2" ColumnName="Q2" />
@@ -17,6 +15,8 @@
           <ScalarProperty Name="Q3" ColumnName="Q3" />
           <ScalarProperty Name="A3" ColumnName="A3" />
           <ScalarProperty Name="LoginTime" ColumnName="LoginTime" />
+          <ScalarProperty Name="YiBanID" ColumnName="YiBanID" />
+          <ScalarProperty Name="YB_AccessToken" ColumnName="YB_AccessToken" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
@@ -135,6 +135,27 @@
           <ScalarProperty Name="InfoEight" ColumnName="InfoEight" />
           <ScalarProperty Name="InfoNine" ColumnName="InfoNine" />
           <ScalarProperty Name="InfoTen" ColumnName="InfoTen" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="T_LeaveIntership">
+      <EntityTypeMapping TypeName="imaw_qingjiaModel.T_LeaveIntership">
+        <MappingFragment StoreEntitySet="T_LeaveIntership">
+          <ScalarProperty Name="ID" ColumnName="ID" />
+          <ScalarProperty Name="StudentID" ColumnName="StudentID" />
+          <ScalarProperty Name="SubmitTime" ColumnName="SubmitTime" />
+          <ScalarProperty Name="StateLeave" ColumnName="StateLeave" />
+          <ScalarProperty Name="StateBack" ColumnName="StateBack" />
+          <ScalarProperty Name="TimeLeave" ColumnName="TimeLeave" />
+          <ScalarProperty Name="TimeBack" ColumnName="TimeBack" />
+          <ScalarProperty Name="IntershipCompany" ColumnName="IntershipCompany" />
+          <ScalarProperty Name="IntershipAddress" ColumnName="IntershipAddress" />
+          <ScalarProperty Name="PrincipalName" ColumnName="PrincipalName" />
+          <ScalarProperty Name="PrincipalTel" ColumnName="PrincipalTel" />
+          <ScalarProperty Name="Note" ColumnName="Note" />
+          <ScalarProperty Name="Evidence1" ColumnName="Evidence1" />
+          <ScalarProperty Name="Evidence2" ColumnName="Evidence2" />
+          <ScalarProperty Name="Evidence3" ColumnName="Evidence3" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>

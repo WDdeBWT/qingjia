@@ -8,8 +8,6 @@
     <Property Name="Psd" Type="String" MaxLength="64" FixedLength="false" Unicode="false" Nullable="false" />
     <Property Name="RoleID" Type="String" MaxLength="64" FixedLength="false" Unicode="false" Nullable="false" />
     <Property Name="Wechat" Type="String" MaxLength="64" FixedLength="false" Unicode="false" />
-    <Property Name="YiBanID" Type="String" MaxLength="64" FixedLength="false" Unicode="false" />
-    <Property Name="YB_AccessToken" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
     <Property Name="Q1" Type="String" MaxLength="64" FixedLength="false" Unicode="true" />
     <Property Name="A1" Type="String" MaxLength="64" FixedLength="false" Unicode="true" />
     <Property Name="Q2" Type="String" MaxLength="64" FixedLength="false" Unicode="true" />
@@ -17,6 +15,8 @@
     <Property Name="Q3" Type="String" MaxLength="64" FixedLength="false" Unicode="true" />
     <Property Name="A3" Type="String" MaxLength="64" FixedLength="false" Unicode="true" />
     <Property Name="LoginTime" Type="DateTime" Precision="3" />
+    <Property Name="YiBanID" Type="String" MaxLength="64" FixedLength="false" Unicode="false" />
+    <Property Name="YB_AccessToken" Type="String" MaxLength="200" FixedLength="false" Unicode="false" />
   </EntityType>
   <EntityType Name="T_Batch">
     <Key>
@@ -127,6 +127,26 @@
     <Property Name="InfoEight" Type="String" MaxLength="64" FixedLength="false" Unicode="true" />
     <Property Name="InfoNine" Type="String" MaxLength="64" FixedLength="false" Unicode="true" />
     <Property Name="InfoTen" Type="String" MaxLength="64" FixedLength="false" Unicode="true" />
+  </EntityType>
+  <EntityType Name="T_LeaveIntership">
+    <Key>
+      <PropertyRef Name="ID" />
+    </Key>
+    <Property Name="ID" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+    <Property Name="StudentID" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+    <Property Name="SubmitTime" Type="DateTime" Nullable="false" Precision="3" />
+    <Property Name="StateLeave" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
+    <Property Name="StateBack" Type="String" MaxLength="1" FixedLength="true" Unicode="false" />
+    <Property Name="TimeLeave" Type="DateTime" Nullable="false" Precision="3" />
+    <Property Name="TimeBack" Type="DateTime" Nullable="false" Precision="3" />
+    <Property Name="IntershipCompany" Type="String" MaxLength="256" FixedLength="false" Unicode="true" Nullable="false" />
+    <Property Name="IntershipAddress" Type="String" MaxLength="256" FixedLength="false" Unicode="true" Nullable="false" />
+    <Property Name="PrincipalName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+    <Property Name="PrincipalTel" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
+    <Property Name="Note" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
+    <Property Name="Evidence1" Type="String" MaxLength="256" FixedLength="false" Unicode="false" />
+    <Property Name="Evidence2" Type="String" MaxLength="256" FixedLength="false" Unicode="false" />
+    <Property Name="Evidence3" Type="String" MaxLength="256" FixedLength="false" Unicode="false" />
   </EntityType>
   <EntityType Name="T_LeaveList">
     <Key>
@@ -370,7 +390,7 @@
     <Property Name="ST_Teacher" Type="String" MaxLength="64" FixedLength="false" Unicode="true" />
     <Property Name="ST_TeacherID" Type="String" MaxLength="64" FixedLength="false" Unicode="false" />
   </EntityType>
-  <EntityContainer Name="Entities" annotation:LazyLoadingEnabled="true">
+  <EntityContainer Name="imaw_qingjiaEntities1" annotation:LazyLoadingEnabled="true">
     <EntitySet Name="T_Account" EntityType="Self.T_Account" />
     <EntitySet Name="T_Batch" EntityType="Self.T_Batch" />
     <EntitySet Name="T_BatchLeave" EntityType="Self.T_BatchLeave" />
@@ -380,6 +400,7 @@
     <EntitySet Name="T_Holiday" EntityType="Self.T_Holiday" />
     <EntitySet Name="T_Info" EntityType="Self.T_Info" />
     <EntitySet Name="T_InfoDetail" EntityType="Self.T_InfoDetail" />
+    <EntitySet Name="T_LeaveIntership" EntityType="Self.T_LeaveIntership" />
     <EntitySet Name="T_LeaveList" EntityType="Self.T_LeaveList" />
     <EntitySet Name="T_Menu" EntityType="Self.T_Menu" />
     <EntitySet Name="T_RoleMenu" EntityType="Self.T_RoleMenu" />

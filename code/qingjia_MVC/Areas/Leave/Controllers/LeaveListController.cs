@@ -790,16 +790,156 @@ namespace qingjia_MVC.Areas.Leave.Controllers
             }
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult filePhoto_FileSelected1(HttpPostedFileBase filePhoto1, FormCollection formInfo)//此处的filePhoto1和前台的ID以及参数的filePhoto1需要相对应（一模一样），所以必须写三个函数来处理三张图片
+        {
+            if (filePhoto1 != null)
+            {
+                string fileName = filePhoto1.FileName;  
+
+                if (!ValidateFileType(fileName))
+                {
+                    // 清空文件上传组件
+                    UIHelper.FileUpload("filePhoto1").Reset();
+                    ShowNotify("无效的文件类型！");
+                }
+                else
+                {
+                    fileName = fileName.Substring(fileName.LastIndexOf(".") + 1, (fileName.Length - fileName.LastIndexOf(".") - 1)); //扩展名
+                    fileName = DateTime.Now.ToString() + "_" + Session["UserID"].ToString() + "_" + "pic1." + fileName;
+                    fileName = fileName.Replace(":", "").Replace(" ", "").Replace("\\", "_").Replace("/", "_");
+
+                    filePhoto1.SaveAs(Server.MapPath(@"~\media\upload\internship\" + fileName));//此处的路径为保存在磁盘的路径，要用双反斜杠（避免转义,或者把@放在双引号前）
+
+                    UIHelper.Image("imgPhoto1").ImageUrl("~/media/upload/internship/" + fileName);//此处的路径因为是url，所以要用单正斜杠
+                    UIHelper.TextBox("imgUrl1").Text("~/media/upload/internship/" + fileName);//将url路径保存至隐藏的空间中，方便提交时提取
+
+                    // 清空文件上传组件（上传后要记着清空，否则点击提交表单时会再次上传！！）
+                    UIHelper.FileUpload("filePhoto1").Reset();
+                }
+            }
+
+            return UIHelper.Result();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult filePhoto_FileSelected2(HttpPostedFileBase filePhoto2, FormCollection formInfo)
+        {
+            if (filePhoto2 != null)
+            {
+                string fileName = filePhoto2.FileName;
+
+                if (!ValidateFileType(fileName))
+                {
+                    // 清空文件上传组件
+                    UIHelper.FileUpload("filePhoto2").Reset();
+                    ShowNotify("无效的文件类型！");
+                }
+                else
+                {
+                    fileName = fileName.Substring(fileName.LastIndexOf(".") + 1, (fileName.Length - fileName.LastIndexOf(".") - 1)); //扩展名
+                    fileName = DateTime.Now.ToString() + "_" + Session["UserID"].ToString() + "_" + "pic2." + fileName;
+                    fileName = fileName.Replace(":", "").Replace(" ", "").Replace("\\", "_").Replace("/", "_");
+
+                    filePhoto2.SaveAs(Server.MapPath(@"~\media\upload\internship\" + fileName));//此处的路径为保存在磁盘的路径，要用双反斜杠（避免转义,或者把@放在双引号前）
+
+                    UIHelper.Image("imgPhoto2").ImageUrl("~/media/upload/internship/" + fileName);//此处的路径因为是url，所以要用单正斜杠
+                    UIHelper.TextBox("imgUrl2").Text("~/media/upload/internship/" + fileName);//将url路径保存至隐藏的空间中，方便提交时提取
+
+                    // 清空文件上传组件（上传后要记着清空，否则点击提交表单时会再次上传！！）
+                    UIHelper.FileUpload("filePhoto2").Reset();
+                }
+            }
+
+            return UIHelper.Result();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult filePhoto_FileSelected3(HttpPostedFileBase filePhoto3, FormCollection formInfo)
+        {
+            if (filePhoto3 != null)
+            {
+                string fileName = filePhoto3.FileName;
+
+                if (!ValidateFileType(fileName))
+                {
+                    // 清空文件上传组件
+                    UIHelper.FileUpload("filePhoto3").Reset();
+                    ShowNotify("无效的文件类型！");
+                }
+                //else
+                //{
+                //    fileName = fileName.Replace(":", "_").Replace(" ", "_").Replace("\\", "_").Replace("/", "_");
+                //    fileName = DateTime.Now.Ticks.ToString() + "_" + fileName;
+
+                //    filePhoto3.SaveAs(Server.MapPath("~/upload/" + fileName));
+
+                //    UIHelper.Image("imgPhoto3").ImageUrl("~/upload/" + fileName);
+
+                //    // 清空文件上传组件（上传后要记着清空，否则点击提交表单时会再次上传！！）
+                //    UIHelper.FileUpload("filePhoto3").Reset();
+                //}
+                else
+                {
+                    fileName = fileName.Substring(fileName.LastIndexOf(".") + 1, (fileName.Length - fileName.LastIndexOf(".") - 1)); //扩展名
+                    fileName = DateTime.Now.ToString() + "_" + Session["UserID"].ToString() + "_" + "pic3." + fileName;
+                    fileName = fileName.Replace(":", "").Replace(" ", "").Replace("\\", "_").Replace("/", "_");
+
+                    filePhoto3.SaveAs(Server.MapPath(@"~\media\upload\internship\" + fileName));//此处的路径为保存在磁盘的路径，要用双反斜杠（避免转义,或者把@放在双引号前）
+
+                    UIHelper.Image("imgPhoto3").ImageUrl("~/media/upload/internship/" + fileName);//此处的路径因为是url，所以要用单正斜杠
+                    UIHelper.TextBox("imgUrl3").Text("~/media/upload/internship/" + fileName);//将url路径保存至隐藏的空间中，方便提交时提取
+
+                    // 清空文件上传组件（上传后要记着清空，否则点击提交表单时会再次上传！！）
+                    UIHelper.FileUpload("filePhoto3").Reset();
+                }
+            }
+
+            return UIHelper.Result();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult leaveInternship_btnSubmit_Click(FormCollection formInfo)
+        {
+            string ST_Num = Session["UserID"].ToString();
+            string IntershipCompany = formInfo["IntershipCompany"];
+            string IntershipAddress = formInfo["IntershipAddress"];
+            string PrincipalName = formInfo["PrincipalName"];
+            string PrincipalTel = formInfo["PrincipalTel"];
+            string Note = formInfo["Note"];
+            string leaveDate = formInfo["leaveDate"];
+            string leaveTime = formInfo["leaveTime"];
+            string backDate = formInfo["backDate"];
+            string backTime = formInfo["backTime"];
+            string imgUrl1 = formInfo["imgUrl1"].ToString();
+            string imgUrl2 = formInfo["imgUrl2"].ToString();
+            string imgUrl3 = formInfo["imgUrl3"].ToString();
+
+            if ((imgUrl1 == "") || (imgUrl2 == "") || (imgUrl3 == ""))
+            {
+                alertInfo("错误提示", "请先上传个人头像!", "Information");
+            }
+            else
+            {
+                //保存本次请假信息
+            }
+            return UIHelper.Result();
+        }
+
         #endregion
 
-            #region 通知方法
+        #region 通知方法
 
-            /// <summary>
-            /// Alert.MessageBoxIcon可设置提示框图标样式,可选样式：None无 Information消息 Warning警告 Question问题 Error错误 Success成功,Alert.Target可设置显示提示框的位置,可选样式：Self当前页面 Parent父页面 Top顶层页面
-            /// </summary>
-            /// <param name="title">标题</param>
-            /// <param name="message">信息</param>
-            /// <param name="icon">Icon类型</param>
+        /// <summary>
+        /// Alert.MessageBoxIcon可设置提示框图标样式,可选样式：None无 Information消息 Warning警告 Question问题 Error错误 Success成功,Alert.Target可设置显示提示框的位置,可选样式：Self当前页面 Parent父页面 Top顶层页面
+        /// </summary>
+        /// <param name="title">标题</param>
+        /// <param name="message">信息</param>
+        /// <param name="icon">Icon类型</param>
         public void alertInfo(string title, string message, string icon)
         {
             Alert alert = new Alert();
