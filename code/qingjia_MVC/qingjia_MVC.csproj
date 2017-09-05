@@ -2528,10 +2528,10 @@
     <Content Include="Views\Home\Hello.cshtml" />
     <Content Include="Views\Home\Login.cshtml" />
     <Content Include="Views\Account\Index.cshtml" />
-    <Content Include="Views\Home\Default_T.cshtml" />
     <Content Include="Views\Home\Default_ST.cshtml" />
     <Content Include="Views\_ViewStart.cshtml" />
     <Content Include="Views\BaseAPI\Index.cshtml" />
+    <Content Include="Views\Home\Default_T.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
