@@ -926,6 +926,24 @@ namespace qingjia_MVC.Areas.Leave.Controllers
             else
             {
                 //保存本次请假信息
+                string LV_Time_Go = leaveDate + " " + leaveTime + ":00";
+                string LV_Time_Back = backDate + " " + backTime + ":00";
+
+                if (Convert.ToDateTime(LV_Time_Go) < Convert.ToDateTime(LV_Time_Back))
+                {
+                    DateTime time_go = Convert.ToDateTime(LV_Time_Go);
+                    DateTime time_back = Convert.ToDateTime(LV_Time_Back);
+                    TimeSpan time_days = time_back - time_go;
+                    int days = time_days.Days;
+                    //生成请假单号
+                    string LV_NUM = DateTime.Now.ToString("yyMMdd");
+                    var exist = from T_LeaveIntership in db.T_LeaveIntership where (T_LeaveIntership.StudentID == ST_Num) && (((T_LeaveIntership.TimeLeave >= time_go) && (T_LeaveIntership.TimeLeave <= time_back)) || ((T_LeaveIntership.TimeBack >= time_go) && (T_LeaveIntership.TimeBack <= time_back)) || ((T_LeaveIntership.TimeLeave <= time_go) && (T_LeaveIntership.TimeBack >= time_back))) select T_LeaveIntership;
+
+                }
+                else
+                {
+                    alertInfo("错误提示", "请假开始时间不能小于结束时间!", "Error");
+                }
             }
             return UIHelper.Result();
         }
@@ -983,7 +1001,7 @@ namespace qingjia_MVC.Areas.Leave.Controllers
                 endString = end.ToString("0000");//按照此格式Tostring
             }
             //请假单号
-            LV_Num += endString;
+            LV_Num += endString;//请假单号形如1509050001
             //提交时间
             DateTime nowTime = DateTime.Now;
             //请假类型编号
@@ -1010,6 +1028,51 @@ namespace qingjia_MVC.Areas.Leave.Controllers
             LL.Lesson = lesson;
             LL.Teacher = teacher;
             db.T_LeaveList.Add(LL);
+            try
+            {
+                return db.SaveChanges();
+            }
+            catch (DbEntityValidationException dbEx)
+            {
+                return 0;
+            }
+        }
+
+        #endregion
+
+        #region 插入T_LeaveIntership表
+
+        protected int Insert_LeaveInternship(string LV_Num, string ST_Num, string IntershipCompany, string IntershipAddress, string PrincipalName, string PrincipalTel, string Note, DateTime TimeLeave, DateTime TimeBack, string imgUrl1, string imgUrl2, string imgUrl3)
+        {
+            string endString = "01";
+            var leavelist = from T_LeaveList in db.T_LeaveList where (T_LeaveList.ID.StartsWith(LV_Num)) orderby T_LeaveList.ID descending select T_LeaveList.ID;
+            if (leavelist.Any())
+            {
+                string leaveNumTop = leavelist.First().ToString().Trim();
+                int end = Convert.ToInt32(leaveNumTop.Substring(6, 4));
+                end++;
+                endString = end.ToString("00");//按照此格式Tostring
+            }
+            //请假单号
+            LV_Num = LV_Num + "99" + endString;//请假单号形如1709059901
+            //提交时间
+            DateTime nowTime = DateTime.Now;
+            T_LeaveIntership LI = new T_LeaveIntership();
+            LI.ID = LV_Num;
+            LI.StudentID = ST_Num;
+            LI.SubmitTime = nowTime;
+            LI.StateLeave = "0";
+            LI.StateBack = "0";
+            LI.TimeLeave = TimeLeave;
+            LI.TimeBack = TimeBack;
+            LI.IntershipCompany = IntershipCompany;
+            LI.IntershipAddress = IntershipAddress;
+            LI.PrincipalName = PrincipalName;
+            LI.PrincipalTel = PrincipalTel;
+            LI.Note = Note;
+            LI.Evidence1 = imgUrl1;
+            LI.Evidence2 = imgUrl2;
+            LI.Evidence3 = imgUrl3;
             try
             {
                 return db.SaveChanges();
