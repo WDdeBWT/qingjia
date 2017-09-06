@@ -148,7 +148,45 @@
                 .Items(
                     F.Label()
                 ),
-            F.FormRow()
+             //F.FormRow()
+             //    .Items(
+             //        F.DatePicker()
+             //            .Required(true)
+             //            .EnableEdit(false)
+             //            .Label("离校日期")
+             //            .EmptyText("请选择离校日期")
+             //            .ID("leaveDate")
+             //            .ShowRedStar(true),
+             //        F.TimePicker()
+             //            .ID("leaveTime")
+             //            .ShowRedStar(true)
+             //            .EnableEdit(false)
+             //            .Increment(30)
+             //            .MinTimeText("00:00")
+             //            .MaxTimeText("23:30")
+             //            .Required(true)
+             //            .EmptyText("请选择离校时间")
+             //    ),
+             //F.FormRow()
+             //    .Items(
+             //        F.DatePicker()
+             //            .Required(true)
+             //            .EnableEdit(false)
+             //            .Label("返校日期")
+             //            .EmptyText("请选择返校日期")
+             //            .ID("backDate")
+             //            .ShowRedStar(true),
+             //        F.TimePicker()
+             //            .ID("backTime")
+             //            .ShowRedStar(true)
+             //            .EnableEdit(false)
+             //            .Increment(30)
+             //            .MinTimeText("00:00")
+             //            .MaxTimeText("23:30")
+             //            .Required(true)
+             //            .EmptyText("请选择返校时间")
+             //    ),
+             F.FormRow()
                 .Items(
                     F.DatePicker()
                         .Required(true)
@@ -157,34 +195,13 @@
                         .EmptyText("请选择离校日期")
                         .ID("leaveDate")
                         .ShowRedStar(true),
-                    F.TimePicker()
-                        .ID("leaveTime")
-                        .ShowRedStar(true)
-                        .EnableEdit(false)
-                        .Increment(30)
-                        .MinTimeText("00:00")
-                        .MaxTimeText("23:30")
-                        .Required(true)
-                        .EmptyText("请选择离校时间")
-                ),
-            F.FormRow()
-                .Items(
                     F.DatePicker()
                         .Required(true)
                         .EnableEdit(false)
                         .Label("返校日期")
                         .EmptyText("请选择返校日期")
                         .ID("backDate")
-                        .ShowRedStar(true),
-                    F.TimePicker()
-                        .ID("backTime")
                         .ShowRedStar(true)
-                        .EnableEdit(false)
-                        .Increment(30)
-                        .MinTimeText("00:00")
-                        .MaxTimeText("23:30")
-                        .Required(true)
-                        .EmptyText("请选择返校时间")
                 ),
             F.FormRow()
                 .Items(

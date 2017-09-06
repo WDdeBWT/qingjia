@@ -912,9 +912,9 @@ namespace qingjia_MVC.Areas.Leave.Controllers
             string PrincipalTel = formInfo["PrincipalTel"];
             string Note = formInfo["Note"];
             string leaveDate = formInfo["leaveDate"];
-            string leaveTime = formInfo["leaveTime"];
+            //string leaveTime = formInfo["leaveTime"];
             string backDate = formInfo["backDate"];
-            string backTime = formInfo["backTime"];
+            //string backTime = formInfo["backTime"];
             string imgUrl1 = formInfo["imgUrl1"].ToString();
             string imgUrl2 = formInfo["imgUrl2"].ToString();
             string imgUrl3 = formInfo["imgUrl3"].ToString();
@@ -925,20 +925,63 @@ namespace qingjia_MVC.Areas.Leave.Controllers
             }
             else
             {
-                //保存本次请假信息
-                string LV_Time_Go = leaveDate + " " + leaveTime + ":00";
-                string LV_Time_Back = backDate + " " + backTime + ":00";
+                //判断并保存本次请假信息
+                string LV_Time_Go = leaveDate + " " + "00:00:00";
+                string LV_Time_Back = backDate + " " + "00:00:00";
 
                 if (Convert.ToDateTime(LV_Time_Go) < Convert.ToDateTime(LV_Time_Back))
                 {
-                    DateTime time_go = Convert.ToDateTime(LV_Time_Go);
-                    DateTime time_back = Convert.ToDateTime(LV_Time_Back);
-                    TimeSpan time_days = time_back - time_go;
+                    DateTime TimeLeave = Convert.ToDateTime(LV_Time_Go);
+                    DateTime TimeBack = Convert.ToDateTime(LV_Time_Back);
+                    TimeSpan time_days = TimeBack - TimeLeave;
                     int days = time_days.Days;
                     //生成请假单号
-                    string LV_NUM = DateTime.Now.ToString("yyMMdd");
-                    var exist = from T_LeaveIntership in db.T_LeaveIntership where (T_LeaveIntership.StudentID == ST_Num) && (((T_LeaveIntership.TimeLeave >= time_go) && (T_LeaveIntership.TimeLeave <= time_back)) || ((T_LeaveIntership.TimeBack >= time_go) && (T_LeaveIntership.TimeBack <= time_back)) || ((T_LeaveIntership.TimeLeave <= time_go) && (T_LeaveIntership.TimeBack >= time_back))) select T_LeaveIntership;
-
+                    string LV_Num = DateTime.Now.ToString("yyMMdd");
+                    var exist = from T_LeaveIntership in db.T_LeaveIntership where (T_LeaveIntership.StudentID == ST_Num) && (((T_LeaveIntership.TimeLeave >= TimeLeave) && (T_LeaveIntership.TimeLeave <= TimeBack)) || ((T_LeaveIntership.TimeBack >= TimeLeave) && (T_LeaveIntership.TimeBack <= TimeBack)) || ((T_LeaveIntership.TimeLeave <= TimeLeave) && (T_LeaveIntership.TimeBack >= TimeBack))) select T_LeaveIntership;
+                    if (exist.Any())
+                    {
+                        bool flag = true;
+                        foreach (qingjia_MVC.Models.T_LeaveIntership leaveintership in exist.ToList())
+                        {
+                            if (leaveintership.StateBack == "0")
+                            {
+                                flag = false;
+                                break;
+                            }
+                        }
+                        if (flag)
+                        {
+                            //插入数据库操作
+                            if (Insert_LeaveInternship(LV_Num, ST_Num, IntershipCompany, IntershipAddress, PrincipalName, PrincipalTel, Note, TimeLeave, TimeBack, imgUrl1, imgUrl2, imgUrl3) == 1)
+                            {
+                                string script = String.Format("alert('实习请假申请成功');");
+                                PageContext.RegisterStartupScript(ActiveWindow.GetHideRefreshReference() +
+                                    script);
+                            }
+                            else
+                            {
+                                alertInfo("提交失败", "数据库提交失败，请重新尝试!", "Information");
+                            }
+                        }
+                        else
+                        {
+                            alertInfo("错误提示", "您已提交过此时间段的请假申请，请不要重复提交！", "Information");
+                        }
+                    }
+                    else
+                    {
+                        //插入数据库操作
+                        if (Insert_LeaveInternship(LV_Num, ST_Num, IntershipCompany, IntershipAddress, PrincipalName, PrincipalTel, Note, TimeLeave, TimeBack, imgUrl1, imgUrl2, imgUrl3) == 1)
+                        {
+                            string script = String.Format("alert('请假申请成功');");
+                            PageContext.RegisterStartupScript(ActiveWindow.GetHideRefreshReference() +
+                                script);
+                        }
+                        else
+                        {
+                            alertInfo("提交失败", "数据库提交失败，请重新尝试!", "Information");
+                        }
+                    }
                 }
                 else
                 {
