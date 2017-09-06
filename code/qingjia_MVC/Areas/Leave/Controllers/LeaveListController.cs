@@ -1116,6 +1116,7 @@ namespace qingjia_MVC.Areas.Leave.Controllers
             LI.Evidence1 = imgUrl1;
             LI.Evidence2 = imgUrl2;
             LI.Evidence3 = imgUrl3;
+            db.T_LeaveIntership.Add(LI);
             try
             {
                 return db.SaveChanges();
