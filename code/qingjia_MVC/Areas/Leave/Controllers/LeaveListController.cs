@@ -919,9 +919,9 @@ namespace qingjia_MVC.Areas.Leave.Controllers
             string imgUrl2 = formInfo["imgUrl2"].ToString();
             string imgUrl3 = formInfo["imgUrl3"].ToString();
 
-            if ((imgUrl1 == "") || (imgUrl2 == "") || (imgUrl3 == ""))
+            if ((imgUrl1 == "") || (imgUrl2 == ""))
             {
-                alertInfo("错误提示", "请先上传个人头像!", "Information");
+                alertInfo("错误提示", "前两项证明材料必须上传!", "Information");
             }
             else
             {
@@ -1088,11 +1088,11 @@ namespace qingjia_MVC.Areas.Leave.Controllers
         protected int Insert_LeaveInternship(string LV_Num, string ST_Num, string IntershipCompany, string IntershipAddress, string PrincipalName, string PrincipalTel, string Note, DateTime TimeLeave, DateTime TimeBack, string imgUrl1, string imgUrl2, string imgUrl3)
         {
             string endString = "01";
-            var leavelist = from T_LeaveList in db.T_LeaveList where (T_LeaveList.ID.StartsWith(LV_Num)) orderby T_LeaveList.ID descending select T_LeaveList.ID;
-            if (leavelist.Any())
+            var leaveinternship = from T_LeaveIntership in db.T_LeaveIntership where (T_LeaveIntership.ID.StartsWith(LV_Num)) orderby T_LeaveIntership.ID descending select T_LeaveIntership.ID;
+            if (leaveinternship.Any())
             {
-                string leaveNumTop = leavelist.First().ToString().Trim();
-                int end = Convert.ToInt32(leaveNumTop.Substring(6, 4));
+                string leaveNumTop = leaveinternship.First().ToString().Trim();
+                int end = Convert.ToInt32(leaveNumTop.Substring(8, 2));
                 end++;
                 endString = end.ToString("00");//按照此格式Tostring
             }
@@ -1116,6 +1116,7 @@ namespace qingjia_MVC.Areas.Leave.Controllers
             LI.Evidence1 = imgUrl1;
             LI.Evidence2 = imgUrl2;
             LI.Evidence3 = imgUrl3;
+            db.T_LeaveIntership.Add(LI);
             try
             {
                 return db.SaveChanges();

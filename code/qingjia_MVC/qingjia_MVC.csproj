@@ -2492,6 +2492,7 @@
     <Content Include="Models\qingjia.edmx.diagram">
       <DependentUpon>qingjia.edmx</DependentUpon>
     </Content>
+    <Content Include="Areas\Leave\Views\AuditForm\AuditInternship.cshtml" />
     <None Include="Properties\PublishProfiles\text.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
