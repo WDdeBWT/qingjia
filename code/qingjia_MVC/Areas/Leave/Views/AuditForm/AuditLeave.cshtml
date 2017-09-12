@@ -31,17 +31,17 @@
     <script srd="~/res/js/grid.js"></script>
     <script>
 
-    //第一个搜索框的值
-    var _lastTriggerBoxValue_01;
-    //第二个搜索框的值
-    var _lastTriggerBoxValue_02;
-    //第三个搜索框的值
-    var _lastTriggerBoxValue_03;
+        //第一个搜索框的值
+        var _lastTriggerBoxValue_01;
+        //第二个搜索框的值
+        var _lastTriggerBoxValue_02;
+        //第三个搜索框的值
+        var _lastTriggerBoxValue_03;
 
-    function btnCancel(value, params) {
-        var deleteImageUrl = '@Url.Content("~/res/icon/delete.png")';
-        return '<a class="action-btn btnCancel" href="javascript:;"><img class="f-grid-cell-icon" src="' + deleteImageUrl + '"></a>';
-    }
+        function btnCancel(value, params) {
+            var deleteImageUrl = '@Url.Content("~/res/icon/delete.png")';
+            return '<a class="action-btn btnCancel" href="javascript:;"><img class="f-grid-cell-icon" src="' + deleteImageUrl + '"></a>';
+        }
 
         function btnAgree(value, params) {
             var agreeImageUrl = '@Url.Content("~/res/icon/accept.png")';
@@ -74,7 +74,7 @@
             });
         }
 
-        //多条请假记录-同意请假
+        //多条请假记录-同意请假-尚未实现
         function batchAgree(event) {
 
 

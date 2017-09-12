@@ -1,7 +1,183 @@
 ﻿
 @{
     ViewBag.Title = "AuditInternship";
+    var F = Html.F();
 }
 
-<h2>AuditInternship</h2>
+@section script{
+<script srd="~/res/js/grid.js"></script>
+<script>
+    function btnCancel1(value, params)
+    {
+        var deleteImageUrl = '@Url.Content("~/res/icon/delete.png")';
+        return '<a class="action-btn btnCancel" href="javascript:;"><img class="f-grid-cell-icon" src="' + deleteImageUrl + '"></a>';
+    }
 
+    function btnAgree1(value, params)
+    {
+        var agreeImageUrl = '@Url.Content("~/res/icon/accept.png")';
+        return '<a class="action-btn btnAgree" href="javascript:;"><img class="f-grid-cell-icon" src="' + agreeImageUrl + '"></a>';
+    }
+
+    function btnDetails(value, params)
+    {
+        return '<a class="action-btn btnAgree" href="javascript:;">详情</a>';
+    }
+
+    function btnAgree2(value, params)
+    {
+        var agreeImageUrl = '@Url.Content("~/res/icon/accept.png")';
+        return '<a class="action-btn btnAgree" href="javascript:;"><img class="f-grid-cell-icon" src="' + agreeImageUrl + '"></a>';
+    }
+</script>
+}
+
+@section body {
+
+    @(F.Panel()
+        .ID("Panel5")
+        .ShowBorder(true)
+        .Layout(LayoutType.HBox)
+        .AutoScroll(true)
+        .ShowHeader(true)
+        .Title("实习请假")
+        .BoxConfigChildMargin("0 5 0 0")
+        .BodyPadding(5)
+        .IsViewPort(true)
+        .Items(
+            F.Panel()
+                .ID("Panel1")
+                .Title("面板1")
+                .BoxFlex(1)
+                .MinWidth(600)
+                .Margin(0)
+                .BodyPadding(5)
+                .ShowBorder(false)
+                .ShowHeader(false)
+                .Items(
+                    F.Grid()
+                        .AllowSorting(true)
+                        .SortDirection("")
+                        .SortField("")
+                        .Title("离校列表")
+                        .ShowHeader(true)
+                        .ShowBorder(true)
+                        .ID("gridLeaveList_Leave")
+                        .EnableCheckBoxSelect(false)
+                        .AllowPaging(true)
+                        .PageSize(20)
+                        .DataIDField("ID")
+                        .Columns(
+                            F.RenderField()
+                                .HeaderText("同意")
+                                .TextAlign(TextAlign.Center)
+                                .Width(50)
+                                .RendererFunction("btnAgree1"),
+                            F.RenderField()
+                                .HeaderText("驳回")
+                                .TextAlign(TextAlign.Center)
+                                .Width(50)
+                                .RendererFunction("btnCancel1"),
+                            F.RenderField()
+                                .HeaderText("请假单号")
+                                .Hidden(true)
+                                .DataField("ID")
+                                .SortField("ID")
+                                .TextAlign(TextAlign.Center)
+                                .Width(100),
+                            F.RenderField()
+                                .HeaderText("姓名")
+                                .DataField("ST_Name")
+                                .TextAlign(TextAlign.Center)
+                                .Width(80),
+                            F.RenderField()
+                                .HeaderText("班级")
+                                .TextAlign(TextAlign.Center)
+                                .DataField("ST_Class")
+                                .SortField("ST_Class")
+                                .Width(100),
+                            F.RenderField()
+                                .HeaderText("提交时间")
+                                .TextAlign(TextAlign.Center)
+                                .Width(160)
+                                .DataField("SubmitTime"),
+                            F.RenderField()
+                                .HeaderText("审核状态")
+                                .TextAlign(TextAlign.Center)
+                                .DataField("auditState")
+                                .Width(80),
+                            F.RenderField()
+                                .HeaderText("详情")
+                                .TextAlign(TextAlign.Center)
+                                .Width(60)
+                                .RendererFunction("btnDetails")
+                        )
+                        .DataSource(ViewBag.leavetable)
+                ),
+            F.Panel()
+                .ID("Panel2")
+                .Title("面板2")
+                .BoxFlex(1)
+                .MinWidth(550)
+                .Margin(0)
+                .BodyPadding(5)
+                .ShowBorder(false)
+                .ShowHeader(false)
+                .Items(
+                    F.Grid()
+                        .AllowSorting(true)
+                        .SortDirection("")
+                        .SortField("")
+                        .Title("销假列表")
+                        .ShowHeader(true)
+                        .ShowBorder(true)
+                        .ID("gridLeaveList_Back")
+                        .EnableCheckBoxSelect(false)
+                        .AllowPaging(true)
+                        .PageSize(20)
+                        .DataIDField("ID")
+                        .Columns(
+                            F.RenderField()
+                                .HeaderText("同意")
+                                .TextAlign(TextAlign.Center)
+                                .Width(50)
+                                .RendererFunction("btnAgree2"),
+                            F.RenderField()
+                                .HeaderText("请假单号")
+                                .Hidden(true)
+                                .DataField("ID")
+                                .SortField("ID")
+                                .TextAlign(TextAlign.Center)
+                                .Width(100),
+                            F.RenderField()
+                                .HeaderText("姓名")
+                                .DataField("ST_Name")
+                                .TextAlign(TextAlign.Center)
+                                .Width(80),
+                            F.RenderField()
+                                .HeaderText("班级")
+                                .TextAlign(TextAlign.Center)
+                                .DataField("ST_Class")
+                                .SortField("ST_Class")
+                                .Width(100),
+                            F.RenderField()
+                                .HeaderText("约定返校时间")
+                                .TextAlign(TextAlign.Center)
+                                .Width(160)
+                                .DataField("SubmitTime"),
+                            F.RenderField()
+                                .HeaderText("审核状态")
+                                .TextAlign(TextAlign.Center)
+                                .DataField("auditState")
+                                .Width(80),
+                            F.RenderField()
+                                .HeaderText("详情")
+                                .TextAlign(TextAlign.Center)
+                                .Width(60)
+                                .RendererFunction("btnDetails")
+                        )
+                        .DataSource(ViewBag.backtable)
+                )
+        )
+    )
+}

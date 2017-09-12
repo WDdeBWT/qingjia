@@ -11,7 +11,7 @@ using System.Configuration;
 
 namespace qingjia_MVC.Controllers.API
 {
-    #region 接受数据模型
+    #region 接收数据模型
 
     public class ChangePsdModel
     {

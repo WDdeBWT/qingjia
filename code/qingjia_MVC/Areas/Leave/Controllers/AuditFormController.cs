@@ -47,6 +47,19 @@ namespace qingjia_MVC.Areas.Leave.Controllers
             return View();
         }
 
+        // GET: Leave/AuditForm/AuditInternship
+        public ActionResult AuditInternship()
+        {
+            //设置Grid标题
+            ViewBag.GridBackTitle = "实习请假";
+
+            //Session["AuditState"] = "back";
+            //Session["AuditBackType"] = "total";
+            //Get_LL_DataTable("total");
+            //LL_Count_Back();
+            return View();
+        }
+
         public ActionResult ModifyLL()
         {
             string LL_ID = Request["LL_ID"].ToString();
@@ -2146,6 +2159,130 @@ namespace qingjia_MVC.Areas.Leave.Controllers
             return UIHelper.Result();
         }
         #endregion
+
+        #endregion
+
+        #region AduitInternshipList
+        /// <summary>
+        /// 获取实习请假记录  DataTable格式
+        /// </summary>
+        /// <param name="type">请假类型</param>
+        /// <returns></returns>
+        public DataTable Get_LIL_DataTable()
+        {
+            string grade = Session["Grade"].ToString();
+
+            //此处将list转为DataTable FineUI的Grid绑定时间类型数据时会发生错误，尚未找到原因。
+            //解决办法：将list转为DataTable绑定到Grid，并且将DataTable中值类型为DateTime的列转为字符串类型
+
+            #region 获取LeaveList、转换为DataTable格式
+            DataTable dtSource = new DataTable();
+            var leavelist = from vw_LeaveList in db.vw_LeaveList where ((vw_LeaveList.StateLeave == "0") && (vw_LeaveList.StateBack == "0") && (vw_LeaveList.ST_Grade == grade)) orderby vw_LeaveList.ID descending select vw_LeaveList;
+
+            //List 转换为 DataTable
+            dtSource = leavelist.ToDataTable(rec => new object[] { leavelist });
+            #endregion
+
+            #region 更改DataTable中某一列的属性
+            DataTable dtClone = new DataTable();
+            dtClone = dtSource.Clone();
+            foreach (DataColumn col in dtClone.Columns)
+            {
+                if (col.ColumnName == "SubmitTime" || col.ColumnName == "TimeLeave" || col.ColumnName == "TimeBack")
+                {
+                    col.DataType = typeof(string);
+                }
+                if (col.ColumnName == "Lesson")
+                {
+                    col.DataType = typeof(string);
+                }
+            }
+
+            DataColumn newCol = new DataColumn();
+            newCol.ColumnName = "auditState";
+            newCol.DataType = typeof(string);
+            dtClone.Columns.Add(newCol);
+
+            foreach (DataRow row in dtSource.Rows)
+            {
+                DataRow rowNew = dtClone.NewRow();
+                rowNew["ID"] = row["ID"];
+                rowNew["Reason"] = row["Reason"];
+                rowNew["StateLeave"] = row["StateLeave"];
+                rowNew["StateBack"] = row["StateBack"];
+                rowNew["Notes"] = row["Notes"];
+                rowNew["TypeID"] = row["TypeID"];
+                rowNew["SubmitTime"] = ((DateTime)row["SubmitTime"]).ToString("yyyy-MM-dd HH:mm:ss");//按指定格式输出
+                rowNew["TimeLeave"] = ((DateTime)row["TimeLeave"]).ToString("yyyy-MM-dd HH:mm:ss");
+                rowNew["TimeBack"] = ((DateTime)row["TimeBack"]).ToString("yyyy-MM-dd HH:mm:ss");
+                rowNew["LeaveWay"] = row["LeaveWay"];
+                rowNew["BackWay"] = row["BackWay"];
+                rowNew["Address"] = row["Address"];
+                rowNew["TypeChildID"] = row["TypeChildID"];
+                rowNew["Teacher"] = row["Teacher"];
+                rowNew["ST_Name"] = row["ST_Name"];
+                rowNew["ST_Tel"] = row["ST_Tel"];
+                rowNew["ST_Grade"] = row["ST_Grade"];
+                rowNew["ST_Class"] = row["ST_Class"];
+                rowNew["ST_Teacher"] = row["ST_Teacher"];
+                rowNew["StudentID"] = row["StudentID"];
+                rowNew["LeaveType"] = row["LeaveType"];
+                rowNew["AuditName"] = row["AuditName"];
+                rowNew["ContactOne"] = row["ContactOne"];
+                rowNew["OneTel"] = row["OneTel"];
+
+                //审核状态属性
+                rowNew["auditState"] = "Error";
+                if (row["StateLeave"].ToString() == "0" && row["StateBack"].ToString() == "0")
+                {
+                    rowNew["auditState"] = "待审核";
+                }
+                if (row["StateLeave"].ToString() == "1" && row["StateBack"].ToString() == "0")
+                {
+                    rowNew["auditState"] = "待销假";
+                }
+                if (row["StateLeave"].ToString() == "1" && row["StateBack"].ToString() == "1")
+                {
+                    rowNew["auditState"] = "已销假";
+                }
+                if (row["StateLeave"].ToString() == "2" && row["StateBack"].ToString() == "1")
+                {
+                    rowNew["auditState"] = "已驳回";
+                }
+
+                //请假课段属性
+                rowNew["Lesson"] = "";
+                if (row["Lesson"].ToString() == "1")
+                {
+                    rowNew["Lesson"] = "第一大节（08:00~09:40）";
+                }
+                if (row["Lesson"].ToString() == "2")
+                {
+                    rowNew["Lesson"] = "第二大节（10:10~11:50）";
+                }
+                if (row["Lesson"].ToString() == "3")
+                {
+                    rowNew["Lesson"] = "第三大节（14:00~15:30）";
+                }
+                if (row["Lesson"].ToString() == "4")
+                {
+                    rowNew["Lesson"] = "第四大节（16:00~17:40）";
+                }
+                if (row["Lesson"].ToString() == "5")
+                {
+                    rowNew["Lesson"] = "第五大节（18:30~21:40）";
+                }
+
+                dtClone.Rows.Add(rowNew);
+            }
+            #endregion
+
+            //绑定数据源
+            ViewBag.leavetable = dtClone;
+
+            return dtClone;
+        }
+
 
         #endregion
 
