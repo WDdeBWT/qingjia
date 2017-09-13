@@ -53,9 +53,9 @@ namespace qingjia_MVC.Areas.Leave.Controllers
             //设置Grid标题
             ViewBag.GridBackTitle = "实习请假";
 
-            //Session["AuditState"] = "back";
-            //Session["AuditBackType"] = "total";
-            //Get_LL_DataTable("total");
+            Session["AuditState"] = "back";
+            Session["AuditBackType"] = "total";
+            Get_LIL_DataTable();
             //LL_Count_Back();
             return View();
         }
@@ -2177,10 +2177,10 @@ namespace qingjia_MVC.Areas.Leave.Controllers
 
             #region 获取LeaveList、转换为DataTable格式
             DataTable dtSource = new DataTable();
-            var leavelist = from vw_LeaveList in db.vw_LeaveList where ((vw_LeaveList.StateLeave == "0") && (vw_LeaveList.StateBack == "0") && (vw_LeaveList.ST_Grade == grade)) orderby vw_LeaveList.ID descending select vw_LeaveList;
+            var internshiplist = from vw_LeaveIntership in db.vw_LeaveIntership where ((vw_LeaveIntership.StateLeave == "0") && (vw_LeaveIntership.StateBack == "0") && (vw_LeaveIntership.ST_Grade == grade)) orderby vw_LeaveIntership.ID descending select vw_LeaveIntership;
 
             //List 转换为 DataTable
-            dtSource = leavelist.ToDataTable(rec => new object[] { leavelist });
+            dtSource = internshiplist.ToDataTable(rec => new object[] { internshiplist });
             #endregion
 
             #region 更改DataTable中某一列的属性
@@ -2189,10 +2189,6 @@ namespace qingjia_MVC.Areas.Leave.Controllers
             foreach (DataColumn col in dtClone.Columns)
             {
                 if (col.ColumnName == "SubmitTime" || col.ColumnName == "TimeLeave" || col.ColumnName == "TimeBack")
-                {
-                    col.DataType = typeof(string);
-                }
-                if (col.ColumnName == "Lesson")
                 {
                     col.DataType = typeof(string);
                 }
@@ -2207,29 +2203,30 @@ namespace qingjia_MVC.Areas.Leave.Controllers
             {
                 DataRow rowNew = dtClone.NewRow();
                 rowNew["ID"] = row["ID"];
-                rowNew["Reason"] = row["Reason"];
+                rowNew["StudentID"] = row["StudentID"];
+                rowNew["SubmitTime"] = ((DateTime)row["SubmitTime"]).ToString("yyyy-MM-dd HH:mm:ss");//按指定格式输出
                 rowNew["StateLeave"] = row["StateLeave"];
                 rowNew["StateBack"] = row["StateBack"];
-                rowNew["Notes"] = row["Notes"];
-                rowNew["TypeID"] = row["TypeID"];
-                rowNew["SubmitTime"] = ((DateTime)row["SubmitTime"]).ToString("yyyy-MM-dd HH:mm:ss");//按指定格式输出
                 rowNew["TimeLeave"] = ((DateTime)row["TimeLeave"]).ToString("yyyy-MM-dd HH:mm:ss");
                 rowNew["TimeBack"] = ((DateTime)row["TimeBack"]).ToString("yyyy-MM-dd HH:mm:ss");
-                rowNew["LeaveWay"] = row["LeaveWay"];
-                rowNew["BackWay"] = row["BackWay"];
-                rowNew["Address"] = row["Address"];
-                rowNew["TypeChildID"] = row["TypeChildID"];
-                rowNew["Teacher"] = row["Teacher"];
+                rowNew["IntershipCompany"] = row["IntershipCompany"];
+                rowNew["IntershipAddress"] = row["IntershipAddress"];
+                rowNew["PrincipalName"] = row["PrincipalName"];
+                rowNew["PrincipalTel"] = row["PrincipalTel"];
+                rowNew["Note"] = row["Note"];
+                rowNew["Evidence1"] = row["Evidence1"];
+                rowNew["Evidence2"] = row["Evidence2"];
+                rowNew["Evidence3"] = row["Evidence3"];
                 rowNew["ST_Name"] = row["ST_Name"];
                 rowNew["ST_Tel"] = row["ST_Tel"];
-                rowNew["ST_Grade"] = row["ST_Grade"];
-                rowNew["ST_Class"] = row["ST_Class"];
-                rowNew["ST_Teacher"] = row["ST_Teacher"];
-                rowNew["StudentID"] = row["StudentID"];
-                rowNew["LeaveType"] = row["LeaveType"];
-                rowNew["AuditName"] = row["AuditName"];
                 rowNew["ContactOne"] = row["ContactOne"];
                 rowNew["OneTel"] = row["OneTel"];
+                rowNew["ST_Sex"] = row["ST_Sex"];
+                rowNew["ST_Dor"] = row["ST_Dor"];
+                rowNew["ST_Class"] = row["ST_Class"];
+                rowNew["ST_Grade"] = row["ST_Grade"];
+                rowNew["ST_Teacher"] = row["ST_Teacher"];
+                rowNew["ST_TeacherID"] = row["ST_TeacherID"];
 
                 //审核状态属性
                 rowNew["auditState"] = "Error";
@@ -2248,29 +2245,6 @@ namespace qingjia_MVC.Areas.Leave.Controllers
                 if (row["StateLeave"].ToString() == "2" && row["StateBack"].ToString() == "1")
                 {
                     rowNew["auditState"] = "已驳回";
-                }
-
-                //请假课段属性
-                rowNew["Lesson"] = "";
-                if (row["Lesson"].ToString() == "1")
-                {
-                    rowNew["Lesson"] = "第一大节（08:00~09:40）";
-                }
-                if (row["Lesson"].ToString() == "2")
-                {
-                    rowNew["Lesson"] = "第二大节（10:10~11:50）";
-                }
-                if (row["Lesson"].ToString() == "3")
-                {
-                    rowNew["Lesson"] = "第三大节（14:00~15:30）";
-                }
-                if (row["Lesson"].ToString() == "4")
-                {
-                    rowNew["Lesson"] = "第四大节（16:00~17:40）";
-                }
-                if (row["Lesson"].ToString() == "5")
-                {
-                    rowNew["Lesson"] = "第五大节（18:30~21:40）";
                 }
 
                 dtClone.Rows.Add(rowNew);

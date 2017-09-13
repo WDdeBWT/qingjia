@@ -132,17 +132,19 @@
         @section script {
 
             <script>
-        function AddLeave(event) {
-            F.ui.window_leave.show('@Url.Content("~/Leave/LeaveList/leaveschool")', '离校请假');
-        }
-        function AddSpecial(event) {
-            F.ui.window_leave.show('@Url.Content("~/Leave/LeaveList/leavespecial")', '特殊请假');
-        }
-        function AddClass(event) {
-            F.ui.window_leave.show('@Url.Content("~/Leave/LeaveList/leaveclass")', '上课请假备案');
-        }
-                function changeInfo()
-                {
+                function AddLeave(event) {
+                    F.ui.window_leave.show('@Url.Content("~/Leave/LeaveList/leaveschool")', '离校请假');
+                }
+                function AddSpecial(event) {
+                    F.ui.window_leave.show('@Url.Content("~/Leave/LeaveList/leavespecial")', '特殊请假');
+                }
+                function AddClass(event) {
+                    F.ui.window_leave.show('@Url.Content("~/Leave/LeaveList/leaveclass")', '上课请假备案');
+                }
+                @*function AddInternship(event) {
+                    F.ui.window_leave.show('@Url.Content("~/Leave/LeaveList/leaveinternship")', '实习请假');
+                }*@
+                function changeInfo() {
                     F.ui.changeInfo.show('@Url.Content("~/UserInfo/UserInfo/Index")', '修改个人信息');
                 }
 
@@ -251,6 +253,9 @@
                 <div>
                     <button type="button" id="btnClass" class="btn btn-info btn-lg" style="width:80%; margin:10px;" onclick="AddClass()">上课请假备案</button>
                 </div>
+                @*<div>
+                    <button type="button" id="btnInternship" class="btn btn-primary btn-lg" style="width:80%; margin:10px;" onclick="AddInternship()">实习请假</button>
+                </div>*@
 
 
             </div>

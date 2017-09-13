@@ -48,6 +48,7 @@ namespace qingjia_MVC.Models
         public virtual DbSet<T_NightNameList> T_NightNameList { get; set; }
         public virtual DbSet<T_Role> T_Role { get; set; }
         public virtual DbSet<vw_ClassBatch> vw_ClassBatch { get; set; }
+        public virtual DbSet<vw_LeaveIntership> vw_LeaveIntership { get; set; }
         public virtual DbSet<vw_LeaveList> vw_LeaveList { get; set; }
         public virtual DbSet<vw_NightNameList> vw_NightNameList { get; set; }
         public virtual DbSet<vw_StudenBatch> vw_StudenBatch { get; set; }

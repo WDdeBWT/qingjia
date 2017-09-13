@@ -5,21 +5,25 @@
     </TreeNode>
     <TreeNode Text="销假审批" NavigateUrl="~/Leave/AuditForm/AuditBack" IconFont="SignIn">
     </TreeNode>
+    <TreeNode Text="实习请假审批" NavigateUrl="~/Leave/AuditForm/AuditInternship" IconFont="SignIn">
+    </TreeNode>
   </TreeNode>
   <TreeNode Text="表单管理" Icon="ApplicationForm" Expanded="true">
     <TreeNode Text="请假记录" NavigateUrl="~/Leave/LeaveList/leavelist" IconFont="SignIn">
     </TreeNode>
     <TreeNode Text="通讯录" NavigateUrl="~/AddressList/GradeAddress" IconFont="SignIn">
     </TreeNode>
-    <TreeNode Text="晚点名名单" NavigateUrl="~/CallName/NameForT" IconFont="SignIn">
+    <!--<TreeNode Text="晚点名名单" NavigateUrl="~/CallName/NameForT" IconFont="SignIn">
+    </TreeNode>-->
+    <TreeNode Text="节假日去向统计" NavigateUrl="~/Vacation/Vacation" IconFont="SignIn">
     </TreeNode>
   </TreeNode>
   
   <TreeNode Text="通知管理" Icon="Transmit" Expanded="true">
     <TreeNode Text="晚点名通知" NavigateUrl="~/Message/NightMessage" IconFont="SignIn">
     </TreeNode>
-    <TreeNode Text="销假通知" NavigateUrl="~/Message/DeleteMessage" IconFont="SignIn">
-    </TreeNode>
+    <!--<TreeNode Text="销假通知" NavigateUrl="~/Message/DeleteMessage" IconFont="SignIn">
+    </TreeNode>-->
     <TreeNode Text="截止通知" NavigateUrl="~/Message/DeadlineMessage" IconFont="SignIn">
     </TreeNode>
   </TreeNode>

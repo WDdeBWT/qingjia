@@ -9,7 +9,7 @@
 
     @F.RenderCss()
     <link href="~/res/css/common.css" rel="stylesheet" type="text/css" />
-    @RenderSection("head", false)
+    @RenderSection("head", required: false)
 
 </head>
 <body>
@@ -39,10 +39,10 @@
     }
     @F.PageManager
 
-    @RenderSection("body", true)
+    @RenderSection("body", required: true)
 
     @F.RenderScript()
-    @RenderSection("script", false)
+    @RenderSection("script", required: false)
 
 </body>
 </html>

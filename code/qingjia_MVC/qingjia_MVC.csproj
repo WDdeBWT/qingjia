@@ -325,6 +325,9 @@
     <Compile Include="Models\vw_ClassBatch.cs">
       <DependentUpon>qingjia.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\vw_LeaveIntership.cs">
+      <DependentUpon>qingjia.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\vw_LeaveList.cs">
       <DependentUpon>qingjia.tt</DependentUpon>
     </Compile>
@@ -2485,6 +2488,7 @@
     <Content Include="Areas\Vacation\Views\Vacation\_tablePartial.cshtml" />
     <Content Include="Areas\Leave\Views\AuditForm\ModifyLL.cshtml" />
     <Content Include="Areas\Leave\Views\LeaveList\leaveinternship.cshtml" />
+    <Content Include="Areas\Leave\Views\AuditForm\AuditInternship.cshtml" />
     <EntityDeploy Include="Models\qingjia.edmx">
       <Generator>EntityModelCodeGenerator</Generator>
       <LastGenOutput>qingjia.Designer.cs</LastGenOutput>
@@ -2492,7 +2496,6 @@
     <Content Include="Models\qingjia.edmx.diagram">
       <DependentUpon>qingjia.edmx</DependentUpon>
     </Content>
-    <Content Include="Areas\Leave\Views\AuditForm\AuditInternship.cshtml" />
     <None Include="Properties\PublishProfiles\text.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
