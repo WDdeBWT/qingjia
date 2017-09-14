@@ -52,11 +52,8 @@ namespace qingjia_MVC.Areas.Leave.Controllers
         {
             //设置Grid标题
             ViewBag.GridBackTitle = "实习请假";
-
-            Session["AuditState"] = "back";
-            Session["AuditBackType"] = "total";
-            Get_LIL_DataTable();
-            //LL_Count_Back();
+            ViewBag.leavetable = Get_LIL_DataTable("leave");
+            ViewBag.backtable = Get_LIL_DataTable("back");
             return View();
         }
 
@@ -2168,7 +2165,7 @@ namespace qingjia_MVC.Areas.Leave.Controllers
         /// </summary>
         /// <param name="type">请假类型</param>
         /// <returns></returns>
-        public DataTable Get_LIL_DataTable()
+        public DataTable Get_LIL_DataTable(string type)
         {
             string grade = Session["Grade"].ToString();
 
@@ -2177,10 +2174,18 @@ namespace qingjia_MVC.Areas.Leave.Controllers
 
             #region 获取LeaveList、转换为DataTable格式
             DataTable dtSource = new DataTable();
-            var internshiplist = from vw_LeaveIntership in db.vw_LeaveIntership where ((vw_LeaveIntership.StateLeave == "0") && (vw_LeaveIntership.StateBack == "0") && (vw_LeaveIntership.ST_Grade == grade)) orderby vw_LeaveIntership.ID descending select vw_LeaveIntership;
-
-            //List 转换为 DataTable
-            dtSource = internshiplist.ToDataTable(rec => new object[] { internshiplist });
+            if (type == "leave")
+            {
+                var internshiplist = from vw_LeaveIntership in db.vw_LeaveIntership where ((vw_LeaveIntership.StateLeave == "0") && (vw_LeaveIntership.StateBack == "0") && (vw_LeaveIntership.ST_Grade == grade)) orderby vw_LeaveIntership.ID descending select vw_LeaveIntership;
+                //List 转换为 DataTable
+                dtSource = internshiplist.ToDataTable(rec => new object[] { internshiplist });
+            }
+            else if (type == "back")
+            {
+                var internshiplist = from vw_LeaveIntership in db.vw_LeaveIntership where ((vw_LeaveIntership.StateLeave == "1") && (vw_LeaveIntership.StateBack == "0") && (vw_LeaveIntership.ST_Grade == grade)) orderby vw_LeaveIntership.ID descending select vw_LeaveIntership;
+                //List 转换为 DataTable
+                dtSource = internshiplist.ToDataTable(rec => new object[] { internshiplist });
+            }
             #endregion
 
             #region 更改DataTable中某一列的属性
@@ -2250,9 +2255,6 @@ namespace qingjia_MVC.Areas.Leave.Controllers
                 dtClone.Rows.Add(rowNew);
             }
             #endregion
-
-            //绑定数据源
-            ViewBag.leavetable = dtClone;
 
             return dtClone;
         }

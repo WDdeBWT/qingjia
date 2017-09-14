@@ -7,29 +7,95 @@
 @section script{
 <script srd="~/res/js/grid.js"></script>
 <script>
-    function btnCancel1(value, params)
+    F.ready(
+        function () {
+            var grid1 = F.ui.gridLeaveList_Leave;
+            var grid2 = F.ui.gridLeaveList_Back;
+            grid1.el.on('click', 'a.action-btn', function (event) {
+                var cnode = $(this);
+                var rowE1 = $(this).closest('.f-grid-row');
+                var rowData = grid1.getRowData(rowE1);
+                if (cnode.hasClass('btnCancel1')) {
+                    cancel(rowData.id, "leave");
+                }
+                else if (cnode.hasClass('btnAgree1')) {
+                    agree(rowData.id, "leave");
+                }
+                else if (cnode.hasClass('btnDetails1')) {
+                    details(rowData.id);
+                }
+                else {
+
+                }
+            });
+            grid2.el.on('click', 'a.action-btn', function (event) {
+                var cnode = $(this);
+                var rowE1 = $(this).closest('.f-grid-row');
+                var rowData = grid1.getRowData(rowE1);
+                if (cnode.hasClass('btnAgree2')) {
+                    agree(rowData.id, "leave");
+                }
+                else if (cnode.hasClass('btnDetails2')) {
+                    details(rowData.id);
+                }
+                else {
+
+                }
+            });
+        });
+
+    //同意请假
+    function agree(selectedRows, type)
     {
+        // 触发后台事件
+        F.doPostBack('@Url.Action("btnAgreeClick_Intership")', {
+            'selectedRows': selectedRows,
+            'type': type,
+        });
+    }
+
+    //拒绝请假
+    function cancel(selectedRows, type)
+    {
+        // 触发后台事件
+        F.doPostBack('@Url.Action("btnCancelClick_Intership")', {
+            'selectedRows': selectedRows,
+            'type': type,
+        });
+    }
+
+    function details(selectedRows)
+    {
+        // 触发后台事件
+        F.doPostBack('@Url.Action("btnDetails_Intership")', {
+            'selectedRows': selectedRows,
+        });
+    }
+
+    function btnAgree1(value, params) {
+        var agreeImageUrl = '@Url.Content("~/res/icon/accept.png")';
+        return '<a class="action-btn btnAgree1" href="javascript:;"><img class="f-grid-cell-icon" src="' + agreeImageUrl + '"></a>';
+    }
+
+    function btnCancel1(value, params) {
         var deleteImageUrl = '@Url.Content("~/res/icon/delete.png")';
-        return '<a class="action-btn btnCancel" href="javascript:;"><img class="f-grid-cell-icon" src="' + deleteImageUrl + '"></a>';
+        return '<a class="action-btn btnCancel1" href="javascript:;"><img class="f-grid-cell-icon" src="' + deleteImageUrl + '"></a>';
     }
 
-    function btnAgree1(value, params)
-    {
+    function btnDetails1(value, params) {
+        return '<a class="action-btn btnDetails1" href="javascript:;">详情</a>';
+    }
+
+    function btnAgree2(value, params) {
         var agreeImageUrl = '@Url.Content("~/res/icon/accept.png")';
-        return '<a class="action-btn btnAgree" href="javascript:;"><img class="f-grid-cell-icon" src="' + agreeImageUrl + '"></a>';
+        return '<a class="action-btn btnAgree2" href="javascript:;"><img class="f-grid-cell-icon" src="' + agreeImageUrl + '"></a>';
+    }
+    function btnDetails2(value, params) {
+        return '<a class="action-btn btnDetails2" href="javascript:;">详情</a>';
     }
 
-    function btnDetails(value, params)
-    {
-        return '<a class="action-btn btnAgree" href="javascript:;">详情</a>';
-    }
-
-    function btnAgree2(value, params)
-    {
-        var agreeImageUrl = '@Url.Content("~/res/icon/accept.png")';
-        return '<a class="action-btn btnAgree" href="javascript:;"><img class="f-grid-cell-icon" src="' + agreeImageUrl + '"></a>';
-    }
 </script>
+
 }
 
 @section body {
@@ -110,7 +176,7 @@
                                 .HeaderText("详情")
                                 .TextAlign(TextAlign.Center)
                                 .Width(60)
-                                .RendererFunction("btnDetails")
+                                .RendererFunction("btnDetails1")
                         )
                         .DataSource(ViewBag.leavetable)
                 ),
@@ -174,7 +240,7 @@
                                 .HeaderText("详情")
                                 .TextAlign(TextAlign.Center)
                                 .Width(60)
-                                .RendererFunction("btnDetails")
+                                .RendererFunction("btnDetails2")
                         )
                         .DataSource(ViewBag.backtable)
                 )
