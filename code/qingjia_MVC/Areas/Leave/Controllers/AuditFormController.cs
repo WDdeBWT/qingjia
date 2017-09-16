@@ -54,6 +54,18 @@ namespace qingjia_MVC.Areas.Leave.Controllers
             ViewBag.GridBackTitle = "实习请假";
             ViewBag.leavetable = Get_LIL_DataTable("leave");
             ViewBag.backtable = Get_LIL_DataTable("back");
+            string ST_Num = "0121101010809";
+            var ST_Info = from vw_Student in db.vw_Student where (vw_Student.ST_Num == ST_Num) select vw_Student;
+            if (ST_Info.Any())
+            {
+                ViewData["LL_ST_Info"] = ST_Info.ToList().First();
+            }
+            string rowID = "1709069901";
+            T_LeaveIntership T_LIL = db.T_LeaveIntership.Find(rowID);
+            if (ST_Info.Any())
+            {
+                ViewData["LI_Info"] = T_LIL;
+            }
             return View();
         }
 
@@ -2257,6 +2269,85 @@ namespace qingjia_MVC.Areas.Leave.Controllers
             #endregion
 
             return dtClone;
+        }
+
+        /// <summary>
+        /// 同意请假/销假操作，Click事件，实习请假
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult btnAgreeClick_Intership(JArray selectedRows, JArray gridLeaveList_fields1, JArray gridLeaveList_fields2, string type)
+        {
+            foreach (string rowId in selectedRows)
+            {
+                T_LeaveIntership T_LIL = db.T_LeaveIntership.Find(rowId);
+                if (type == "leave")
+                {
+                    T_LIL.StateLeave = "1";
+                    db.SaveChanges();
+                    //绑定Grid数据
+                    UIHelper.Grid("gridLeaveList_Leave").DataSource(Get_LIL_DataTable("leave"), gridLeaveList_fields1);
+                    UIHelper.Grid("gridLeaveList_Back").DataSource(Get_LIL_DataTable("back"), gridLeaveList_fields2);
+                }
+                else if (type == "back")
+                {
+                    T_LIL.StateBack = "1";
+                    db.SaveChanges();
+                    //绑定Grid数据
+                    UIHelper.Grid("gridLeaveList_Leave").DataSource(Get_LIL_DataTable("leave"), gridLeaveList_fields1);
+                    UIHelper.Grid("gridLeaveList_Back").DataSource(Get_LIL_DataTable("back"), gridLeaveList_fields2);
+                }
+            }
+            ShowNotify(String.Format("批准操作成功！"));
+            return UIHelper.Result();
+        }
+
+        /// <summary>
+        /// 驳回请假操作，Click事件，实习请假
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult btnCancelClick_Intership(JArray selectedRows, JArray gridLeaveList_fields1, JArray gridLeaveList_fields2)
+        {
+            foreach (string rowId in selectedRows)
+            {
+                T_LeaveIntership T_LIL = db.T_LeaveIntership.Find(rowId);
+                T_LIL.StateLeave = "2";
+                T_LIL.StateBack = "1";
+                db.SaveChanges();
+                //绑定Grid数据
+                UIHelper.Grid("gridLeaveList_Leave").DataSource(Get_LIL_DataTable("leave"), gridLeaveList_fields1);
+                UIHelper.Grid("gridLeaveList_Back").DataSource(Get_LIL_DataTable("back"), gridLeaveList_fields2);
+            }
+            ShowNotify(String.Format("驳回操作成功！"));
+            return UIHelper.Result();
+        }
+
+        /// <summary>
+        /// 弹出详情框，实习请假
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult btnDetails_Intership(JArray selectedRows, JArray gridLeaveList_fields1, JArray gridLeaveList_fields2)
+        {
+            string ST_Num = selectedRows.First().ToString();
+            var ST_Info = from vw_Student in db.vw_Student where (vw_Student.ST_Num == ST_Num) select vw_Student;
+            if (ST_Info.Any())
+            {
+                ViewData["LL_ST_Info"] = ST_Info.ToList().First(); 
+            }
+            string rowID = selectedRows.ToList().First().ToString();
+            T_LeaveIntership T_LIL = db.T_LeaveIntership.Find(rowID);
+            if (ST_Info.Any())
+            {
+                ViewData["LI_Info"] = T_LIL;
+            }
+            UIHelper.Window("DetailWindow").Title("详情 - " + ST_Num);
+            UIHelper.Window("DetailWindow").Show();
+            return UIHelper.Result();
         }
 
 

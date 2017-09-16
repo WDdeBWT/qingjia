@@ -2,6 +2,8 @@
 @{
     ViewBag.Title = "AuditInternship";
     var F = Html.F();
+    var LL_ST_Info = (qingjia_MVC.Models.vw_Student)ViewData["LL_ST_Info"];
+    var LI_Info = (qingjia_MVC.Models.T_LeaveIntership)ViewData["LI_Info"];
 }
 
 @section script{
@@ -16,13 +18,13 @@
                 var rowE1 = $(this).closest('.f-grid-row');
                 var rowData = grid1.getRowData(rowE1);
                 if (cnode.hasClass('btnCancel1')) {
-                    cancel(rowData.id, "leave");
+                    cancel([rowData.id]);
                 }
                 else if (cnode.hasClass('btnAgree1')) {
-                    agree(rowData.id, "leave");
+                    agree([rowData.id], "leave");
                 }
                 else if (cnode.hasClass('btnDetails1')) {
-                    details(rowData.id);
+                    details([rowData.id]);
                 }
                 else {
 
@@ -30,13 +32,13 @@
             });
             grid2.el.on('click', 'a.action-btn', function (event) {
                 var cnode = $(this);
-                var rowE1 = $(this).closest('.f-grid-row');
-                var rowData = grid1.getRowData(rowE1);
+                var rowE2 = $(this).closest('.f-grid-row');
+                var rowData = grid2.getRowData(rowE2);
                 if (cnode.hasClass('btnAgree2')) {
-                    agree(rowData.id, "leave");
+                    agree([rowData.id], "back");
                 }
                 else if (cnode.hasClass('btnDetails2')) {
-                    details(rowData.id);
+                    details([rowData.id]);
                 }
                 else {
 
@@ -50,17 +52,20 @@
         // 触发后台事件
         F.doPostBack('@Url.Action("btnAgreeClick_Intership")', {
             'selectedRows': selectedRows,
+            'gridLeaveList_fields1': F.ui.gridLeaveList_Leave.fields,
+            'gridLeaveList_fields2': F.ui.gridLeaveList_Back.fields,
             'type': type,
         });
     }
 
     //拒绝请假
-    function cancel(selectedRows, type)
+    function cancel(selectedRows)
     {
         // 触发后台事件
         F.doPostBack('@Url.Action("btnCancelClick_Intership")', {
             'selectedRows': selectedRows,
-            'type': type,
+            'gridLeaveList_fields1': F.ui.gridLeaveList_Leave.fields,
+            'gridLeaveList_fields2': F.ui.gridLeaveList_Back.fields,
         });
     }
 
@@ -69,6 +74,8 @@
         // 触发后台事件
         F.doPostBack('@Url.Action("btnDetails_Intership")', {
             'selectedRows': selectedRows,
+            'gridLeaveList_fields1': F.ui.gridLeaveList_Leave.fields,
+            'gridLeaveList_fields2': F.ui.gridLeaveList_Back.fields,
         });
     }
 
@@ -95,6 +102,23 @@
     }
 
 </script>
+
+}
+
+@section head {
+
+    <style>
+        .photo {
+            height: 100px;
+            line-height: 100px;
+            overflow: hidden;
+        }
+
+            .photo img {
+                height: 100px;
+                vertical-align: middle;
+            }
+    </style>
 
 }
 
@@ -245,5 +269,159 @@
                         .DataSource(ViewBag.backtable)
                 )
         )
+    )
+    @(
+ F.Window()
+    .Hidden(true)
+    .Height(650)
+    .Width(650)
+    .IsModal(false)
+    .Layout(LayoutType.Fit)
+    .Target(Target.Top)
+    .EnableResize(false)
+    .EnableMaximize(true)
+    .Title("实习请假详情")
+    .ID("DetailWindow")
+    .Items(
+     F.Form()
+        .BodyPadding(1)
+        .AutoScroll(true)
+        .ShowHeader(false)
+        .ShowBorder(false)
+        .ID("SimpleForm1")
+        .IsViewPort(true)
+        .Toolbars(
+            F.Toolbar()
+                .ToolbarAlign(ToolbarAlign.Center)
+                .Position(ToolbarPosition.Bottom)
+                .Items(
+                    F.Button()
+                        .ID("btnSubmit")
+                        .IconFont(IconFont.Save)
+                        .ValidateForms("SimpleForm1")
+                        .CssClass("marginr")
+                        .Text("申请请假")
+                        .OnClick(Url.Action("leaveInternship_btnSubmit_Click"), "SimpleForm1")
+                )
+        )
+        .Rows(
+            F.FormRow()
+            .Width(600)
+                .Items(
+                    F.Label()
+                        .Text(@LL_ST_Info.ST_Num)
+                        .Label("学号")
+                        .ID("ST_Num"),
+                    F.Label()
+                        .Text(@LL_ST_Info.ST_Name)
+                        .Label("姓名")
+                        .ID("ST_Name")
+                ),
+            F.FormRow()
+            .Width(600)
+                .Items(
+                    F.Label()
+                        .Text(@LL_ST_Info.ST_Class)
+                        .Label("班级")
+                        .ID("ST_Class"),
+                    F.Label()
+                        .Text(@LL_ST_Info.ST_Sex)
+                        .Label("性别")
+                        .ID("ST_Sex")
+                ),
+            F.FormRow()
+            .Width(600)
+                .Items(
+                    F.Label()
+                        .Text(@LL_ST_Info.ContactOne + "-" + @LL_ST_Info.OneTel)
+                        .Label("联系人一")
+                        .ID("contactone"),
+                    F.Label()
+                        .Text(@LL_ST_Info.ContactTwo + "-" + @LL_ST_Info.TwoTel)
+                        .Label("联系人二")
+                        .ID("contacttwo")
+                ),
+            F.FormRow()
+            .Width(600)
+                .Items(
+                    F.Label()
+                        .Text(@LL_ST_Info.ContactThree + "-" + @LL_ST_Info.ThreeTel)
+                        .Label("联系人三")
+                        .ID("contactthree")
+                ),
+            F.FormRow()
+            .Width(600)
+                .Items(
+                    F.Label()
+                        .Text(LI_Info.IntershipCompany)
+                        .Label("实习单位")
+                        .ID("IntershipCompany"),
+                    F.Label()
+                        .Text(LI_Info.IntershipAddress)
+                        .Label("实习地址")
+                        .ID("IntershipAddress")
+                ),
+            F.FormRow()
+            .Width(600)
+                .Items(
+                    F.Label()
+                        .Text(@LI_Info.PrincipalName)
+                        .Label("联系人")
+                        .ID("PrincipalName"),
+                    F.Label()
+                        .Text(@LI_Info.PrincipalTel)
+                        .Label("联系方式")
+                        .ID("PrincipalTel")
+                ),
+            F.FormRow()
+            .Width(600)
+                .Items(
+                    F.Label()
+                        .Text(@LI_Info.Note)
+                        .Label("实习描述")
+                        .ID("Note")
+                ),
+            F.FormRow()
+            .Width(600)
+                .Items(
+                    F.Label()
+                        .Text(@LI_Info.TimeLeave.ToString())
+                        .Label("离校日期")
+                        .ID("leaveDate"),
+                    F.Label()
+                        .Text(@LI_Info.TimeBack.ToString())
+                        .Label("返校日期")
+                        .ID("backDate")
+                ),
+            F.FormRow()
+            .Width(600)
+                .Items(
+                    F.Image()
+                        .Label("上传材料1")
+                        .ID("imgPhoto1")
+                        .CssClass("photo")
+                        .ImageUrl(@LI_Info.Evidence1)
+                        .ShowEmptyLabel(true),
+                    F.Image()
+                        .Label("上传材料2")
+                        .ID("imgPhoto2")
+                        .CssClass("photo")
+                        .ImageUrl(@LI_Info.Evidence2)
+                        .ShowEmptyLabel(true)
+                ),
+                 F.FormRow()
+            .Width(600)
+                .Items(
+                    F.Image()
+                        .Label("上传材料3")
+                        .ID("imgPhoto3")
+                        .CssClass("photo")
+                        .ImageUrl(@LI_Info.Evidence3)
+                        .ShowEmptyLabel(true)
+                )
+                )
+        )
+    )
+
     )
 }
