@@ -2326,30 +2326,39 @@ namespace qingjia_MVC.Areas.Leave.Controllers
         }
 
         /// <summary>
-        /// 弹出详情框，实习请假
+        /// ajax获取学生信息详情
         /// </summary>
         /// <returns></returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult btnDetails_Intership(JArray selectedRows, JArray gridLeaveList_fields1, JArray gridLeaveList_fields2)
+        public vw_Student ajax_Intership_stinfo()
         {
-            string ST_Num = selectedRows.First().ToString();
+            string ST_Num = Session["UserID"].ToString();
             var ST_Info = from vw_Student in db.vw_Student where (vw_Student.ST_Num == ST_Num) select vw_Student;
             if (ST_Info.Any())
             {
-                ViewData["LL_ST_Info"] = ST_Info.ToList().First(); 
+                vw_Student st_info = ST_Info.ToList().First();
+                return st_info;
             }
-            string rowID = selectedRows.ToList().First().ToString();
-            T_LeaveIntership T_LIL = db.T_LeaveIntership.Find(rowID);
-            if (ST_Info.Any())
+            else
             {
-                ViewData["LI_Info"] = T_LIL;
+                return null;
             }
-            UIHelper.Window("DetailWindow").Title("详情 - " + ST_Num);
-            UIHelper.Window("DetailWindow").Show();
-            return UIHelper.Result();
+            
         }
 
+        /// <summary>
+        /// ajax获取实习请假详情
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public T_LeaveIntership ajax_Intership_liinfo()
+        {
+            string rowID = Request["selectedRows"].ToList().First().ToString();
+            T_LeaveIntership li_info = db.T_LeaveIntership.Find(rowID);
+            return li_info;
+        }
 
         #endregion
 

@@ -1,4 +1,5 @@
-﻿
+﻿@*@model IEnumerable<qingjia_MVC.Areas.Vacation.Controllers.LL_Table>*@
+@model IEnumerable<qingjia_MVC.Models.imaw_qingjiaEntities>
 @{
     ViewBag.Title = "AuditInternship";
     var F = Html.F();
@@ -69,14 +70,40 @@
         });
     }
 
-    function details(selectedRows)
-    {
-        // 触发后台事件
-        F.doPostBack('@Url.Action("btnDetails_Intership")', {
-            'selectedRows': selectedRows,
-            'gridLeaveList_fields1': F.ui.gridLeaveList_Leave.fields,
-            'gridLeaveList_fields2': F.ui.gridLeaveList_Back.fields,
+    function details(selectedRows) {
+        // 使用ajax获取详细数据
+        $.ajax({
+            //注意Url传值时不能有空格
+            url: '/Leave/AuditForm/ajax_Intership_stinfo',
+            success: function (response) {
+                F.ui.ST_Num.setValue(response.ID);
+                F.ui.ST_Name.setValue(response.Name);
+                F.ui.ST_Class.setValue(response.ClassName);
+                F.ui.ST_Sex.setValue(response.Sex);
+                F.ui.contactone.setValue(response.ContactOne);
+            },
+            error: function () {
+                notify('未知错误！');
+            }
         });
+        $.ajax({
+            url: '/Leave/AuditForm/ajax_Intership_liinfo?selectedRows=' + selectedRows,
+            success: function (response) {
+                notify('加载完成！');
+                F.ui.IntershipCompany.setValue(response.ID);
+                F.ui.IntershipAddress.setValue(response.Name);
+                F.ui.PrincipalName.setValue(response.ClassName);
+                F.ui.PrincipalTel.setValue(response.Sex);
+                F.ui.Note.setValue(response.ContactOne);
+                F.ui.Note.setValue(response.ContactOne);
+            },
+            error: function () {
+                notify('未知错误！');
+            }
+        });
+        F.ui.DetailWindow.setHidden(false);
+
+        
     }
 
     function btnAgree1(value, params) {
@@ -309,11 +336,10 @@
             .Width(600)
                 .Items(
                     F.Label()
-                        .Text(@LL_ST_Info.ST_Num)
+                        .Text("000000")
                         .Label("学号")
                         .ID("ST_Num"),
                     F.Label()
-                        .Text(@LL_ST_Info.ST_Name)
                         .Label("姓名")
                         .ID("ST_Name")
                 ),
@@ -321,11 +347,9 @@
             .Width(600)
                 .Items(
                     F.Label()
-                        .Text(@LL_ST_Info.ST_Class)
                         .Label("班级")
                         .ID("ST_Class"),
                     F.Label()
-                        .Text(@LL_ST_Info.ST_Sex)
                         .Label("性别")
                         .ID("ST_Sex")
                 ),
