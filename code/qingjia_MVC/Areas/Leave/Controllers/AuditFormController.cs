@@ -2325,42 +2325,65 @@ namespace qingjia_MVC.Areas.Leave.Controllers
             return UIHelper.Result();
         }
 
+        ///// <summary>
+        ///// ajax获取学生信息详情
+        ///// </summary>
+        ///// <returns></returns>
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
+        //public vw_Student ajax_Intership_stinfo()
+        //{
+        //    string ST_Num = Session["UserID"].ToString();
+        //    var ST_Info = from vw_Student in db.vw_Student where (vw_Student.ST_Num == ST_Num) select vw_Student;
+        //    if (ST_Info.Any())
+        //    {
+        //        vw_Student st_info = ST_Info.ToList().First();
+        //        return st_info;
+        //    }
+        //    else
+        //    {
+        //        return null;
+        //    }
+            
+        //}
+
+        ///// <summary>
+        ///// ajax获取实习请假详情
+        ///// </summary>
+        ///// <returns></returns>
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
+        //public T_LeaveIntership ajax_Intership_liinfo()
+        //{
+        //    string rowID = Request["selectedRows"].ToList().First().ToString();
+        //    T_LeaveIntership li_info = db.T_LeaveIntership.Find(rowID);
+        //    return li_info;
+        //}
+
         /// <summary>
-        /// ajax获取学生信息详情
+        /// ajax获取学生请假记录详情
         /// </summary>
         /// <returns></returns>
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public vw_Student ajax_Intership_stinfo()
+        public vw_LeaveIntership ajax_Intership_detail()
         {
-            string ST_Num = Session["UserID"].ToString();
-            var ST_Info = from vw_Student in db.vw_Student where (vw_Student.ST_Num == ST_Num) select vw_Student;
-            if (ST_Info.Any())
+            var selectedRows = Request["selectedRows"];
+            string rowID = selectedRows.ToString();
+            //string rowID = Request["selectedRows"].ToList().First().ToString();
+            var LII = from vw_LeaveIntership in db.vw_LeaveIntership where (vw_LeaveIntership.ID == rowID) select vw_LeaveIntership;
+            if (LII.Any())
             {
-                vw_Student st_info = ST_Info.ToList().First();
-                return st_info;
+                vw_LeaveIntership li_info = LII.ToList().First();
+                return li_info;
             }
             else
             {
                 return null;
             }
-            
-        }
 
-        /// <summary>
-        /// ajax获取实习请假详情
-        /// </summary>
-        /// <returns></returns>
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public T_LeaveIntership ajax_Intership_liinfo()
-        {
-            string rowID = Request["selectedRows"].ToList().First().ToString();
-            T_LeaveIntership li_info = db.T_LeaveIntership.Find(rowID);
-            return li_info;
         }
 
         #endregion
 
     }
 }
+

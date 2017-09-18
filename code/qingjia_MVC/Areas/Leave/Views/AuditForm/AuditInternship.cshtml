@@ -3,8 +3,6 @@
 @{
     ViewBag.Title = "AuditInternship";
     var F = Html.F();
-    var LL_ST_Info = (qingjia_MVC.Models.vw_Student)ViewData["LL_ST_Info"];
-    var LI_Info = (qingjia_MVC.Models.T_LeaveIntership)ViewData["LI_Info"];
 }
 
 @section script{
@@ -71,39 +69,63 @@
     }
 
     function details(selectedRows) {
-        // 使用ajax获取详细数据
+         //使用ajax获取详细数据
+        //$.ajax({
+        //    //注意Url传值时不能有空格
+        //    url: '/Leave/AuditForm/ajax_Intership_stinfo',
+        //    success: function (response) {
+        //        F.ui.ST_Num.setValue(response.ID);
+        //        F.ui.ST_Name.setValue(response.Name);
+        //        F.ui.ST_Class.setValue(response.ClassName);
+        //        F.ui.ST_Sex.setValue(response.Sex);
+        //        F.ui.contactone.setValue(response.ContactOne);
+        //        F.ui.contacttwo.setValue(response.ContactTwo);
+        //    },
+        //    error: function () {
+        //        notify('未知错误！');
+        //    }
+        //});
+        //$.ajax({
+        //    url: '/Leave/AuditForm/ajax_Intership_liinfo?selectedRows=' + selectedRows,
+        //    success: function (response) {
+        //        notify('加载完成！');
+        //        F.ui.IntershipCompany.setValue(response.ID);
+        //        F.ui.IntershipAddress.setValue(response.Name);
+        //        F.ui.PrincipalName.setValue(response.ClassName);
+        //        F.ui.PrincipalTel.setValue(response.Sex);
+        //        F.ui.Note.setValue(response.ContactOne);
+        //        F.ui.leaveDate.setValue(response.ContactOne); 
+        //        F.ui.Note.setValue(response.ContactOne);
+        //    }, 
+        //    error: function () {
+        //        notify('未知错误！');
+        //    }
+        //});
         $.ajax({
-            //注意Url传值时不能有空格
-            url: '/Leave/AuditForm/ajax_Intership_stinfo',
-            success: function (response) {
-                F.ui.ST_Num.setValue(response.ID);
-                F.ui.ST_Name.setValue(response.Name);
-                F.ui.ST_Class.setValue(response.ClassName);
-                F.ui.ST_Sex.setValue(response.Sex);
-                F.ui.contactone.setValue(response.ContactOne);
+            url: '/Leave/AuditForm/ajax_Intership_detail?selectedRows=' + selectedRows,
+            success: function (response123) {
+                console.log(response123);
+                F.ui.ST_Num.setValue(response.StudentID);
+                F.ui.ST_Name.setValue("12345");
+                //F.ui.ST_Name.setValue(response.ST_Name);
+                F.ui.ST_Class.setValue(response.ST_Class);
+                F.ui.ST_Sex.setValue(response.ST_Sex);
+                F.ui.contactone.setValue(response.ContactOne + "-" + response.OneTel);
+                F.ui.IntershipCompany.setValue(response.IntershipCompany);
+                F.ui.IntershipAddress.setValue(response.IntershipAddress);
+                F.ui.PrincipalName.setValue(response.PrincipalName);
+                F.ui.PrincipalTel.setValue(response.PrincipalTel);
+                F.ui.Note.setValue(response.Note);
+                F.ui.leaveDate.setValue(response.TimeLeave);
+                F.ui.backDate.setValue(response.TimeBack);
+                //F.ui.imgPhoto1.setValue(response.TimeBack);
+                F.ui.DetailWindow.setHidden(false);
             },
             error: function () {
-                notify('未知错误！');
+                alert("发生未知错误");
             }
         });
-        $.ajax({
-            url: '/Leave/AuditForm/ajax_Intership_liinfo?selectedRows=' + selectedRows,
-            success: function (response) {
-                notify('加载完成！');
-                F.ui.IntershipCompany.setValue(response.ID);
-                F.ui.IntershipAddress.setValue(response.Name);
-                F.ui.PrincipalName.setValue(response.ClassName);
-                F.ui.PrincipalTel.setValue(response.Sex);
-                F.ui.Note.setValue(response.ContactOne);
-                F.ui.Note.setValue(response.ContactOne);
-            },
-            error: function () {
-                notify('未知错误！');
-            }
-        });
-        F.ui.DetailWindow.setHidden(false);
-
-        
+        //F.ui.DetailWindow.setHidden(false);
     }
 
     function btnAgree1(value, params) {
@@ -317,20 +339,20 @@
         .ShowBorder(false)
         .ID("SimpleForm1")
         .IsViewPort(true)
-        .Toolbars(
-            F.Toolbar()
-                .ToolbarAlign(ToolbarAlign.Center)
-                .Position(ToolbarPosition.Bottom)
-                .Items(
-                    F.Button()
-                        .ID("btnSubmit")
-                        .IconFont(IconFont.Save)
-                        .ValidateForms("SimpleForm1")
-                        .CssClass("marginr")
-                        .Text("申请请假")
-                        .OnClick(Url.Action("leaveInternship_btnSubmit_Click"), "SimpleForm1")
-                )
-        )
+        //.Toolbars(
+        //    F.Toolbar()
+        //        .ToolbarAlign(ToolbarAlign.Center)
+        //        .Position(ToolbarPosition.Bottom)
+        //        .Items(
+        //            F.Button()
+        //                .ID("btnSubmit")
+        //                .IconFont(IconFont.Save)
+        //                .ValidateForms("SimpleForm1")
+        //                .CssClass("marginr")
+        //                .Text("申请请假")
+        //                .OnClick(Url.Action("leaveInternship_btnSubmit_Click"), "SimpleForm1")
+        //        )
+        //)
         .Rows(
             F.FormRow()
             .Width(600)
@@ -357,11 +379,9 @@
             .Width(600)
                 .Items(
                     F.Label()
-                        .Text(@LL_ST_Info.ContactOne + "-" + @LL_ST_Info.OneTel)
                         .Label("联系人一")
                         .ID("contactone"),
                     F.Label()
-                        .Text(@LL_ST_Info.ContactTwo + "-" + @LL_ST_Info.TwoTel)
                         .Label("联系人二")
                         .ID("contacttwo")
                 ),
@@ -369,19 +389,9 @@
             .Width(600)
                 .Items(
                     F.Label()
-                        .Text(@LL_ST_Info.ContactThree + "-" + @LL_ST_Info.ThreeTel)
-                        .Label("联系人三")
-                        .ID("contactthree")
-                ),
-            F.FormRow()
-            .Width(600)
-                .Items(
-                    F.Label()
-                        .Text(LI_Info.IntershipCompany)
                         .Label("实习单位")
                         .ID("IntershipCompany"),
                     F.Label()
-                        .Text(LI_Info.IntershipAddress)
                         .Label("实习地址")
                         .ID("IntershipAddress")
                 ),
@@ -389,11 +399,9 @@
             .Width(600)
                 .Items(
                     F.Label()
-                        .Text(@LI_Info.PrincipalName)
                         .Label("联系人")
                         .ID("PrincipalName"),
                     F.Label()
-                        .Text(@LI_Info.PrincipalTel)
                         .Label("联系方式")
                         .ID("PrincipalTel")
                 ),
@@ -401,7 +409,6 @@
             .Width(600)
                 .Items(
                     F.Label()
-                        .Text(@LI_Info.Note)
                         .Label("实习描述")
                         .ID("Note")
                 ),
@@ -409,39 +416,11 @@
             .Width(600)
                 .Items(
                     F.Label()
-                        .Text(@LI_Info.TimeLeave.ToString())
                         .Label("离校日期")
                         .ID("leaveDate"),
                     F.Label()
-                        .Text(@LI_Info.TimeBack.ToString())
                         .Label("返校日期")
                         .ID("backDate")
-                ),
-            F.FormRow()
-            .Width(600)
-                .Items(
-                    F.Image()
-                        .Label("上传材料1")
-                        .ID("imgPhoto1")
-                        .CssClass("photo")
-                        .ImageUrl(@LI_Info.Evidence1)
-                        .ShowEmptyLabel(true),
-                    F.Image()
-                        .Label("上传材料2")
-                        .ID("imgPhoto2")
-                        .CssClass("photo")
-                        .ImageUrl(@LI_Info.Evidence2)
-                        .ShowEmptyLabel(true)
-                ),
-                 F.FormRow()
-            .Width(600)
-                .Items(
-                    F.Image()
-                        .Label("上传材料3")
-                        .ID("imgPhoto3")
-                        .CssClass("photo")
-                        .ImageUrl(@LI_Info.Evidence3)
-                        .ShowEmptyLabel(true)
                 )
                 )
         )
