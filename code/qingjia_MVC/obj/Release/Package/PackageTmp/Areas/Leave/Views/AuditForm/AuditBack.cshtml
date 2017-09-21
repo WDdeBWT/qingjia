@@ -28,7 +28,7 @@
     }
 
 @section script{
-    <script srd="~/res/js/grid.js"></script>
+    <script src="~/res/js/grid.js"></script>
     <script>
 
     //第一个搜索框的值
@@ -138,6 +138,7 @@
         _lastTriggerBoxValue_02 = F.ui.TwinTriggerBox2.getValue();
         // 设置 TwinTriggerBox3 初始值
         _lastTriggerBoxValue_03 = F.ui.TwinTriggerBox3.getValue();
+        console.log();
 
         var grid1 = F.ui.gridLeaveList_Back;
         grid1.el.on('click', 'a.action-btn', function (event) {
