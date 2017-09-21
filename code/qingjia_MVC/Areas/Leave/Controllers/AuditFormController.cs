@@ -11,6 +11,7 @@ using qingjia_MVC.Content;
 using System.Data.Entity.Validation;
 using System.Data;
 using Newtonsoft.Json.Linq;
+using System.Web.Script.Serialization;
 
 namespace qingjia_MVC.Areas.Leave.Controllers
 {
@@ -52,20 +53,20 @@ namespace qingjia_MVC.Areas.Leave.Controllers
         {
             //设置Grid标题
             ViewBag.GridBackTitle = "实习请假";
-            ViewBag.leavetable = Get_LIL_DataTable("leave");
-            ViewBag.backtable = Get_LIL_DataTable("back");
-            string ST_Num = "0121101010809";
-            var ST_Info = from vw_Student in db.vw_Student where (vw_Student.ST_Num == ST_Num) select vw_Student;
-            if (ST_Info.Any())
-            {
-                ViewData["LL_ST_Info"] = ST_Info.ToList().First();
-            }
-            string rowID = "1709069901";
-            T_LeaveIntership T_LIL = db.T_LeaveIntership.Find(rowID);
-            if (ST_Info.Any())
-            {
-                ViewData["LI_Info"] = T_LIL;
-            }
+            ViewBag.leavetable = Get_LIL_DataTable("leave", null);
+            ViewBag.backtable = Get_LIL_DataTable("back", null);
+            //string ST_Num = "0121101010809";
+            //var ST_Info = from vw_Student in db.vw_Student where (vw_Student.ST_Num == ST_Num) select vw_Student;
+            //if (ST_Info.Any())
+            //{
+            //    ViewData["LL_ST_Info"] = ST_Info.ToList().First();
+            //}
+            //string rowID = "1709069901";
+            //T_LeaveIntership T_LIL = db.T_LeaveIntership.Find(rowID);
+            //if (ST_Info.Any())
+            //{
+            //    ViewData["LI_Info"] = T_LIL;
+            //}
             return View();
         }
 
@@ -2176,30 +2177,40 @@ namespace qingjia_MVC.Areas.Leave.Controllers
         /// 获取实习请假记录  DataTable格式
         /// </summary>
         /// <param name="type">请假类型</param>
+        /// <param name="ID">实习请假单号</param>
         /// <returns></returns>
-        public DataTable Get_LIL_DataTable(string type)
+        public DataTable Get_LIL_DataTable(string type, string ID)
         {
             string grade = Session["Grade"].ToString();
 
             //此处将list转为DataTable FineUI的Grid绑定时间类型数据时会发生错误，尚未找到原因。
             //解决办法：将list转为DataTable绑定到Grid，并且将DataTable中值类型为DateTime的列转为字符串类型
-
-            #region 获取LeaveList、转换为DataTable格式
             DataTable dtSource = new DataTable();
-            if (type == "leave")
+            if (ID == null)
             {
-                var internshiplist = from vw_LeaveIntership in db.vw_LeaveIntership where ((vw_LeaveIntership.StateLeave == "0") && (vw_LeaveIntership.StateBack == "0") && (vw_LeaveIntership.ST_Grade == grade)) orderby vw_LeaveIntership.ID descending select vw_LeaveIntership;
+                #region 获取LeaveList、转换为DataTable格式
+                if (type == "leave")
+                {
+                    var internshiplist = from vw_LeaveIntership in db.vw_LeaveIntership where ((vw_LeaveIntership.StateLeave == "0") && (vw_LeaveIntership.StateBack == "0") && (vw_LeaveIntership.ST_Grade == grade)) orderby vw_LeaveIntership.ID descending select vw_LeaveIntership;
+                    //List 转换为 DataTable
+                    dtSource = internshiplist.ToDataTable(rec => new object[] { internshiplist });
+                }
+                else if (type == "back")
+                {
+                    var internshiplist = from vw_LeaveIntership in db.vw_LeaveIntership where ((vw_LeaveIntership.StateLeave == "1") && (vw_LeaveIntership.StateBack == "0") && (vw_LeaveIntership.ST_Grade == grade)) orderby vw_LeaveIntership.ID descending select vw_LeaveIntership;
+                    //List 转换为 DataTable
+                    dtSource = internshiplist.ToDataTable(rec => new object[] { internshiplist });
+                }
+                else
+                    return null;
+                #endregion
+            }
+            else
+            {
+                var internshiplist = from vw_LeaveIntership in db.vw_LeaveIntership where ((vw_LeaveIntership.ID == ID)) orderby vw_LeaveIntership.ID descending select vw_LeaveIntership;
                 //List 转换为 DataTable
                 dtSource = internshiplist.ToDataTable(rec => new object[] { internshiplist });
             }
-            else if (type == "back")
-            {
-                var internshiplist = from vw_LeaveIntership in db.vw_LeaveIntership where ((vw_LeaveIntership.StateLeave == "1") && (vw_LeaveIntership.StateBack == "0") && (vw_LeaveIntership.ST_Grade == grade)) orderby vw_LeaveIntership.ID descending select vw_LeaveIntership;
-                //List 转换为 DataTable
-                dtSource = internshiplist.ToDataTable(rec => new object[] { internshiplist });
-            }
-            #endregion
-
             #region 更改DataTable中某一列的属性
             DataTable dtClone = new DataTable();
             dtClone = dtSource.Clone();
@@ -2287,16 +2298,16 @@ namespace qingjia_MVC.Areas.Leave.Controllers
                     T_LIL.StateLeave = "1";
                     db.SaveChanges();
                     //绑定Grid数据
-                    UIHelper.Grid("gridLeaveList_Leave").DataSource(Get_LIL_DataTable("leave"), gridLeaveList_fields1);
-                    UIHelper.Grid("gridLeaveList_Back").DataSource(Get_LIL_DataTable("back"), gridLeaveList_fields2);
+                    UIHelper.Grid("gridLeaveList_Leave").DataSource(Get_LIL_DataTable("leave", null), gridLeaveList_fields1);
+                    UIHelper.Grid("gridLeaveList_Back").DataSource(Get_LIL_DataTable("back", null), gridLeaveList_fields2);
                 }
                 else if (type == "back")
                 {
                     T_LIL.StateBack = "1";
                     db.SaveChanges();
                     //绑定Grid数据
-                    UIHelper.Grid("gridLeaveList_Leave").DataSource(Get_LIL_DataTable("leave"), gridLeaveList_fields1);
-                    UIHelper.Grid("gridLeaveList_Back").DataSource(Get_LIL_DataTable("back"), gridLeaveList_fields2);
+                    UIHelper.Grid("gridLeaveList_Leave").DataSource(Get_LIL_DataTable("leave", null), gridLeaveList_fields1);
+                    UIHelper.Grid("gridLeaveList_Back").DataSource(Get_LIL_DataTable("back", null), gridLeaveList_fields2);
                 }
             }
             ShowNotify(String.Format("批准操作成功！"));
@@ -2318,72 +2329,38 @@ namespace qingjia_MVC.Areas.Leave.Controllers
                 T_LIL.StateBack = "1";
                 db.SaveChanges();
                 //绑定Grid数据
-                UIHelper.Grid("gridLeaveList_Leave").DataSource(Get_LIL_DataTable("leave"), gridLeaveList_fields1);
-                UIHelper.Grid("gridLeaveList_Back").DataSource(Get_LIL_DataTable("back"), gridLeaveList_fields2);
+                UIHelper.Grid("gridLeaveList_Leave").DataSource(Get_LIL_DataTable("leave", null), gridLeaveList_fields1);
+                UIHelper.Grid("gridLeaveList_Back").DataSource(Get_LIL_DataTable("back", null), gridLeaveList_fields2);
             }
             ShowNotify(String.Format("驳回操作成功！"));
             return UIHelper.Result();
         }
-
-        ///// <summary>
-        ///// ajax获取学生信息详情
-        ///// </summary>
-        ///// <returns></returns>
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public vw_Student ajax_Intership_stinfo()
-        //{
-        //    string ST_Num = Session["UserID"].ToString();
-        //    var ST_Info = from vw_Student in db.vw_Student where (vw_Student.ST_Num == ST_Num) select vw_Student;
-        //    if (ST_Info.Any())
-        //    {
-        //        vw_Student st_info = ST_Info.ToList().First();
-        //        return st_info;
-        //    }
-        //    else
-        //    {
-        //        return null;
-        //    }
-            
-        //}
-
-        ///// <summary>
-        ///// ajax获取实习请假详情
-        ///// </summary>
-        ///// <returns></returns>
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public T_LeaveIntership ajax_Intership_liinfo()
-        //{
-        //    string rowID = Request["selectedRows"].ToList().First().ToString();
-        //    T_LeaveIntership li_info = db.T_LeaveIntership.Find(rowID);
-        //    return li_info;
-        //}
-
+        
         /// <summary>
         /// ajax获取学生请假记录详情
         /// </summary>
         /// <returns></returns>
-        public vw_LeaveIntership ajax_Intership_detail()
+        public ActionResult ajax_Intership_detail()
         {
+            //var res = new JsonResult();
+            JavaScriptSerializer jss = new JavaScriptSerializer();
+
             var selectedRows = Request["selectedRows"];
             string rowID = selectedRows.ToString();
-            //string rowID = Request["selectedRows"].ToList().First().ToString();
-            var LII = from vw_LeaveIntership in db.vw_LeaveIntership where (vw_LeaveIntership.ID == rowID) select vw_LeaveIntership;
-            if (LII.Any())
+            DataTable dt = Get_LIL_DataTable(null, rowID);
+            //将datatable中的第一行(datarow)转化成Dictionary，再转换成json
+            Dictionary<string, object> RowDic = new Dictionary<string, object>();
+            foreach (DataColumn col in dt.Columns)
             {
-                vw_LeaveIntership li_info = LII.ToList().First();
-                return li_info;
+                RowDic.Add(col.ColumnName, dt.Rows[0][col]);
             }
-            else
-            {
-                return null;
-            }
-
+            string JsonStr = jss.Serialize(RowDic);
+            return Content(JsonStr);
         }
 
         #endregion
 
     }
 }
+
 
