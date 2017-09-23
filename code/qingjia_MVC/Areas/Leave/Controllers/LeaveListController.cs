@@ -991,6 +991,114 @@ namespace qingjia_MVC.Areas.Leave.Controllers
             return UIHelper.Result();
         }
 
+        //GET:Leave/LeaveList/leaveinternshiplist 获取实习请假记录
+        public ActionResult leaveinternshiplist()
+        {
+            ViewBag.listTable = Get_LIL_DataTable();
+            return View();
+        }
+
+        /// <summary>
+        /// 获取实习请假记录
+        /// </summary>
+        /// <param name="LL_ID">请假单号</param>
+        /// <returns></returns>
+        public DataTable Get_LIL_DataTable()
+        {
+            string roleId = Session["RoleID"].ToString();
+            string grade;
+            DataTable dtSource = new DataTable();
+            //此处将list转为DataTable FineUI的Grid绑定时间类型数据时会发生错误，尚未找到原因。
+            //解决办法：将list转为DataTable绑定到Grid，并且将DataTable中值类型为DateTime的列转为字符串类型
+            if (roleId == "3")
+            {
+                grade = Session["Grade"].ToString();
+                var internshiplist = from vw_LeaveIntership in db.vw_LeaveIntership where (vw_LeaveIntership.ST_Grade == grade) orderby vw_LeaveIntership.ID descending select vw_LeaveIntership;
+                //List 转换为 DataTable
+                dtSource = internshiplist.ToDataTable(rec => new object[] { internshiplist });
+            }
+            else if (roleId == "1")
+            {
+                string userId = Session["UserID"].ToString();
+                var internshiplist = from vw_LeaveIntership in db.vw_LeaveIntership where (vw_LeaveIntership.StudentID == userId) orderby vw_LeaveIntership.ID descending select vw_LeaveIntership;
+                //List 转换为 DataTable
+                dtSource = internshiplist.ToDataTable(rec => new object[] { internshiplist });
+            }
+            else
+            {
+                return null;
+            }
+            #region 更改DataTable中某一列的属性
+            DataTable dtClone = new DataTable();
+            dtClone = dtSource.Clone();
+            foreach (DataColumn col in dtClone.Columns)
+            {
+                if (col.ColumnName == "SubmitTime" || col.ColumnName == "TimeLeave" || col.ColumnName == "TimeBack")
+                {
+                    col.DataType = typeof(string);
+                }
+            }
+
+            DataColumn newCol = new DataColumn();
+            newCol.ColumnName = "auditState";
+            newCol.DataType = typeof(string);
+            dtClone.Columns.Add(newCol);
+
+            foreach (DataRow row in dtSource.Rows)
+            {
+                DataRow rowNew = dtClone.NewRow();
+                rowNew["ID"] = row["ID"];
+                rowNew["StudentID"] = row["StudentID"];
+                rowNew["SubmitTime"] = ((DateTime)row["SubmitTime"]).ToString("yyyy-MM-dd HH:mm:ss");//按指定格式输出
+                rowNew["StateLeave"] = row["StateLeave"];
+                rowNew["StateBack"] = row["StateBack"];
+                rowNew["TimeLeave"] = ((DateTime)row["TimeLeave"]).ToString("yyyy-MM-dd HH:mm:ss").Substring(0, 10);
+                rowNew["TimeBack"] = ((DateTime)row["TimeBack"]).ToString("yyyy-MM-dd HH:mm:ss").Substring(0, 10);
+                rowNew["IntershipCompany"] = row["IntershipCompany"];
+                rowNew["IntershipAddress"] = row["IntershipAddress"];
+                rowNew["PrincipalName"] = row["PrincipalName"];
+                rowNew["PrincipalTel"] = row["PrincipalTel"];
+                rowNew["Note"] = row["Note"];
+                rowNew["Evidence1"] = row["Evidence1"];
+                rowNew["Evidence2"] = row["Evidence2"];
+                rowNew["Evidence3"] = row["Evidence3"];
+                rowNew["ST_Name"] = row["ST_Name"];
+                rowNew["ST_Tel"] = row["ST_Tel"];
+                rowNew["ContactOne"] = row["ContactOne"];
+                rowNew["OneTel"] = row["OneTel"];
+                rowNew["ST_Sex"] = row["ST_Sex"];
+                rowNew["ST_Dor"] = row["ST_Dor"];
+                rowNew["ST_Class"] = row["ST_Class"];
+                rowNew["ST_Grade"] = row["ST_Grade"];
+                rowNew["ST_Teacher"] = row["ST_Teacher"];
+                rowNew["ST_TeacherID"] = row["ST_TeacherID"];
+
+                //审核状态属性
+                rowNew["auditState"] = "Error";
+                if (row["StateLeave"].ToString() == "0" && row["StateBack"].ToString() == "0")
+                {
+                    rowNew["auditState"] = "待审核";
+                }
+                if (row["StateLeave"].ToString() == "1" && row["StateBack"].ToString() == "0")
+                {
+                    rowNew["auditState"] = "待销假";
+                }
+                if (row["StateLeave"].ToString() == "1" && row["StateBack"].ToString() == "1")
+                {
+                    rowNew["auditState"] = "已销假";
+                }
+                if (row["StateLeave"].ToString() == "2" && row["StateBack"].ToString() == "1")
+                {
+                    rowNew["auditState"] = "已驳回";
+                }
+
+                dtClone.Rows.Add(rowNew);
+            }
+            #endregion
+
+            return dtClone;
+        }
+
         #endregion
 
         #region 通知方法

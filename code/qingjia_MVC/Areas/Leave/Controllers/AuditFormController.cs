@@ -55,18 +55,6 @@ namespace qingjia_MVC.Areas.Leave.Controllers
             ViewBag.GridBackTitle = "实习请假";
             ViewBag.leavetable = Get_LIL_DataTable("leave", null);
             ViewBag.backtable = Get_LIL_DataTable("back", null);
-            //string ST_Num = "0121101010809";
-            //var ST_Info = from vw_Student in db.vw_Student where (vw_Student.ST_Num == ST_Num) select vw_Student;
-            //if (ST_Info.Any())
-            //{
-            //    ViewData["LL_ST_Info"] = ST_Info.ToList().First();
-            //}
-            //string rowID = "1709069901";
-            //T_LeaveIntership T_LIL = db.T_LeaveIntership.Find(rowID);
-            //if (ST_Info.Any())
-            //{
-            //    ViewData["LI_Info"] = T_LIL;
-            //}
             return View();
         }
 
@@ -2181,8 +2169,16 @@ namespace qingjia_MVC.Areas.Leave.Controllers
         /// <returns></returns>
         public DataTable Get_LIL_DataTable(string type, string ID)
         {
-            string grade = Session["Grade"].ToString();
-
+            string grade;
+            string roleId = Session["RoleID"].ToString();
+            if (roleId == "3")
+            {
+                grade = Session["Grade"].ToString();
+            }
+            else
+            {
+                grade = null;
+            }
             //此处将list转为DataTable FineUI的Grid绑定时间类型数据时会发生错误，尚未找到原因。
             //解决办法：将list转为DataTable绑定到Grid，并且将DataTable中值类型为DateTime的列转为字符串类型
             DataTable dtSource = new DataTable();
@@ -2235,8 +2231,8 @@ namespace qingjia_MVC.Areas.Leave.Controllers
                 rowNew["SubmitTime"] = ((DateTime)row["SubmitTime"]).ToString("yyyy-MM-dd HH:mm:ss");//按指定格式输出
                 rowNew["StateLeave"] = row["StateLeave"];
                 rowNew["StateBack"] = row["StateBack"];
-                rowNew["TimeLeave"] = ((DateTime)row["TimeLeave"]).ToString("yyyy-MM-dd HH:mm:ss");
-                rowNew["TimeBack"] = ((DateTime)row["TimeBack"]).ToString("yyyy-MM-dd HH:mm:ss");
+                rowNew["TimeLeave"] = ((DateTime)row["TimeLeave"]).ToString("yyyy-MM-dd HH:mm:ss").Substring(0, 10);
+                rowNew["TimeBack"] = ((DateTime)row["TimeBack"]).ToString("yyyy-MM-dd HH:mm:ss").Substring(0, 10);
                 rowNew["IntershipCompany"] = row["IntershipCompany"];
                 rowNew["IntershipAddress"] = row["IntershipAddress"];
                 rowNew["PrincipalName"] = row["PrincipalName"];
