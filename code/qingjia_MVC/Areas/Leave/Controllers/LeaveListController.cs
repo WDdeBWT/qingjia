@@ -31,7 +31,6 @@ namespace qingjia_MVC.Areas.Leave.Controllers
         //Index 加载数据
         protected void LoadData()
         {
-
             //防止Session过期
             try
             {
@@ -39,6 +38,11 @@ namespace qingjia_MVC.Areas.Leave.Controllers
                 var studentInfo = from vw_Student in db.vw_Student where (vw_Student.ST_Num == ST_Num) select vw_Student;
                 if (studentInfo.Any())
                 {
+                    vw_Student studentModel = (vw_Student)studentInfo.First();
+                    if (studentModel.ST_Grade == null || studentModel.ST_Grade == "" || studentModel.ST_TeacherID == null || studentModel.ST_TeacherID == "")
+                    {
+                        //信息不完整  该学生尚未绑定班级 及 辅导员
+                    }
                     ViewData["studentInfo"] = (vw_Student)studentInfo.First();
                 }
                 else
@@ -65,8 +69,6 @@ namespace qingjia_MVC.Areas.Leave.Controllers
             {
 
             }
-
-
         }
 
         [HttpPost]
@@ -796,7 +798,7 @@ namespace qingjia_MVC.Areas.Leave.Controllers
         {
             if (filePhoto1 != null)
             {
-                string fileName = filePhoto1.FileName;  
+                string fileName = filePhoto1.FileName;
 
                 if (!ValidateFileType(fileName))
                 {

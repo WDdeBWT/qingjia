@@ -17,7 +17,7 @@ namespace qingjia_YiBan.HomePage
             }
 
             //测试运行
-            //string access_token = "0121403490107_3749f6d6-8a19-4bb3-887a-3d9d2f464d96";
+            //string access_token = "0121603920213_1";
             //Session["access_token"] = access_token;
 
             //获取学生基本信息
@@ -40,6 +40,17 @@ namespace qingjia_YiBan.HomePage
             if (HttpContext.Current.Request.Cookies["UserInfo"] != null && HttpContext.Current.Request.Cookies["UserInfo"]["UserID"] == ST_NUM)
             {
                 HttpCookie _cookie = HttpContext.Current.Request.Cookies["UserInfo"];
+
+                UserInfo userinfoModel = new UserInfo();
+                userinfoModel.UserTel = _cookie["UserTel"].ToString();
+                userinfoModel.UserQQ = _cookie["UserQQ"].ToString();
+                userinfoModel.UserEmail = _cookie["UserEmail"].ToString();
+                userinfoModel.ContactName = HttpUtility.UrlDecode(_cookie["UserContactName"]);//转码
+                userinfoModel.ContactTel = _cookie["UserContactTel"].ToString();
+
+                //如果缺少信息，则提示更新信息
+                UpdateInfo(userinfoModel);
+
                 label_teacherName.InnerText = HttpUtility.UrlDecode(_cookie["UserTeacher"]);
                 label_Year.InnerText = _cookie["UserYear"].ToString();
             }
@@ -68,6 +79,8 @@ namespace qingjia_YiBan.HomePage
                 cookie.Values.Add("UserClass", HttpUtility.UrlEncode(userInfo.UserClass.ToString().Trim()));
                 cookie.Values.Add("UserYear", userInfo.UserYear.ToString().Trim());
                 cookie.Values.Add("UserTel", userInfo.UserTel.ToString().Trim());
+                cookie.Values.Add("UserQQ", userInfo.UserQQ.ToString().Trim());
+                cookie.Values.Add("UserEmail", userInfo.UserEmail.ToString().Trim());
                 cookie.Values.Add("UserTeacher", HttpUtility.UrlEncode(userInfo.UserTeacherName.ToString().Trim()));
                 cookie.Values.Add("UserTeacherID", userInfo.UserTeacherID.ToString().Trim());
                 cookie.Values.Add("UserContactName", HttpUtility.UrlEncode(userInfo.ContactName.ToString().Trim()));
@@ -194,17 +207,17 @@ namespace qingjia_YiBan.HomePage
 
                     if (end_time_holiday < DateTime.Now)//小于当前是见表示尚可请假
                     {
-                        vacation_end_time.Value = "已过请假时间！";
+                        vacation_end_time.InnerText = "已过请假时间！";
                     }
                     else
                     {
                         Default_Vacation.Visible = true;
-                        vacation_end_time.Value = end_time_holiday.ToString("yyyy/MM/dd HH:mm");
+                        vacation_end_time.InnerText = end_time_holiday.ToString("yyyy/MM/dd HH:mm");
                     }
                 }
                 else
                 {
-                    vacation_end_time.Value = "未设置";
+                    vacation_end_time.InnerText = "未设置";
                 }
             }
             else
@@ -235,22 +248,22 @@ namespace qingjia_YiBan.HomePage
 
                         if (end_time_holiday < DateTime.Now)//小于当前是见表示尚可请假
                         {
-                            vacation_end_time.Value = "已过请假时间！";
+                            vacation_end_time.InnerText = "已过请假时间！";
                         }
                         else
                         {
                             Default_Vacation.Visible = true;
-                            vacation_end_time.Value = end_time_holiday.ToString("yyyy/MM/dd HH:mm");
+                            vacation_end_time.InnerText = end_time_holiday.ToString("yyyy/MM/dd HH:mm");
                         }
                     }
                     else
                     {
-                        vacation_end_time.Value = "未设置";
+                        vacation_end_time.InnerText = "未设置";
                     }
                 }
                 else
                 {
-                    vacation_end_time.Value = "获取数据失败！";
+                    vacation_end_time.InnerText = "获取数据失败！";
                 }
             }
             #endregion
@@ -259,7 +272,7 @@ namespace qingjia_YiBan.HomePage
         //完善个人信息
         private void UpdateInfo(UserInfo userInfo)
         {
-            if (userInfo.ContactName == "" || userInfo.ContactTel == "")
+            if (userInfo.UserTel == "" || userInfo.UserQQ == "" || userInfo.UserEmail == "" || userInfo.ContactName == "" || userInfo.ContactTel == "")
             {
                 Response.Redirect("./SubPage/info_detail.aspx");
             }

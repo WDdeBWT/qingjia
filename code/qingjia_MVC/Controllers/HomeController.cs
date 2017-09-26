@@ -123,88 +123,117 @@ namespace qingjia_MVC.Controllers
         {
             string teacherid = "";
 
-            if (Session["RoleID"].ToString() == "3")//辅导员
+            try
             {
-                teacherid = Session["UserID"].ToString();
-                T_Teacher teacher = db.T_Teacher.Find(teacherid);
-                string teacher_name = teacher.Name.ToString();
-                string teacher_grade = teacher.Grade.ToString() + "级";
-                ViewBag.lblTName = teacher_name.ToString();
-                ViewBag.lblTGrade = teacher_grade.ToString();
-            }
-            else if (Session["RoleID"].ToString() == "1")//学生
-            {
-                string ST_Num = Session["UserID"].ToString();
-                //teacherid = (from vw_Student in db.vw_Student where (vw_Student.ST_Num == Session["UserID"].ToString()) select vw_Student.ST_TeacherID).ToList().First().ToString();
-                var student = from vw_Student in db.vw_Student where vw_Student.ST_Num == ST_Num select vw_Student;
-                teacherid = student.ToList().First().ST_TeacherID.ToString();
-                T_Teacher teacher = db.T_Teacher.Find(teacherid);
-                string teacher_name = teacher.Name.ToString();
-                string teacher_grade = teacher.Grade.ToString() + "级";
-                ViewBag.lblTName = teacher_name.ToString();
-                ViewBag.lblTGrade = teacher_grade.ToString();
-            }
-
-            for (int i = 1; i <= 3; i++)
-            {
-                var classes = from c in db.vw_ClassBatch
-                              where c.TeacherID == teacherid && c.Batch == i
-                              select c;
-                StringBuilder str_class = new StringBuilder();
-                string time;
-                if (classes.Count() > 0)
+                if (Session["RoleID"].ToString() == "3")//辅导员
                 {
+                    teacherid = Session["UserID"].ToString();
+                    T_Teacher teacher = db.T_Teacher.Find(teacherid);
+                    string teacher_name = teacher.Name.ToString();
+                    string teacher_grade = teacher.Grade.ToString() + "级";
+                    ViewBag.lblTName = teacher_name.ToString();
+                    ViewBag.lblTGrade = teacher_grade.ToString();
+                }
+                else if (Session["RoleID"].ToString() == "1")//学生
+                {
+                    string ST_Num = Session["UserID"].ToString();
+                    var student = from vw_Student in db.vw_Student where vw_Student.ST_Num == ST_Num select vw_Student;
+                    teacherid = student.ToList().First().ST_TeacherID.ToString();
+                    T_Teacher teacher = db.T_Teacher.Find(teacherid);
+                    string teacher_name = teacher.Name.ToString();
+                    string teacher_grade = teacher.Grade.ToString() + "级";
+                    ViewBag.lblTName = teacher_name.ToString();
+                    ViewBag.lblTGrade = teacher_grade.ToString();
+                }
+            }
+            catch
+            {
+                ViewBag.lblTName = "未设定";
+                ViewBag.lblTGrade = "未设定";
+            }
 
-                    foreach (var item in classes)
+            if (teacherid != "")
+            {
+                ViewBag.IsTeacherIDExist = "1";
+                try
+                {
+                    for (int i = 1; i <= 3; i++)
                     {
-                        str_class.Append(item.ClassName.ToString());
-                        str_class.Append("；");
+                        var classes = from c in db.vw_ClassBatch
+                                      where c.TeacherID == teacherid && c.Batch == i
+                                      select c;
+                        StringBuilder str_class = new StringBuilder();
+                        string time;
+                        if (classes.Count() > 0)
+                        {
+
+                            foreach (var item in classes)
+                            {
+                                str_class.Append(item.ClassName.ToString());
+                                str_class.Append("；");
+                            }
+                            time = classes.First().Datetime.ToString();
+                        }
+                        else
+                        {
+                            str_class.Append("无");
+                            time = "无";
+                        }
+                        switch (i)
+                        {
+                            case 1:
+                                {
+                                    ViewBag.lblTimeFirst = time;
+                                    ViewBag.lblClassFirst = str_class.ToString();
+                                    break;
+                                }
+                            case 2:
+                                {
+                                    ViewBag.lblTimeSecond = time;
+                                    ViewBag.lblClassSecond = str_class.ToString();
+                                    break;
+                                }
+                            case 3:
+                                {
+                                    ViewBag.lblTimeThird = time;
+                                    ViewBag.lblClassThird = str_class.ToString();
+                                    break;
+                                }
+                            default:
+                                break;
+                        }
                     }
-                    time = classes.First().Datetime.ToString();
-                }
-                else
-                {
-                    str_class.Append("无");
-                    time = "无";
-                }
-                switch (i)
-                {
-                    case 1:
-                        {
-                            ViewBag.lblTimeFirst = time;
-                            ViewBag.lblClassFirst = str_class.ToString();
-                            break;
-                        }
-                    case 2:
-                        {
-                            ViewBag.lblTimeSecond = time;
-                            ViewBag.lblClassSecond = str_class.ToString();
-                            break;
-                        }
-                    case 3:
-                        {
-                            ViewBag.lblTimeThird = time;
-                            ViewBag.lblClassThird = str_class.ToString();
-                            break;
-                        }
-                    default:
-                        break;
-                }
 
+                    string deadline_time = "辅导员尚未设定";
+
+                    //此处TypeID = 2 代表晚点名请假截止时间、TypeID = 1 代表节假日请假截止时间
+                    var deadline = from d in db.T_Deadline
+                                   where d.TeacherID == teacherid && d.TypeID == 2
+                                   select d.Time;
+                    if (deadline.Count() > 0)
+                    {
+                        deadline_time = deadline.First().ToString();
+                    }
+
+                    ViewBag.lblDeadlineNight = deadline_time;
+
+                }
+                catch
+                {
+                    ViewBag.lblTimeFirst = "未设定晚点名批次";
+                    ViewBag.lblClassFirst = "未设定晚点名时间";
+                    ViewBag.lblTimeSecond = "未设定晚点名批次";
+                    ViewBag.lblClassSecond = "未设定晚点名时间";
+                    ViewBag.lblTimeThird = "未设定晚点名批次";
+                    ViewBag.lblClassThird = "未设定晚点名时间";
+                    ViewBag.lblDeadlineNight = "未设定截止时间";
+                }
             }
-
-            string deadline_time = "";
-
-            //此处TypeID = 2 代表晚点名请假截止时间、TypeID = 1 代表节假日请假截止时间
-            var deadline = from d in db.T_Deadline
-                           where d.TeacherID == teacherid && d.TypeID == 2
-                           select d.Time;
-            if (deadline.Count() > 0)
+            else
             {
-                deadline_time = deadline.First().ToString();
+                //学生端口   尚未绑定辅导员
+                ViewBag.IsTeacherIDExist = "0";
             }
-
-            ViewBag.lblDeadlineNight = deadline_time;
         }
 
         // GET: Default_ST

@@ -78,14 +78,15 @@
             <div class="weui-cell">
                 <div class="weui-cell__hd"><label class="weui-label1">请假截止时间</label></div>
                 <div class="weui-cell__bd">
-                    <input class="weui-input" disabled="disabled" id="vacation_end_time" runat="server" type="text" style="color:rgb(169,169,169);" />
+                    <%--<input class="weui-input" disabled="disabled" id="vacation_end_time" runat="server" type="text" style="color:rgb(169,169,169);" />--%>
+                    <label class ="weui-label1" id="vacation_end_time" runat="server" style="color:rgb(169,169,169);"></label>
                 </div>
             </div>    
             </div>
         </div>
 
         <div id="Default_Version">
-            <div class="weui-cells__title" style="text-align:right; font-size:15px; font-family:宋体; color:rgb(169,169,169);">V.170905</div>
+            <div class="weui-cells__title" style="text-align:right; font-size:15px; font-family:宋体; color:rgb(169,169,169);">V.170924</div>
         </div>
 
         </div>

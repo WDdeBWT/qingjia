@@ -63,19 +63,48 @@ namespace qingjia_YiBan.SubPage
 
             if (Check())
             {
-                string ST_Tel = txtTel.Value;
-                string ST_QQ = txtQQ.Value;
+                string ST_Tel = txtTel.Value.ToString().Trim();
+                string ST_QQ = txtQQ.Value.ToString().Trim();
+                string ST_Email = txtEmail.Value.ToString().Trim();
                 string Guardian = txtGuardianName.Value.ToString().Trim();
                 string ST_Guardian = Guardian.Substring(0, 2);
                 string ST_GuardianName = Guardian.Substring(3, Guardian.Length - 3);
-                string ST_GuardianTel = txtGuardianNum.Value;
+                string ST_GuardianTel = txtGuardianNum.Value.ToString().Trim();
 
                 Client<string> client = new Client<string>();
-                string _postString = String.Format("access_token={0}&ST_Tel={1}&ST_QQ={2}&ST_Guardian={3}&ST_GuardianName={4}&ST_GuardianTel={5}", access_token, ST_Tel, ST_QQ, ST_Guardian, ST_GuardianName, ST_GuardianTel);
+                string _postString = String.Format("access_token={0}&ST_Tel={1}&ST_QQ={2}&ST_Guardian={3}&ST_GuardianName={4}&ST_GuardianTel={5}&ST_Email={6}", access_token, ST_Tel, ST_QQ, ST_Guardian, ST_GuardianName, ST_GuardianTel, ST_Email);
                 ApiResult<string> result = client.PostRequest(_postString, "/api/student/changeinfo");
 
                 if (result.result == "success")
                 {
+                    Client<UserInfo> user_client = new Client<UserInfo>();
+                    ApiResult<UserInfo> user_result = user_client.GetRequest("access_token=" + access_token, "/api/student/me");
+
+                    if (user_result.result == "error" || user_result.data == null)
+                    {
+                        //出现错误，获取信息失败，跳转到错误界面 尚未完成
+                        Response.Redirect("../Error.aspx");
+                        return;
+                    }
+
+                    UserInfo userInfo = user_result.data;
+
+                    HttpCookie cookie = new HttpCookie("UserInfo");
+                    cookie.Values.Add("UserID", userInfo.UserID.ToString().Trim());
+                    cookie.Values.Add("UserName", HttpUtility.UrlEncode(userInfo.UserName.ToString().Trim()));
+                    cookie.Values.Add("UserClass", HttpUtility.UrlEncode(userInfo.UserClass.ToString().Trim()));
+                    cookie.Values.Add("UserYear", userInfo.UserYear.ToString().Trim());
+                    cookie.Values.Add("UserTel", userInfo.UserTel.ToString().Trim());
+                    cookie.Values.Add("UserQQ", userInfo.UserQQ.ToString().Trim());
+                    cookie.Values.Add("UserEmail", userInfo.UserEmail.ToString().Trim());
+                    cookie.Values.Add("UserTeacher", HttpUtility.UrlEncode(userInfo.UserTeacherName.ToString().Trim()));
+                    cookie.Values.Add("UserTeacherID", userInfo.UserTeacherID.ToString().Trim());
+                    cookie.Values.Add("UserContactName", HttpUtility.UrlEncode(userInfo.ContactName.ToString().Trim()));
+                    cookie.Values.Add("UserContactTel", userInfo.ContactTel.ToString().Trim());
+                    cookie.Values.Add("IsFreshman", userInfo.IsFreshman.ToString().Trim());
+                    cookie.Expires = DateTime.Now.AddMinutes(20);
+                    HttpContext.Current.Response.Cookies.Add(cookie);
+
                     Response.Redirect("info_succeed.aspx");
                 }
                 else
