@@ -148,44 +148,6 @@
                 .Items(
                     F.Label()
                 ),
-             //F.FormRow()
-             //    .Items(
-             //        F.DatePicker()
-             //            .Required(true)
-             //            .EnableEdit(false)
-             //            .Label("离校日期")
-             //            .EmptyText("请选择离校日期")
-             //            .ID("leaveDate")
-             //            .ShowRedStar(true),
-             //        F.TimePicker()
-             //            .ID("leaveTime")
-             //            .ShowRedStar(true)
-             //            .EnableEdit(false)
-             //            .Increment(30)
-             //            .MinTimeText("00:00")
-             //            .MaxTimeText("23:30")
-             //            .Required(true)
-             //            .EmptyText("请选择离校时间")
-             //    ),
-             //F.FormRow()
-             //    .Items(
-             //        F.DatePicker()
-             //            .Required(true)
-             //            .EnableEdit(false)
-             //            .Label("返校日期")
-             //            .EmptyText("请选择返校日期")
-             //            .ID("backDate")
-             //            .ShowRedStar(true),
-             //        F.TimePicker()
-             //            .ID("backTime")
-             //            .ShowRedStar(true)
-             //            .EnableEdit(false)
-             //            .Increment(30)
-             //            .MinTimeText("00:00")
-             //            .MaxTimeText("23:30")
-             //            .Required(true)
-             //            .EmptyText("请选择返校时间")
-             //    ),
              F.FormRow()
                 .Items(
                     F.DatePicker()
@@ -280,6 +242,13 @@
                 .Items(
                     F.Label()
                         .Text("上述三项证明材料，实习单位证明和家属同意证明为必须提交项，任课老师同意书，如请假期间没有相应课程或处于假期，可以不提交")
+                        .Label("Note")
+                        .ID("Note")
+                ),
+             F.FormRow()
+                .Items(
+                    F.Label()
+                        .Text("图片较大时，上传会比较慢，请耐心等待；建议先适当压缩图片后再进行上传")
                         .Label("Note")
                         .ID("Note")
                 )

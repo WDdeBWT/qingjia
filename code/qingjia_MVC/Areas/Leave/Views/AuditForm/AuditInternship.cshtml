@@ -78,6 +78,9 @@
                 var url1 = response.Evidence1.substr(1);
                 var url2 = response.Evidence2.substr(1);
                 var url3 = response.Evidence3.substr(1);
+                var thumbnailUrl1 = "/media/upload/internship/thumbnail/" + response.Evidence1.substr(26);
+                var thumbnailUrl2 = "/media/upload/internship/thumbnail/" + response.Evidence2.substr(26);
+                var thumbnailUrl3 = "/media/upload/internship/thumbnail/" + response.Evidence3.substr(26);
                 $("#ST_Num").html(response.StudentID);
                 $("#ST_Name").html(response.ST_Name);
                 $("#ST_Class").html(response.ST_Class);
@@ -90,12 +93,12 @@
                 $("#Note").html(response.Note);
                 $("#leaveDate").html(response.TimeLeave);
                 $("#backDate").html(response.TimeBack);
-                $("#img1").attr('src', url1);
+                $("#img1").attr('src', thumbnailUrl1);
                 $("#a1").attr("href", url1);
-                $("#img2").attr('src', url2);
+                $("#img2").attr('src', thumbnailUrl2);
                 $("#a2").attr("href", url2);
                 if (response.Evidence3 != "") {
-                    $("#img3").attr('src', url3);
+                    $("#img3").attr('src', thumbnailUrl3);
                     $("#a3").attr("href", url3);
                 }
                 else {
@@ -192,6 +195,7 @@
             <td>任课老师同意书(非必填)</td>
         </tr>
     </table>
+    <p>若上面的缩略图未加载成功，请刷新页面。点击缩略图，可以查看高清原图（原图加载较慢，请耐心等候）</p>
 </div>
 
     @(F.Panel()
