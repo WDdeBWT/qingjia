@@ -11,6 +11,9 @@ using qingjia_MVC.Content;
 using System.Data.Entity.Validation;
 using System.Data;
 using Newtonsoft.Json.Linq;
+using System.Drawing.Imaging;
+using System.Drawing;
+using System.Drawing.Drawing2D;
 
 namespace qingjia_MVC.Areas.Leave.Controllers
 {
@@ -811,10 +814,13 @@ namespace qingjia_MVC.Areas.Leave.Controllers
                     fileName = fileName.Substring(fileName.LastIndexOf(".") + 1, (fileName.Length - fileName.LastIndexOf(".") - 1)); //扩展名
                     fileName = DateTime.Now.ToString() + "_" + Session["UserID"].ToString() + "_" + "pic1." + fileName;
                     fileName = fileName.Replace(":", "").Replace(" ", "").Replace("\\", "_").Replace("/", "_");
-
+                    
                     filePhoto1.SaveAs(Server.MapPath(@"~\media\upload\internship\" + fileName));//此处的路径为保存在磁盘的路径，要用双反斜杠（避免转义,或者把@放在双引号前）
 
-                    UIHelper.Image("imgPhoto1").ImageUrl("~/media/upload/internship/" + fileName);//此处的路径因为是url，所以要用单正斜杠
+                    //生成缩略图并保存
+                    GetPicThumbnail(Server.MapPath(@"~\media\upload\internship\" + fileName), Server.MapPath(@"~\media\upload\internship\thumbnail\" + fileName), 1200, 1200, 50);
+
+                    UIHelper.Image("imgPhoto1").ImageUrl("~/media/upload/internship/thumbnail/" + fileName);//此处的路径因为是url，所以要用单正斜杠
                     UIHelper.TextBox("imgUrl1").Text("~/media/upload/internship/" + fileName);//将url路径保存至隐藏的空间中，方便提交时提取
 
                     // 清空文件上传组件（上传后要记着清空，否则点击提交表单时会再次上传！！）
@@ -847,7 +853,10 @@ namespace qingjia_MVC.Areas.Leave.Controllers
 
                     filePhoto2.SaveAs(Server.MapPath(@"~\media\upload\internship\" + fileName));//此处的路径为保存在磁盘的路径，要用双反斜杠（避免转义,或者把@放在双引号前）
 
-                    UIHelper.Image("imgPhoto2").ImageUrl("~/media/upload/internship/" + fileName);//此处的路径因为是url，所以要用单正斜杠
+                    //生成缩略图并保存
+                    GetPicThumbnail(Server.MapPath(@"~\media\upload\internship\" + fileName), Server.MapPath(@"~\media\upload\internship\thumbnail\" + fileName), 1200, 1200, 50);
+
+                    UIHelper.Image("imgPhoto2").ImageUrl("~/media/upload/internship/thumbnail/" + fileName);//此处的路径因为是url，所以要用单正斜杠
                     UIHelper.TextBox("imgUrl2").Text("~/media/upload/internship/" + fileName);//将url路径保存至隐藏的空间中，方便提交时提取
 
                     // 清空文件上传组件（上传后要记着清空，否则点击提交表单时会再次上传！！）
@@ -892,7 +901,10 @@ namespace qingjia_MVC.Areas.Leave.Controllers
 
                     filePhoto3.SaveAs(Server.MapPath(@"~\media\upload\internship\" + fileName));//此处的路径为保存在磁盘的路径，要用双反斜杠（避免转义,或者把@放在双引号前）
 
-                    UIHelper.Image("imgPhoto3").ImageUrl("~/media/upload/internship/" + fileName);//此处的路径因为是url，所以要用单正斜杠
+                    //生成缩略图并保存
+                    GetPicThumbnail(Server.MapPath(@"~\media\upload\internship\" + fileName), Server.MapPath(@"~\media\upload\internship\thumbnail\" + fileName), 1200, 1200, 50);
+
+                    UIHelper.Image("imgPhoto3").ImageUrl("~/media/upload/internship/thumbnail/" + fileName);//此处的路径因为是url，所以要用单正斜杠
                     UIHelper.TextBox("imgUrl3").Text("~/media/upload/internship/" + fileName);//将url路径保存至隐藏的空间中，方便提交时提取
 
                     // 清空文件上传组件（上传后要记着清空，否则点击提交表单时会再次上传！！）
@@ -991,6 +1003,114 @@ namespace qingjia_MVC.Areas.Leave.Controllers
                 }
             }
             return UIHelper.Result();
+        }
+
+        //GET:Leave/LeaveList/leaveinternshiplist 获取实习请假记录
+        public ActionResult leaveinternshiplist()
+        {
+            ViewBag.listTable = Get_LIL_DataTable();
+            return View();
+        }
+
+        /// <summary>
+        /// 获取实习请假记录
+        /// </summary>
+        /// <param name="LL_ID">请假单号</param>
+        /// <returns></returns>
+        public DataTable Get_LIL_DataTable()
+        {
+            string roleId = Session["RoleID"].ToString();
+            string grade;
+            DataTable dtSource = new DataTable();
+            //此处将list转为DataTable FineUI的Grid绑定时间类型数据时会发生错误，尚未找到原因。
+            //解决办法：将list转为DataTable绑定到Grid，并且将DataTable中值类型为DateTime的列转为字符串类型
+            if (roleId == "3")
+            {
+                grade = Session["Grade"].ToString();
+                var internshiplist = from vw_LeaveIntership in db.vw_LeaveIntership where (vw_LeaveIntership.ST_Grade == grade) orderby vw_LeaveIntership.ID descending select vw_LeaveIntership;
+                //List 转换为 DataTable
+                dtSource = internshiplist.ToDataTable(rec => new object[] { internshiplist });
+            }
+            else if (roleId == "1")
+            {
+                string userId = Session["UserID"].ToString();
+                var internshiplist = from vw_LeaveIntership in db.vw_LeaveIntership where (vw_LeaveIntership.StudentID == userId) orderby vw_LeaveIntership.ID descending select vw_LeaveIntership;
+                //List 转换为 DataTable
+                dtSource = internshiplist.ToDataTable(rec => new object[] { internshiplist });
+            }
+            else
+            {
+                return null;
+            }
+            #region 更改DataTable中某一列的属性
+            DataTable dtClone = new DataTable();
+            dtClone = dtSource.Clone();
+            foreach (DataColumn col in dtClone.Columns)
+            {
+                if (col.ColumnName == "SubmitTime" || col.ColumnName == "TimeLeave" || col.ColumnName == "TimeBack")
+                {
+                    col.DataType = typeof(string);
+                }
+            }
+
+            DataColumn newCol = new DataColumn();
+            newCol.ColumnName = "auditState";
+            newCol.DataType = typeof(string);
+            dtClone.Columns.Add(newCol);
+
+            foreach (DataRow row in dtSource.Rows)
+            {
+                DataRow rowNew = dtClone.NewRow();
+                rowNew["ID"] = row["ID"];
+                rowNew["StudentID"] = row["StudentID"];
+                rowNew["SubmitTime"] = ((DateTime)row["SubmitTime"]).ToString("yyyy-MM-dd HH:mm:ss");//按指定格式输出
+                rowNew["StateLeave"] = row["StateLeave"];
+                rowNew["StateBack"] = row["StateBack"];
+                rowNew["TimeLeave"] = ((DateTime)row["TimeLeave"]).ToString("yyyy-MM-dd HH:mm:ss").Substring(0, 10);
+                rowNew["TimeBack"] = ((DateTime)row["TimeBack"]).ToString("yyyy-MM-dd HH:mm:ss").Substring(0, 10);
+                rowNew["IntershipCompany"] = row["IntershipCompany"];
+                rowNew["IntershipAddress"] = row["IntershipAddress"];
+                rowNew["PrincipalName"] = row["PrincipalName"];
+                rowNew["PrincipalTel"] = row["PrincipalTel"];
+                rowNew["Note"] = row["Note"];
+                rowNew["Evidence1"] = row["Evidence1"];
+                rowNew["Evidence2"] = row["Evidence2"];
+                rowNew["Evidence3"] = row["Evidence3"];
+                rowNew["ST_Name"] = row["ST_Name"];
+                rowNew["ST_Tel"] = row["ST_Tel"];
+                rowNew["ContactOne"] = row["ContactOne"];
+                rowNew["OneTel"] = row["OneTel"];
+                rowNew["ST_Sex"] = row["ST_Sex"];
+                rowNew["ST_Dor"] = row["ST_Dor"];
+                rowNew["ST_Class"] = row["ST_Class"];
+                rowNew["ST_Grade"] = row["ST_Grade"];
+                rowNew["ST_Teacher"] = row["ST_Teacher"];
+                rowNew["ST_TeacherID"] = row["ST_TeacherID"];
+
+                //审核状态属性
+                rowNew["auditState"] = "Error";
+                if (row["StateLeave"].ToString() == "0" && row["StateBack"].ToString() == "0")
+                {
+                    rowNew["auditState"] = "待审核";
+                }
+                if (row["StateLeave"].ToString() == "1" && row["StateBack"].ToString() == "0")
+                {
+                    rowNew["auditState"] = "待销假";
+                }
+                if (row["StateLeave"].ToString() == "1" && row["StateBack"].ToString() == "1")
+                {
+                    rowNew["auditState"] = "已销假";
+                }
+                if (row["StateLeave"].ToString() == "2" && row["StateBack"].ToString() == "1")
+                {
+                    rowNew["auditState"] = "已驳回";
+                }
+
+                dtClone.Rows.Add(rowNew);
+            }
+            #endregion
+
+            return dtClone;
         }
 
         #endregion
@@ -1746,6 +1866,91 @@ namespace qingjia_MVC.Areas.Leave.Controllers
         }
         #endregion
         #endregion
+
+        /// 无损压缩图片    
+        /// <param name="sFile">原图片</param>    
+        /// <param name="dFile">压缩后保存位置</param>    
+        /// <param name="dHeight">高度</param>    
+        /// <param name="dWidth"></param>    
+        /// <param name="flag">压缩质量(数字越小压缩率越高) 1-100</param>    
+        /// <returns></returns>
+        public static bool GetPicThumbnail(string sFile, string dFile, int dHeight, int dWidth, int flag)
+        {
+            System.Drawing.Image iSource = System.Drawing.Image.FromFile(sFile);
+            ImageFormat tFormat = iSource.RawFormat;
+            int sW = 0, sH = 0;
+
+            //按比例缩放  
+            Size tem_size = new Size(iSource.Width, iSource.Height);
+
+            if (tem_size.Width > dHeight || tem_size.Width > dWidth)
+            {
+                if ((tem_size.Width * dHeight) > (tem_size.Width * dWidth))
+                {
+                    sW = dWidth;
+                    sH = (dWidth * tem_size.Height) / tem_size.Width;
+                }
+                else
+                {
+                    sH = dHeight;
+                    sW = (tem_size.Width * dHeight) / tem_size.Height;
+                }
+            }
+            else
+            {
+                sW = tem_size.Width;
+                sH = tem_size.Height;
+            }
+
+            Bitmap ob = new Bitmap(dWidth, dHeight);
+            Graphics g = Graphics.FromImage(ob);
+
+            g.Clear(Color.WhiteSmoke);
+            g.CompositingQuality = CompositingQuality.HighQuality;
+            g.SmoothingMode = SmoothingMode.HighQuality;
+            g.InterpolationMode = InterpolationMode.HighQualityBicubic;
+
+            g.DrawImage(iSource, new Rectangle((dWidth - sW) / 2, (dHeight - sH) / 2, sW, sH), 0, 0, iSource.Width, iSource.Height, GraphicsUnit.Pixel);
+
+            g.Dispose();
+            //以下代码为保存图片时，设置压缩质量    
+            EncoderParameters ep = new EncoderParameters();
+            long[] qy = new long[1];
+            qy[0] = flag;//设置压缩的比例1-100    
+            EncoderParameter eParam = new EncoderParameter(System.Drawing.Imaging.Encoder.Quality, qy);
+            ep.Param[0] = eParam;
+            try
+            {
+                ImageCodecInfo[] arrayICI = ImageCodecInfo.GetImageEncoders();
+                ImageCodecInfo jpegICIinfo = null;
+                for (int x = 0; x < arrayICI.Length; x++)
+                {
+                    if (arrayICI[x].FormatDescription.Equals("JPEG"))
+                    {
+                        jpegICIinfo = arrayICI[x];
+                        break;
+                    }
+                }
+                if (jpegICIinfo != null)
+                {
+                    ob.Save(dFile, jpegICIinfo, ep);//dFile是压缩后的新路径    
+                }
+                else
+                {
+                    ob.Save(dFile, tFormat);
+                }
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+            finally
+            {
+                iSource.Dispose();
+                ob.Dispose();
+            }
+        }
 
     }
 }

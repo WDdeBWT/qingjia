@@ -290,6 +290,51 @@
     <Property Name="Location" Type="varchar" MaxLength="50" />
   </EntityType>
   <!--生成过程中发现错误:
+警告 6002: 表/视图“imaw_qingjia.dbo.vw_LeaveIntership”未定义主键。已推断出该键，并将定义创建为只读的表/视图。-->
+  <EntityType Name="vw_LeaveIntership">
+    <Key>
+      <PropertyRef Name="ID" />
+      <PropertyRef Name="StudentID" />
+      <PropertyRef Name="SubmitTime" />
+      <PropertyRef Name="TimeLeave" />
+      <PropertyRef Name="TimeBack" />
+      <PropertyRef Name="IntershipCompany" />
+      <PropertyRef Name="IntershipAddress" />
+      <PropertyRef Name="PrincipalName" />
+      <PropertyRef Name="PrincipalTel" />
+      <PropertyRef Name="ST_Name" />
+      <PropertyRef Name="ST_Tel" />
+      <PropertyRef Name="ContactOne" />
+      <PropertyRef Name="OneTel" />
+      <PropertyRef Name="ST_Class" />
+    </Key>
+    <Property Name="ID" Type="varchar" MaxLength="50" Nullable="false" />
+    <Property Name="StudentID" Type="varchar" MaxLength="50" Nullable="false" />
+    <Property Name="SubmitTime" Type="datetime" Nullable="false" />
+    <Property Name="StateLeave" Type="char" MaxLength="1" />
+    <Property Name="StateBack" Type="char" MaxLength="1" />
+    <Property Name="TimeLeave" Type="datetime" Nullable="false" />
+    <Property Name="TimeBack" Type="datetime" Nullable="false" />
+    <Property Name="IntershipCompany" Type="nvarchar" MaxLength="256" Nullable="false" />
+    <Property Name="IntershipAddress" Type="nvarchar" MaxLength="256" Nullable="false" />
+    <Property Name="PrincipalName" Type="nvarchar" MaxLength="50" Nullable="false" />
+    <Property Name="PrincipalTel" Type="nvarchar" MaxLength="50" Nullable="false" />
+    <Property Name="Note" Type="nvarchar" MaxLength="256" />
+    <Property Name="Evidence1" Type="varchar" MaxLength="256" />
+    <Property Name="Evidence2" Type="varchar" MaxLength="256" />
+    <Property Name="Evidence3" Type="varchar" MaxLength="256" />
+    <Property Name="ST_Name" Type="nvarchar" MaxLength="64" Nullable="false" />
+    <Property Name="ST_Tel" Type="varchar" MaxLength="64" Nullable="false" />
+    <Property Name="ContactOne" Type="nvarchar" MaxLength="64" Nullable="false" />
+    <Property Name="OneTel" Type="varchar" MaxLength="64" Nullable="false" />
+    <Property Name="ST_Sex" Type="nchar" MaxLength="10" />
+    <Property Name="ST_Dor" Type="nchar" MaxLength="10" />
+    <Property Name="ST_Class" Type="varchar" MaxLength="64" Nullable="false" />
+    <Property Name="ST_Grade" Type="nchar" MaxLength="10" />
+    <Property Name="ST_Teacher" Type="nvarchar" MaxLength="64" />
+    <Property Name="ST_TeacherID" Type="varchar" MaxLength="64" />
+  </EntityType>
+  <!--生成过程中发现错误:
 警告 6002: 表/视图“imaw_qingjia.dbo.vw_LeaveList”未定义主键。已推断出该键，并将定义创建为只读的表/视图。-->
   <EntityType Name="vw_LeaveList">
     <Key>
@@ -448,6 +493,35 @@
     [vw_ClassBatch].[TeacherID] AS [TeacherID], 
     [vw_ClassBatch].[Location] AS [Location]
     FROM [dbo].[vw_ClassBatch] AS [vw_ClassBatch]</DefiningQuery>
+    </EntitySet>
+    <EntitySet Name="vw_LeaveIntership" EntityType="Self.vw_LeaveIntership" store:Type="Views" store:Schema="dbo">
+      <DefiningQuery>SELECT 
+    [vw_LeaveIntership].[ID] AS [ID], 
+    [vw_LeaveIntership].[StudentID] AS [StudentID], 
+    [vw_LeaveIntership].[SubmitTime] AS [SubmitTime], 
+    [vw_LeaveIntership].[StateLeave] AS [StateLeave], 
+    [vw_LeaveIntership].[StateBack] AS [StateBack], 
+    [vw_LeaveIntership].[TimeLeave] AS [TimeLeave], 
+    [vw_LeaveIntership].[TimeBack] AS [TimeBack], 
+    [vw_LeaveIntership].[IntershipCompany] AS [IntershipCompany], 
+    [vw_LeaveIntership].[IntershipAddress] AS [IntershipAddress], 
+    [vw_LeaveIntership].[PrincipalName] AS [PrincipalName], 
+    [vw_LeaveIntership].[PrincipalTel] AS [PrincipalTel], 
+    [vw_LeaveIntership].[Note] AS [Note], 
+    [vw_LeaveIntership].[Evidence1] AS [Evidence1], 
+    [vw_LeaveIntership].[Evidence2] AS [Evidence2], 
+    [vw_LeaveIntership].[Evidence3] AS [Evidence3], 
+    [vw_LeaveIntership].[ST_Name] AS [ST_Name], 
+    [vw_LeaveIntership].[ST_Tel] AS [ST_Tel], 
+    [vw_LeaveIntership].[ContactOne] AS [ContactOne], 
+    [vw_LeaveIntership].[OneTel] AS [OneTel], 
+    [vw_LeaveIntership].[ST_Sex] AS [ST_Sex], 
+    [vw_LeaveIntership].[ST_Dor] AS [ST_Dor], 
+    [vw_LeaveIntership].[ST_Class] AS [ST_Class], 
+    [vw_LeaveIntership].[ST_Grade] AS [ST_Grade], 
+    [vw_LeaveIntership].[ST_Teacher] AS [ST_Teacher], 
+    [vw_LeaveIntership].[ST_TeacherID] AS [ST_TeacherID]
+    FROM [dbo].[vw_LeaveIntership] AS [vw_LeaveIntership]</DefiningQuery>
     </EntitySet>
     <EntitySet Name="vw_LeaveList" EntityType="Self.vw_LeaveList" store:Type="Views" store:Schema="dbo">
       <DefiningQuery>SELECT 

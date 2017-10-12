@@ -4,7 +4,7 @@
   <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
-      <Diagram DiagramId="18a10779829147a387cddf0c7e6e2fa7" Name="Diagram1">
+      <Diagram DiagramId="1dd16fd7a6a649dc8300261c239359b1" Name="Diagram1">
         <EntityTypeShape EntityType="imaw_qingjiaModel.T_Account" Width="1.5" PointX="0.75" PointY="0.75" IsExpanded="true" />
         <EntityTypeShape EntityType="imaw_qingjiaModel.T_Batch" Width="1.5" PointX="2.75" PointY="0.75" IsExpanded="true" />
         <EntityTypeShape EntityType="imaw_qingjiaModel.T_BatchLeave" Width="1.5" PointX="2.75" PointY="3.75" IsExpanded="true" />
@@ -26,10 +26,11 @@
         <EntityTypeShape EntityType="imaw_qingjiaModel.T_NightNameList" Width="1.5" PointX="12.75" PointY="0.75" IsExpanded="true" />
         <EntityTypeShape EntityType="imaw_qingjiaModel.T_Role" Width="1.5" PointX="12.75" PointY="3.75" IsExpanded="true" />
         <EntityTypeShape EntityType="imaw_qingjiaModel.vw_ClassBatch" Width="1.5" PointX="12.75" PointY="6.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="imaw_qingjiaModel.vw_LeaveList" Width="1.5" PointX="8.75" PointY="12.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="imaw_qingjiaModel.vw_NightNameList" Width="1.5" PointX="12.75" PointY="9.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="imaw_qingjiaModel.vw_StudenBatch" Width="1.5" PointX="10.75" PointY="13.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="imaw_qingjiaModel.vw_Student" Width="1.5" PointX="12.75" PointY="13.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="imaw_qingjiaModel.vw_LeaveIntership" Width="1.5" PointX="8.75" PointY="12.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="imaw_qingjiaModel.vw_LeaveList" Width="1.5" PointX="12.75" PointY="9.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="imaw_qingjiaModel.vw_NightNameList" Width="1.5" PointX="14.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="imaw_qingjiaModel.vw_StudenBatch" Width="1.5" PointX="0.75" PointY="14.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="imaw_qingjiaModel.vw_Student" Width="1.5" PointX="2.75" PointY="14.75" IsExpanded="true" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

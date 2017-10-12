@@ -11,6 +11,8 @@
   <TreeNode Text="表单管理" Icon="ApplicationForm" Expanded="true">
     <TreeNode Text="请假记录" NavigateUrl="~/Leave/LeaveList/leavelist" IconFont="SignIn">
     </TreeNode>
+    <TreeNode Text="实习请假记录" NavigateUrl="~/Leave/LeaveList/leaveinternshiplist" IconFont="SignIn">
+    </TreeNode>
     <TreeNode Text="班级通讯录" NavigateUrl="~/AddressList/ClassAddress" IconFont="SignIn">
     </TreeNode>
   </TreeNode>

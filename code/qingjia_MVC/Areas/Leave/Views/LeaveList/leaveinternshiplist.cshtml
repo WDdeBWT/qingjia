@@ -1,0 +1,219 @@
+﻿@model IEnumerable<qingjia_MVC.Models.imaw_qingjiaEntities>
+@{
+    ViewBag.Title = "leaveinternshiplist";
+    var F = Html.F();
+}
+
+@section script{
+    <script src="~/res/js/grid.js"></script>
+    <script>
+    F.ready(
+        function () {
+            var grid = F.ui.gridLeaveList;
+            grid.el.on('click', 'a.action-btn', function (event) {
+                var cnode = $(this);
+                var rowE1 = $(this).closest('.f-grid-row');
+                var rowData = grid.getRowData(rowE1);
+                if (cnode.hasClass('btnDetails')) {
+                    details([rowData.id]);
+                }
+                else {
+
+                }
+            });
+        });
+
+    function details(selectedRows) {
+        //使用ajax获取详细数据
+        $.ajax({
+            url: '/Leave/AuditForm/ajax_Intership_detail?selectedRows=' + selectedRows,
+            success: function (text) {
+                console.log(text);
+                var response = JSON.parse(text);
+                var url1 = response.Evidence1.substr(1);
+                var url2 = response.Evidence2.substr(1);
+                var url3 = response.Evidence3.substr(1);
+                var thumbnailUrl1 = "/media/upload/internship/thumbnail/" + response.Evidence1.substr(26);
+                var thumbnailUrl2 = "/media/upload/internship/thumbnail/" + response.Evidence2.substr(26);
+                var thumbnailUrl3 = "/media/upload/internship/thumbnail/" + response.Evidence3.substr(26);
+                $("#ST_Num").html(response.StudentID);
+                $("#ST_Name").html(response.ST_Name);
+                $("#ST_Class").html(response.ST_Class);
+                $("#ST_Sex").html(response.ST_Sex);
+                $("#contactone").html(response.ContactOne + "-" + response.OneTel);
+                $("#IntershipCompany").html(response.IntershipCompany);
+                $("#IntershipAddress").html(response.IntershipAddress);
+                $("#PrincipalName").html(response.PrincipalName);
+                $("#PrincipalTel").html(response.PrincipalTel);
+                $("#Note").html(response.Note);
+                $("#leaveDate").html(response.TimeLeave);
+                $("#backDate").html(response.TimeBack);
+                $("#img1").attr('src', thumbnailUrl1);
+                $("#a1").attr("href", url1);
+                $("#img2").attr('src', thumbnailUrl2);
+                $("#a2").attr("href", url2);
+                if (response.Evidence3 != "") {
+                    $("#img3").attr('src', thumbnailUrl3);
+                    $("#a3").attr("href", url3);
+                }
+                else {
+                    $("#img3").attr('src', "/res/images/blank.png");
+                    $("#a3").attr("href", null);
+                }
+                F.ui.DetailWindow.setHidden(false);
+            },
+            error: function () {
+                alert("发生未知错误");
+            }
+        });
+    }
+   
+    function btnDetails(value, params) {
+        return '<a class="action-btn btnDetails" href="javascript:;">详情</a>';
+    }
+
+    </script>
+
+}
+
+@section body {
+    <div id="panelCallName">
+        <table border="0" cellpadding="15">
+            <tr>
+                <td>学号：<label id="ST_Num"></label></td>
+                <td>姓名：<label id="ST_Name"></label></td>
+            </tr>
+            <tr>
+                <td>班级：<label id="ST_Class"></label></td>
+                <td>性别：<label id="ST_Sex"></label></td>
+            </tr>
+            <tr>
+                <td>家庭联系方式：<label id="contactone"></label></td>
+            </tr>
+            <tr>
+                <td>实习单位：<label id="IntershipCompany"></label></td>
+                <td>实习地址：<label id="IntershipAddress"></label></td>
+            </tr>
+            <tr>
+                <td>联系人：<label id="PrincipalName"></label></td>
+                <td>联系方式：<label id="PrincipalTel"></label></td>
+            </tr>
+            <tr>
+                <td>离校日期：<label id="leaveDate"></label></td>
+                <td>返校日期：<label id="backDate"></label></td>
+            </tr>
+        </table>
+        <p style="padding:15px;">实习详情：<label id="Note" style="padding:5px;"></label></p>
+        <table border="0" cellpadding="15">
+            <tr>
+                <td><a id="a1" target="_blank"><img id="img1" src="~/res/images/blank.png" alt="实习单位证明材料" width="180"></a></td>
+                <td><a id="a2" target="_blank"><img id="img2" src="~/res/images/blank.png" alt="家属同意证明材料" width="180"></a></td>
+                <td><a id="a3" target="_blank"><img id="img3" src="~/res/images/blank.png" alt="任课老师同意书(非必填)" width="180"></a></td>
+            </tr>
+            <tr>
+                <td>实习单位证明材料</td>
+                <td>家属同意证明材料</td>
+                <td>任课老师同意书(非必填)</td>
+            </tr>
+        </table>
+        <p>若上面的缩略图未加载成功，请刷新页面。点击缩略图，可以查看高清原图（原图加载较慢，请耐心等候）</p>
+    </div>
+
+    @(
+        F.Panel()
+            .ID("Panel")
+            .Title("面板")
+            .BoxFlex(1)
+            .MinWidth(900)
+            .Margin(0)
+            .BodyPadding(5)
+            .ShowBorder(false)
+            .ShowHeader(false)
+            .Items(
+                F.Grid()
+                    .AllowSorting(true)
+                    .SortDirection("")
+                    .SortField("")
+                    .Title("离校列表")
+                    .ShowHeader(true)
+                    .ShowBorder(true)
+                    .ID("gridLeaveList")
+                    .EnableCheckBoxSelect(false)
+                    .AllowPaging(true)
+                    .PageSize(20)
+                    .DataIDField("ID")
+                    .Columns(
+                        F.RenderField()
+                            .HeaderText("请假单号")
+                            .DataField("ID")
+                            .SortField("ID")
+                            .TextAlign(TextAlign.Center)
+                            .Width(100),
+                        F.RenderField()
+                            .HeaderText("姓名")
+                            .DataField("ST_Name")
+                            .TextAlign(TextAlign.Center)
+                            .Width(80),
+                        F.RenderField()
+                            .HeaderText("班级")
+                            .TextAlign(TextAlign.Center)
+                            .DataField("ST_Class")
+                            .SortField("ST_Class")
+                            .Width(100),
+                        F.RenderField()
+                            .HeaderText("离校时间")
+                            .DataField("TimeLeave")
+                            .SortField("TimeLeave")
+                            .TextAlign(TextAlign.Center)
+                            .Width(120),
+                        F.RenderField()
+                            .HeaderText("返校时间")
+                            .DataField("TimeBack")
+                            .SortField("TimeBack")
+                            .TextAlign(TextAlign.Center)
+                            .Width(120),
+                        F.RenderField()
+                            .HeaderText("提交时间")
+                            .TextAlign(TextAlign.Center)
+                            .Width(160)
+                            .DataField("SubmitTime"),
+                        F.RenderField()
+                            .HeaderText("审核状态")
+                            .TextAlign(TextAlign.Center)
+                            .DataField("auditState")
+                            .Width(80),
+                        F.RenderField()
+                            .HeaderText("详情")
+                            .TextAlign(TextAlign.Center)
+                            .Width(60)
+                            .RendererFunction("btnDetails")
+                    )
+                    .DataSource(ViewBag.listTable)
+            )
+    )
+    @(
+ F.Window()
+    .Hidden(true)
+    .Height(800)
+    .Width(650)
+    .IsModal(false)
+    .Layout(LayoutType.Fit)
+    .Target(Target.Top)
+    .EnableResize(false)
+    .EnableMaximize(true)
+    .Title("实习请假详情")
+    .ID("DetailWindow")
+    .Items(
+     F.Panel()
+     .ID("Panel2")
+     .Title("面板2")
+     .BoxFlex(1)
+     .MinWidth(550)
+     .Margin(0)
+     .BodyPadding(5)
+     .ShowBorder(false)
+     .ShowHeader(false)
+     .ContentEl("#panelCallName")
+     )
+    )
+}
