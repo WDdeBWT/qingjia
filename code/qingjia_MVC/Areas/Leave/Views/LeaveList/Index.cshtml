@@ -153,7 +153,6 @@
                 }
             </script>
 
-
         }
 
         @section body{
@@ -193,9 +192,18 @@
                         <td style="text-align:right;">
                             年级：
                         </td>
-                        <td style="text-align:left;">
-                            @(studentInfo.ST_Grade.ToString().Trim())级
-                        </td>
+                        @if (studentInfo.ST_Grade == null || studentInfo.ST_Grade == "")
+                        {
+                            <td style="text-align:left;">
+                                未设定年级
+                            </td>
+                        }
+                        else
+                        {
+                            <td style = "text-align:left;">
+                                @(studentInfo.ST_Grade.ToString().Trim())级
+                            </td>
+                        }
                         <td style="text-align:right;">
                             班级：
                         </td>
@@ -207,9 +215,19 @@
                         <td style="text-align:right;">
                             辅导员：
                         </td>
-                        <td style="text-align:left;">
-                            @studentInfo.ST_Teacher.ToString().Trim()
-                        </td>
+                        @if (studentInfo.ST_Teacher == null || studentInfo.ST_Teacher == "")
+                        {
+                            <td style="text-align:left;">
+                                未设定辅导员
+                            </td>
+                        }
+                        else
+                        {
+                            <td style="text-align:left;">
+                                @studentInfo.ST_Teacher.ToString().Trim()
+                            </td>
+                        }
+                        
                         <td></td>
                         @*<td><a href="@Url.Content("~/UserInfo/UserInfo/Index")">修改个人信息</a></td>*@
                         <td><a href="javascript:changeInfo()">修改个人信息</a></td>
@@ -244,19 +262,34 @@
             <!--请假-->
             <div class="buttonGroup" style="text-align:center;">
                 <br />
-                <div>
-                    <button type="button" id="btnLeave" class="btn btn-primary btn-lg" style="width:80%; margin:10px;" onclick="AddLeave()">离校请假</button>
-                </div>
-                <div>
-                    <button type="button" id="btnSpecial" class="btn btn-success btn-lg" style="width:80%; margin:10px;" onclick="AddSpecial()">特殊请假</button>
-                </div>
-                <div>
-                    <button type="button" id="btnClass" class="btn btn-info btn-lg" style="width:80%; margin:10px;" onclick="AddClass()">上课请假备案</button>
-                </div>
+                @if (studentInfo.ST_Grade == null || studentInfo.ST_Grade == "" || studentInfo.ST_TeacherID == null || studentInfo.ST_TeacherID == "")
+                {
+                    <div>
+                        <button type="button" disabled="disabled" id="btnLeave" class="btn btn-primary btn-lg" style="width:80%; margin:10px;" onclick="AddLeave()">离校请假</button>
+                    </div>
+                    <div>
+                        <button type="button" disabled="disabled" id="btnSpecial" class="btn btn-success btn-lg" style="width:80%; margin:10px;" onclick="AddSpecial()">特殊请假</button>
+                    </div>
+                    <div>
+                        <button type="button" disabled="disabled" id="btnClass" class="btn btn-info btn-lg" style="width:80%; margin:10px;" onclick="AddClass()">上课请假备案</button>
+                    </div>
+                }
+                else
+                {
+                    <div>
+                        <button type="button" id="btnLeave" class="btn btn-primary btn-lg" style="width:80%; margin:10px;" onclick="AddLeave()">离校请假</button>
+                    </div>
+                    <div>
+                        <button type="button" id="btnSpecial" class="btn btn-success btn-lg" style="width:80%; margin:10px;" onclick="AddSpecial()">特殊请假</button>
+                    </div>
+                    <div>
+                        <button type="button" id="btnClass" class="btn btn-info btn-lg" style="width:80%; margin:10px;" onclick="AddClass()">上课请假备案</button>
+                    </div>
+                }
+
                 @*<div>
                     <button type="button" id="btnInternship" class="btn btn-primary btn-lg" style="width:80%; margin:10px;" onclick="AddInternship()">实习请假</button>
                 </div>*@
-
 
             </div>
             <!--请假记录-->

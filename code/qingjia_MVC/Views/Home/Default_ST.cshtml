@@ -164,95 +164,114 @@
                     )
                 </td>
             </tr>
-            <tr>
-                <td colspan="4">
-                    <table class="table table-hover table-bordered" style="width:100%; margin-left:auto; margin-right:auto; margin-top:20px;">
-                        <tr>
-                            <th>
-                                点名批次
-                            </th>
-                            <th>
-                                时间
-                            </th>
-                            <th>
-                                班级
-                            </th>
-                        </tr>
-                        <tr>
-                            <td>
-                                第一批
-                            </td>
-                            <td>
-                                @(F.Label()
-                                    .ID("lblTimeFirst")
-                                    .Text(ViewBag.lblTimeFirst)
-                                )
-                            </td>
-                            <td>
-                                @(F.Label()
-                                    .ID("lblClassFirst")
-                                    .Text(ViewBag.lblClassFirst)
-                                )
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                第二批
-                            </td>
-                            <td>
-                                @(F.Label()
-                                    .ID("lblTimeSecond")
-                                    .Text(ViewBag.lblTimeSecond)
-                                )
-                            </td>
-                            <td>
-                                @(F.Label()
-                                    .ID("lblClassSecond")
-                                    .Text(ViewBag.lblClassSecond)
-                                )
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                第三批
-                            </td>
-                            <td>
-                                @(F.Label()
-                                    .ID("lblTimeThird")
-                                    .Text(ViewBag.lblTimeThird)
-                                )
-                            </td>
-                            <td>
-                                @(F.Label()
-                                    .ID("lblClassThird")
-                                    .Text(ViewBag.lblClassThird)
-                                )
-                            </td>
-                        </tr>
-                    </table>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="2" style="text-align:right; width:40%; font-size:18px;">
-                    <b>
-                        晚点名请假截止时间：
-                    </b>
-                </td>
-                <td colspan="2" style="text-align:left; width:60%; font-size:16px;">
-                    <b>
-                        @(F.Label()
-                            .ID("lblDeadlineNight")
-                            .Text(ViewBag.lblDeadlineNight)
-                        )
-                        
-                    </b>
-                </td>
-            </tr>
+            @if (ViewBag.IsTeacherIDExist == "1")
+            {
+                <tr>
+                    <td colspan="4">
+                        <table class="table table-hover table-bordered" style="width:100%; margin-left:auto; margin-right:auto; margin-top:20px;">
+                            <tr>
+                                <th>
+                                    点名批次
+                                </th>
+                                <th>
+                                    时间
+                                </th>
+                                <th>
+                                    班级
+                                </th>
+                            </tr>
+                            <tr>
+                                <td>
+                                    第一批
+                                </td>
+                                <td>
+                                    @(F.Label()
+    .ID("lblTimeFirst")
+    .Text(ViewBag.lblTimeFirst)
+                                    )
+                                </td>
+                                <td>
+                                    @(F.Label()
+    .ID("lblClassFirst")
+    .Text(ViewBag.lblClassFirst)
+                                    )
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    第二批
+                                </td>
+                                <td>
+                                    @(F.Label()
+    .ID("lblTimeSecond")
+    .Text(ViewBag.lblTimeSecond)
+                                    )
+                                </td>
+                                <td>
+                                    @(F.Label()
+    .ID("lblClassSecond")
+    .Text(ViewBag.lblClassSecond)
+                                    )
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    第三批
+                                </td>
+                                <td>
+                                    @(F.Label()
+    .ID("lblTimeThird")
+    .Text(ViewBag.lblTimeThird)
+                                    )
+                                </td>
+                                <td>
+                                    @(F.Label()
+    .ID("lblClassThird")
+    .Text(ViewBag.lblClassThird)
+                                    )
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2" style="text-align:right; width:40%; font-size:18px;">
+                        <b>
+                            晚点名请假截止时间：
+                        </b>
+                    </td>
+                    <td colspan="2" style="text-align:left; width:60%; font-size:16px;">
+                        <b>
+                            @(F.Label()
+            .ID("lblDeadlineNight")
+            .Text(ViewBag.lblDeadlineNight)
+                            )
+
+                        </b>
+                    </td>
+                </tr>
+            }
+            else
+            {
+                <tr>
+                    <td colspan="2" style="text-align:right; width:40%; font-size:18px;">
+                        <b>
+                            晚点名请假截止时间：
+                        </b>
+                    </td>
+                    <td colspan="2" style="text-align:left; width:60%; font-size:16px;">
+                        <b>
+                            @(F.Label()
+                                .ID("lblDeadlineNight")
+                                .Text("尚未设定辅导员，请联系管理员")
+                            )
+
+                        </b>
+                    </td>
+                </tr>
+            }
         </table>
     </div>
-
-
-
 
     @(
 

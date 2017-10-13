@@ -25,12 +25,13 @@ namespace qingjia_MVC.Controllers.API
         public string access_token { get; set; }
         public string ST_Tel { get; set; }
         public string ST_QQ { get; set; }
+        public string ST_Email { get; set; }
         public string ST_Guardian { get; set; }
         public string ST_GuardianName { get; set; }
         public string ST_GuardianTel { get; set; }
         public bool CheckInfo()
         {
-            if (this.access_token == null || this.ST_Tel == null || this.ST_QQ == null || this.ST_Guardian == null || this.ST_GuardianName == null || this.ST_GuardianTel == null)
+            if (this.access_token == null || this.ST_Tel == null || this.ST_QQ == null || this.ST_Email == null || this.ST_Guardian == null || this.ST_GuardianName == null || this.ST_GuardianTel == null)
             {
                 return false;
             }
@@ -84,10 +85,10 @@ namespace qingjia_MVC.Controllers.API
                     UserInfo userInfo = new UserInfo();
                     userInfo.UserID = student.ST_Num;
                     userInfo.UserName = student.ST_Name;
-                    userInfo.UserClass = student.ST_Class;
-                    userInfo.UserYear = student.ST_Grade;
-                    userInfo.UserTeacherID = student.ST_TeacherID;
-                    userInfo.UserTeacherName = student.ST_Teacher;
+                    userInfo.UserClass = (student.ST_Class == null) ? "" : student.ST_Class;
+                    userInfo.UserYear = (student.ST_Grade == null) ? "" : student.ST_Grade;
+                    userInfo.UserTeacherID = (student.ST_TeacherID == null) ? "" : student.ST_TeacherID;
+                    userInfo.UserTeacherName = (student.ST_Teacher == null) ? "" : student.ST_Teacher;
                     userInfo.UserTel = (student.ST_Tel == null) ? "" : student.ST_Tel;
                     userInfo.UserQQ = (student.ST_QQ == null) ? "" : student.ST_QQ;
                     userInfo.UserEmail = (student.ST_Email == null) ? "" : student.ST_Email;
@@ -155,6 +156,7 @@ namespace qingjia_MVC.Controllers.API
                 T_Student student = db.T_Student.Find(StudentID);
                 student.Tel = changeInfo.ST_Tel;
                 student.QQ = changeInfo.ST_QQ;
+                student.Email = changeInfo.ST_Email;
                 student.ContactOne = changeInfo.ST_Guardian + "-" + changeInfo.ST_GuardianName;
                 student.OneTel = changeInfo.ST_GuardianTel;
                 db.SaveChanges();
