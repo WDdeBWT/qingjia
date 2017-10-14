@@ -818,7 +818,7 @@ namespace qingjia_MVC.Areas.Leave.Controllers
                     fileName = fileName.Substring(fileName.LastIndexOf(".") + 1, (fileName.Length - fileName.LastIndexOf(".") - 1)); //扩展名
                     fileName = DateTime.Now.ToString() + "_" + Session["UserID"].ToString() + "_" + "pic1." + fileName;
                     fileName = fileName.Replace(":", "").Replace(" ", "").Replace("\\", "_").Replace("/", "_");
-                    
+
                     filePhoto1.SaveAs(Server.MapPath(@"~\media\upload\internship\" + fileName));//此处的路径为保存在磁盘的路径，要用双反斜杠（避免转义,或者把@放在双引号前）
 
                     //生成缩略图并保存
