@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
+﻿using System.Linq;
 using System.Web.Http;
 using qingjia_MVC.Models;
 using qingjia_MVC.Common;
@@ -96,7 +92,7 @@ namespace qingjia_MVC.Controllers.API
                     userInfo.UserDoor = (student.ST_Dor == null) ? "" : student.ST_Dor;
                     userInfo.ContactName = (student.ContactOne == null) ? "" : student.ContactOne;
                     userInfo.ContactTel = (student.OneTel == null) ? "" : student.OneTel;
-                    userInfo.IsFreshman = (ConfigurationManager.AppSettings["FreshmanYear"].ToString() == student.ST_Grade) ? "true" : "false";
+                    userInfo.IsFreshman = (ConfigurationManager.AppSettings["FreshmanYear"].ToString().Trim() == student.ST_Grade.ToString().Trim()) ? "true" : "false";
 
                     result.result = "success";
                     result.data = userInfo;

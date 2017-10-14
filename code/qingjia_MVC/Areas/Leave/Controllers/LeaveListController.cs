@@ -258,7 +258,11 @@ namespace qingjia_MVC.Areas.Leave.Controllers
                 vw_Student modelStudent = student.ToList().First();
 
                 //此处为需要晚自习的年级
-                if (modelStudent.ST_Grade != "2016")
+
+                //获取具有早晚自习请假的年级
+                string FreshmanYear = System.Configuration.ConfigurationManager.AppSettings["FreshmanYear"].ToString().Trim();
+
+                if (modelStudent.ST_Grade.Trim() != FreshmanYear)
                 {
                     ShowNotify("您没有早晚自习！");
                     UIHelper.DropDownList("LL_Type").Reset();
