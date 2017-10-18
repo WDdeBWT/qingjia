@@ -88,6 +88,7 @@
                         .EmptyText("请选择请假课段")
                         .Required(true)
                         .Label("请假课段")
+                        .ShowRedStar(true)
                         .DataSource(ViewBag.LeaveType),
                     F.DropDownList()
                         .ID("LL_Type_Child")
@@ -95,6 +96,7 @@
                         .EmptyText("请选择请假子类型")
                         .Required(true)
                         .Label("请假子类型")
+                        .ShowRedStar(true)
                         .DataSource(ViewBag.ChildType)
                 ),
             F.FormRow()
@@ -128,6 +130,7 @@
                         .EmptyText("请输入请假原因。（30字以内）")
                         .Required(true)
                         .Label("请假原因")
+                        .ShowRedStar(true)
                         .AutoGrowHeight(true)
                         .AutoGrowHeightMin(100)
                         .AutoGrowHeightMax(200)

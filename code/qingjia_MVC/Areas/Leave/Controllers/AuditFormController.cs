@@ -20,7 +20,6 @@ namespace qingjia_MVC.Areas.Leave.Controllers
         //实例化数据库
         private imaw_qingjiaEntities db = new imaw_qingjiaEntities();
         private string staticLeaveType = "total";
-        //private string staticST_Class = "total";//代表全部班级
 
         // GET: Leave/AuditForm/AuditLeave
         public ActionResult AuditLeave()
@@ -32,6 +31,8 @@ namespace qingjia_MVC.Areas.Leave.Controllers
             Session["AuditLeaveType"] = "total";
             Get_LL_DataTable("total");
             LL_Count_Leave();
+            //加载班级下拉列表数据
+            LoadClassDDL();
             return View();
         }
 
@@ -45,6 +46,8 @@ namespace qingjia_MVC.Areas.Leave.Controllers
             Session["AuditBackType"] = "total";
             Get_LL_DataTable("total");
             LL_Count_Back();
+            //加载班级下拉列表数据
+            LoadClassDDL();
             return View();
         }
 
@@ -65,6 +68,38 @@ namespace qingjia_MVC.Areas.Leave.Controllers
             return View(modelLL);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        public void LoadClassDDL()
+        {
+            string grade = Session["Grade"].ToString();
+            string ST_TeacherID = Session["UserID"].ToString();
+
+            var classList = from T_Class in db.T_Class where (T_Class.Grade == grade && T_Class.TeacherID == ST_TeacherID) select T_Class;
+            if (classList.Any())
+            {
+                DataTable dtSource = new DataTable();
+                dtSource.Columns.Add("ClassID");
+                dtSource.Columns.Add("ClassName");
+
+                DataRow firstRow = dtSource.NewRow();
+                firstRow["ClassID"] = "-1";
+                firstRow["ClassName"] = "全部班级";
+                dtSource.Rows.Add(firstRow);
+
+                foreach (T_Class item in classList.ToList())
+                {
+                    DataRow row = dtSource.NewRow();
+                    row["ClassID"] = item.ID;
+                    row["ClassName"] = item.ClassName;
+
+                    dtSource.Rows.Add(row);
+                }
+                ViewBag.ddlST_Class = dtSource;
+            }
+        }
+
         #region 统计数据
 
         /// <summary>
@@ -73,6 +108,7 @@ namespace qingjia_MVC.Areas.Leave.Controllers
         protected void LL_Count_Leave()
         {
             string grade = Session["Grade"].ToString();
+            string ST_TeacherID = Session["UserID"].ToString();
 
             //检索各类请假条数
             int totalNum = 0;
@@ -84,7 +120,7 @@ namespace qingjia_MVC.Areas.Leave.Controllers
 
             //提取待审核请假记录
             DataTable dtSource = new DataTable();
-            var leavelist = from vw_LeaveList in db.vw_LeaveList where ((vw_LeaveList.StateLeave == "0") && (vw_LeaveList.StateBack == "0") && (vw_LeaveList.ST_Grade == grade)) orderby vw_LeaveList.ID descending select vw_LeaveList;
+            var leavelist = from vw_LeaveList in db.vw_LeaveList where ((vw_LeaveList.StateLeave == "0") && (vw_LeaveList.StateBack == "0") && (vw_LeaveList.ST_Grade == grade) && (vw_LeaveList.ST_TeacherID == ST_TeacherID)) orderby vw_LeaveList.ID descending select vw_LeaveList;
 
             //List 转换为 DataTable
             dtSource = leavelist.ToDataTable(rec => new object[] { leavelist });
@@ -228,6 +264,7 @@ namespace qingjia_MVC.Areas.Leave.Controllers
         protected void LL_Count_Back()
         {
             string grade = Session["Grade"].ToString();
+            string ST_TeacherID = Session["UserID"].ToString();
 
             //检索各类请假条数
             int totalNum = 0;
@@ -239,7 +276,7 @@ namespace qingjia_MVC.Areas.Leave.Controllers
 
             //提取待销假记录
             DataTable dtSource = new DataTable();
-            var leavelist = from vw_LeaveList in db.vw_LeaveList where ((vw_LeaveList.StateLeave == "1") && (vw_LeaveList.StateBack == "0") && (vw_LeaveList.ST_Grade == grade)) orderby vw_LeaveList.ID descending select vw_LeaveList;
+            var leavelist = from vw_LeaveList in db.vw_LeaveList where ((vw_LeaveList.StateLeave == "1") && (vw_LeaveList.StateBack == "0") && (vw_LeaveList.ST_Grade == grade) && (vw_LeaveList.ST_TeacherID == ST_TeacherID)) orderby vw_LeaveList.ID descending select vw_LeaveList;
 
             //List 转换为 DataTable
             dtSource = leavelist.ToDataTable(rec => new object[] { leavelist });
@@ -381,6 +418,7 @@ namespace qingjia_MVC.Areas.Leave.Controllers
 
         #region AuditLeaveList
 
+        #region 获取请假记录
         /// <summary>
         /// 获取请假记录  DataTable格式
         /// </summary>
@@ -389,6 +427,7 @@ namespace qingjia_MVC.Areas.Leave.Controllers
         public DataTable Get_LL_DataTable(string type)
         {
             string grade = Session["Grade"].ToString();
+            string ST_TeacherID = Session["UserID"].ToString();
 
             if (Session["AuditState"].ToString() == "leave")
             {
@@ -397,27 +436,27 @@ namespace qingjia_MVC.Areas.Leave.Controllers
 
                 #region 获取LeaveList、转换为DataTable格式
                 DataTable dtSource = new DataTable();
-                var leavelist = from vw_LeaveList in db.vw_LeaveList where ((vw_LeaveList.StateLeave == "0") && (vw_LeaveList.StateBack == "0") && (vw_LeaveList.ST_Grade == grade)) orderby vw_LeaveList.ID descending select vw_LeaveList;
+                var leavelist = from vw_LeaveList in db.vw_LeaveList where ((vw_LeaveList.StateLeave == "0") && (vw_LeaveList.StateBack == "0") && (vw_LeaveList.ST_Grade == grade) && vw_LeaveList.ST_TeacherID == ST_TeacherID) orderby vw_LeaveList.ID descending select vw_LeaveList;
 
                 if (type == "btnShort")
                 {
-                    leavelist = from vw_LeaveList in db.vw_LeaveList where ((vw_LeaveList.LeaveType == "短期请假") && (vw_LeaveList.StateLeave == "0") && (vw_LeaveList.StateBack == "0") && (vw_LeaveList.ST_Grade == grade)) orderby vw_LeaveList.ID descending select vw_LeaveList;
+                    leavelist = from vw_LeaveList in db.vw_LeaveList where ((vw_LeaveList.LeaveType == "短期请假") && (vw_LeaveList.StateLeave == "0") && (vw_LeaveList.StateBack == "0") && (vw_LeaveList.ST_Grade == grade) && vw_LeaveList.ST_TeacherID == ST_TeacherID) orderby vw_LeaveList.ID descending select vw_LeaveList;
                 }
                 if (type == "btnLong")
                 {
-                    leavelist = from vw_LeaveList in db.vw_LeaveList where ((vw_LeaveList.LeaveType == "长期请假") && (vw_LeaveList.StateLeave == "0") && (vw_LeaveList.StateBack == "0") && (vw_LeaveList.ST_Grade == grade)) orderby vw_LeaveList.ID descending select vw_LeaveList;
+                    leavelist = from vw_LeaveList in db.vw_LeaveList where ((vw_LeaveList.LeaveType == "长期请假") && (vw_LeaveList.StateLeave == "0") && (vw_LeaveList.StateBack == "0") && (vw_LeaveList.ST_Grade == grade) && vw_LeaveList.ST_TeacherID == ST_TeacherID) orderby vw_LeaveList.ID descending select vw_LeaveList;
                 }
                 if (type == "btnHoliday")
                 {
-                    leavelist = from vw_LeaveList in db.vw_LeaveList where ((vw_LeaveList.LeaveType == "节假日请假") && (vw_LeaveList.StateLeave == "0") && (vw_LeaveList.StateBack == "0") && (vw_LeaveList.ST_Grade == grade)) orderby vw_LeaveList.ID descending select vw_LeaveList;
+                    leavelist = from vw_LeaveList in db.vw_LeaveList where ((vw_LeaveList.LeaveType == "节假日请假") && (vw_LeaveList.StateLeave == "0") && (vw_LeaveList.StateBack == "0") && (vw_LeaveList.ST_Grade == grade) && vw_LeaveList.ST_TeacherID == ST_TeacherID) orderby vw_LeaveList.ID descending select vw_LeaveList;
                 }
                 if (type == "btnCall")
                 {
-                    leavelist = from vw_LeaveList in db.vw_LeaveList where ((vw_LeaveList.LeaveType.StartsWith("晚点名请假")) && (vw_LeaveList.StateLeave == "0") && (vw_LeaveList.StateBack == "0") && (vw_LeaveList.ST_Grade == grade)) orderby vw_LeaveList.ID descending select vw_LeaveList;
+                    leavelist = from vw_LeaveList in db.vw_LeaveList where ((vw_LeaveList.LeaveType.StartsWith("晚点名请假")) && (vw_LeaveList.StateLeave == "0") && (vw_LeaveList.StateBack == "0") && (vw_LeaveList.ST_Grade == grade) && vw_LeaveList.ST_TeacherID == ST_TeacherID) orderby vw_LeaveList.ID descending select vw_LeaveList;
                 }
                 if (type == "btnClass")
                 {
-                    leavelist = from vw_LeaveList in db.vw_LeaveList where ((vw_LeaveList.LeaveType.StartsWith("上课请假")) && (vw_LeaveList.StateLeave == "0") && (vw_LeaveList.StateBack == "0") && (vw_LeaveList.ST_Grade == grade)) orderby vw_LeaveList.ID descending select vw_LeaveList;
+                    leavelist = from vw_LeaveList in db.vw_LeaveList where ((vw_LeaveList.LeaveType.StartsWith("上课请假")) && (vw_LeaveList.StateLeave == "0") && (vw_LeaveList.StateBack == "0") && (vw_LeaveList.ST_Grade == grade) && vw_LeaveList.ST_TeacherID == ST_TeacherID) orderby vw_LeaveList.ID descending select vw_LeaveList;
                 }
                 //List 转换为 DataTable
                 dtSource = leavelist.ToDataTable(rec => new object[] { leavelist });
@@ -529,27 +568,27 @@ namespace qingjia_MVC.Areas.Leave.Controllers
 
                 #region 获取LeaveList、转换为DataTable格式
                 DataTable dtSource = new DataTable();
-                var leavelist = from vw_LeaveList in db.vw_LeaveList where ((vw_LeaveList.StateLeave == "1") && (vw_LeaveList.StateBack == "0") && (vw_LeaveList.ST_Grade == grade)) orderby vw_LeaveList.ID descending select vw_LeaveList;
+                var leavelist = from vw_LeaveList in db.vw_LeaveList where ((vw_LeaveList.StateLeave == "1") && (vw_LeaveList.StateBack == "0") && (vw_LeaveList.ST_Grade == grade) && vw_LeaveList.ST_TeacherID == ST_TeacherID) orderby vw_LeaveList.ID descending select vw_LeaveList;
 
                 if (type == "btnShort")
                 {
-                    leavelist = from vw_LeaveList in db.vw_LeaveList where ((vw_LeaveList.LeaveType == "短期请假") && (vw_LeaveList.StateLeave == "1") && (vw_LeaveList.StateBack == "0") && (vw_LeaveList.ST_Grade == grade)) orderby vw_LeaveList.ID descending select vw_LeaveList;
+                    leavelist = from vw_LeaveList in db.vw_LeaveList where ((vw_LeaveList.LeaveType == "短期请假") && (vw_LeaveList.StateLeave == "1") && (vw_LeaveList.StateBack == "0") && (vw_LeaveList.ST_Grade == grade) && vw_LeaveList.ST_TeacherID == ST_TeacherID) orderby vw_LeaveList.ID descending select vw_LeaveList;
                 }
                 if (type == "btnLong")
                 {
-                    leavelist = from vw_LeaveList in db.vw_LeaveList where ((vw_LeaveList.LeaveType == "长期请假") && (vw_LeaveList.StateLeave == "1") && (vw_LeaveList.StateBack == "0") && (vw_LeaveList.ST_Grade == grade)) orderby vw_LeaveList.ID descending select vw_LeaveList;
+                    leavelist = from vw_LeaveList in db.vw_LeaveList where ((vw_LeaveList.LeaveType == "长期请假") && (vw_LeaveList.StateLeave == "1") && (vw_LeaveList.StateBack == "0") && (vw_LeaveList.ST_Grade == grade) && vw_LeaveList.ST_TeacherID == ST_TeacherID) orderby vw_LeaveList.ID descending select vw_LeaveList;
                 }
                 if (type == "btnHoliday")
                 {
-                    leavelist = from vw_LeaveList in db.vw_LeaveList where ((vw_LeaveList.LeaveType == "节假日请假") && (vw_LeaveList.StateLeave == "1") && (vw_LeaveList.StateBack == "0") && (vw_LeaveList.ST_Grade == grade)) orderby vw_LeaveList.ID descending select vw_LeaveList;
+                    leavelist = from vw_LeaveList in db.vw_LeaveList where ((vw_LeaveList.LeaveType == "节假日请假") && (vw_LeaveList.StateLeave == "1") && (vw_LeaveList.StateBack == "0") && (vw_LeaveList.ST_Grade == grade) && vw_LeaveList.ST_TeacherID == ST_TeacherID) orderby vw_LeaveList.ID descending select vw_LeaveList;
                 }
                 if (type == "btnCall")
                 {
-                    leavelist = from vw_LeaveList in db.vw_LeaveList where ((vw_LeaveList.LeaveType.StartsWith("晚点名请假")) && (vw_LeaveList.StateLeave == "1") && (vw_LeaveList.StateBack == "0") && (vw_LeaveList.ST_Grade == grade)) orderby vw_LeaveList.ID descending select vw_LeaveList;
+                    leavelist = from vw_LeaveList in db.vw_LeaveList where ((vw_LeaveList.LeaveType.StartsWith("晚点名请假")) && (vw_LeaveList.StateLeave == "1") && (vw_LeaveList.StateBack == "0") && (vw_LeaveList.ST_Grade == grade) && vw_LeaveList.ST_TeacherID == ST_TeacherID) orderby vw_LeaveList.ID descending select vw_LeaveList;
                 }
                 if (type == "btnClass")
                 {
-                    leavelist = from vw_LeaveList in db.vw_LeaveList where ((vw_LeaveList.LeaveType.StartsWith("上课请假")) && (vw_LeaveList.StateLeave == "1") && (vw_LeaveList.StateBack == "0") && (vw_LeaveList.ST_Grade == grade)) orderby vw_LeaveList.ID descending select vw_LeaveList;
+                    leavelist = from vw_LeaveList in db.vw_LeaveList where ((vw_LeaveList.LeaveType.StartsWith("上课请假")) && (vw_LeaveList.StateLeave == "1") && (vw_LeaveList.StateBack == "0") && (vw_LeaveList.ST_Grade == grade) && vw_LeaveList.ST_TeacherID == ST_TeacherID) orderby vw_LeaveList.ID descending select vw_LeaveList;
                 }
                 //List 转换为 DataTable
                 dtSource = leavelist.ToDataTable(rec => new object[] { leavelist });
@@ -671,6 +710,7 @@ namespace qingjia_MVC.Areas.Leave.Controllers
         public DataTable Get_LL_DataTable(string type, string sortField, string sortDirection)
         {
             string grade = Session["Grade"].ToString();
+            string ST_TeacherID = Session["UserID"].ToString();
 
             if (Session["AuditState"].ToString() == "leave")
             {
@@ -679,27 +719,27 @@ namespace qingjia_MVC.Areas.Leave.Controllers
 
                 #region 获取LeaveList、转换为DataTable格式
                 DataTable dtSource = new DataTable();
-                var leavelist = from vw_LeaveList in db.vw_LeaveList where ((vw_LeaveList.StateLeave == "0") && (vw_LeaveList.StateBack == "0") && (vw_LeaveList.ST_Grade == grade)) orderby vw_LeaveList.ID descending select vw_LeaveList;
+                var leavelist = from vw_LeaveList in db.vw_LeaveList where ((vw_LeaveList.StateLeave == "0") && (vw_LeaveList.StateBack == "0") && (vw_LeaveList.ST_Grade == grade) && vw_LeaveList.ST_TeacherID == ST_TeacherID) orderby vw_LeaveList.ID descending select vw_LeaveList;
 
                 if (type == "btnShort")
                 {
-                    leavelist = from vw_LeaveList in db.vw_LeaveList where ((vw_LeaveList.LeaveType == "短期请假") && (vw_LeaveList.StateLeave == "0") && (vw_LeaveList.StateBack == "0") && (vw_LeaveList.ST_Grade == grade)) orderby vw_LeaveList.ID descending select vw_LeaveList;
+                    leavelist = from vw_LeaveList in db.vw_LeaveList where ((vw_LeaveList.LeaveType == "短期请假") && (vw_LeaveList.StateLeave == "0") && (vw_LeaveList.StateBack == "0") && (vw_LeaveList.ST_Grade == grade) && vw_LeaveList.ST_TeacherID == ST_TeacherID) orderby vw_LeaveList.ID descending select vw_LeaveList;
                 }
                 if (type == "btnLong")
                 {
-                    leavelist = from vw_LeaveList in db.vw_LeaveList where ((vw_LeaveList.LeaveType == "长期请假") && (vw_LeaveList.StateLeave == "0") && (vw_LeaveList.StateBack == "0") && (vw_LeaveList.ST_Grade == grade)) orderby vw_LeaveList.ID descending select vw_LeaveList;
+                    leavelist = from vw_LeaveList in db.vw_LeaveList where ((vw_LeaveList.LeaveType == "长期请假") && (vw_LeaveList.StateLeave == "0") && (vw_LeaveList.StateBack == "0") && (vw_LeaveList.ST_Grade == grade) && vw_LeaveList.ST_TeacherID == ST_TeacherID) orderby vw_LeaveList.ID descending select vw_LeaveList;
                 }
                 if (type == "btnHoliday")
                 {
-                    leavelist = from vw_LeaveList in db.vw_LeaveList where ((vw_LeaveList.LeaveType == "节假日请假") && (vw_LeaveList.StateLeave == "0") && (vw_LeaveList.StateBack == "0") && (vw_LeaveList.ST_Grade == grade)) orderby vw_LeaveList.ID descending select vw_LeaveList;
+                    leavelist = from vw_LeaveList in db.vw_LeaveList where ((vw_LeaveList.LeaveType == "节假日请假") && (vw_LeaveList.StateLeave == "0") && (vw_LeaveList.StateBack == "0") && (vw_LeaveList.ST_Grade == grade) && vw_LeaveList.ST_TeacherID == ST_TeacherID) orderby vw_LeaveList.ID descending select vw_LeaveList;
                 }
                 if (type == "btnCall")
                 {
-                    leavelist = from vw_LeaveList in db.vw_LeaveList where ((vw_LeaveList.LeaveType.StartsWith("晚点名请假")) && (vw_LeaveList.StateLeave == "0") && (vw_LeaveList.StateBack == "0") && (vw_LeaveList.ST_Grade == grade)) orderby vw_LeaveList.ID descending select vw_LeaveList;
+                    leavelist = from vw_LeaveList in db.vw_LeaveList where ((vw_LeaveList.LeaveType.StartsWith("晚点名请假")) && (vw_LeaveList.StateLeave == "0") && (vw_LeaveList.StateBack == "0") && (vw_LeaveList.ST_Grade == grade) && vw_LeaveList.ST_TeacherID == ST_TeacherID) orderby vw_LeaveList.ID descending select vw_LeaveList;
                 }
                 if (type == "btnClass")
                 {
-                    leavelist = from vw_LeaveList in db.vw_LeaveList where ((vw_LeaveList.LeaveType.StartsWith("上课请假")) && (vw_LeaveList.StateLeave == "0") && (vw_LeaveList.StateBack == "0") && (vw_LeaveList.ST_Grade == grade)) orderby vw_LeaveList.ID descending select vw_LeaveList;
+                    leavelist = from vw_LeaveList in db.vw_LeaveList where ((vw_LeaveList.LeaveType.StartsWith("上课请假")) && (vw_LeaveList.StateLeave == "0") && (vw_LeaveList.StateBack == "0") && (vw_LeaveList.ST_Grade == grade) && vw_LeaveList.ST_TeacherID == ST_TeacherID) orderby vw_LeaveList.ID descending select vw_LeaveList;
                 }
                 //List 转换为 DataTable
                 if (sortDirection == "ASC")
@@ -819,27 +859,27 @@ namespace qingjia_MVC.Areas.Leave.Controllers
 
                 #region 获取LeaveList、转换为DataTable格式
                 DataTable dtSource = new DataTable();
-                var leavelist = from vw_LeaveList in db.vw_LeaveList where ((vw_LeaveList.StateLeave == "1") && (vw_LeaveList.StateBack == "0") && (vw_LeaveList.ST_Grade == grade)) orderby vw_LeaveList.ID descending select vw_LeaveList;
+                var leavelist = from vw_LeaveList in db.vw_LeaveList where ((vw_LeaveList.StateLeave == "1") && (vw_LeaveList.StateBack == "0") && (vw_LeaveList.ST_Grade == grade) && vw_LeaveList.ST_TeacherID == ST_TeacherID) orderby vw_LeaveList.ID descending select vw_LeaveList;
 
                 if (type == "btnShort")
                 {
-                    leavelist = from vw_LeaveList in db.vw_LeaveList where ((vw_LeaveList.LeaveType == "短期请假") && (vw_LeaveList.StateLeave == "1") && (vw_LeaveList.StateBack == "0") && (vw_LeaveList.ST_Grade == grade)) orderby vw_LeaveList.ID descending select vw_LeaveList;
+                    leavelist = from vw_LeaveList in db.vw_LeaveList where ((vw_LeaveList.LeaveType == "短期请假") && (vw_LeaveList.StateLeave == "1") && (vw_LeaveList.StateBack == "0") && (vw_LeaveList.ST_Grade == grade) && vw_LeaveList.ST_TeacherID == ST_TeacherID) orderby vw_LeaveList.ID descending select vw_LeaveList;
                 }
                 if (type == "btnLong")
                 {
-                    leavelist = from vw_LeaveList in db.vw_LeaveList where ((vw_LeaveList.LeaveType == "长期请假") && (vw_LeaveList.StateLeave == "1") && (vw_LeaveList.StateBack == "0") && (vw_LeaveList.ST_Grade == grade)) orderby vw_LeaveList.ID descending select vw_LeaveList;
+                    leavelist = from vw_LeaveList in db.vw_LeaveList where ((vw_LeaveList.LeaveType == "长期请假") && (vw_LeaveList.StateLeave == "1") && (vw_LeaveList.StateBack == "0") && (vw_LeaveList.ST_Grade == grade) && vw_LeaveList.ST_TeacherID == ST_TeacherID) orderby vw_LeaveList.ID descending select vw_LeaveList;
                 }
                 if (type == "btnHoliday")
                 {
-                    leavelist = from vw_LeaveList in db.vw_LeaveList where ((vw_LeaveList.LeaveType == "节假日请假") && (vw_LeaveList.StateLeave == "1") && (vw_LeaveList.StateBack == "0") && (vw_LeaveList.ST_Grade == grade)) orderby vw_LeaveList.ID descending select vw_LeaveList;
+                    leavelist = from vw_LeaveList in db.vw_LeaveList where ((vw_LeaveList.LeaveType == "节假日请假") && (vw_LeaveList.StateLeave == "1") && (vw_LeaveList.StateBack == "0") && (vw_LeaveList.ST_Grade == grade) && vw_LeaveList.ST_TeacherID == ST_TeacherID) orderby vw_LeaveList.ID descending select vw_LeaveList;
                 }
                 if (type == "btnCall")
                 {
-                    leavelist = from vw_LeaveList in db.vw_LeaveList where ((vw_LeaveList.LeaveType.StartsWith("晚点名请假")) && (vw_LeaveList.StateLeave == "1") && (vw_LeaveList.StateBack == "0") && (vw_LeaveList.ST_Grade == grade)) orderby vw_LeaveList.ID descending select vw_LeaveList;
+                    leavelist = from vw_LeaveList in db.vw_LeaveList where ((vw_LeaveList.LeaveType.StartsWith("晚点名请假")) && (vw_LeaveList.StateLeave == "1") && (vw_LeaveList.StateBack == "0") && (vw_LeaveList.ST_Grade == grade) && vw_LeaveList.ST_TeacherID == ST_TeacherID) orderby vw_LeaveList.ID descending select vw_LeaveList;
                 }
                 if (type == "btnClass")
                 {
-                    leavelist = from vw_LeaveList in db.vw_LeaveList where ((vw_LeaveList.LeaveType.StartsWith("上课请假")) && (vw_LeaveList.StateLeave == "1") && (vw_LeaveList.StateBack == "0") && (vw_LeaveList.ST_Grade == grade)) orderby vw_LeaveList.ID descending select vw_LeaveList;
+                    leavelist = from vw_LeaveList in db.vw_LeaveList where ((vw_LeaveList.LeaveType.StartsWith("上课请假")) && (vw_LeaveList.StateLeave == "1") && (vw_LeaveList.StateBack == "0") && (vw_LeaveList.ST_Grade == grade) && vw_LeaveList.ST_TeacherID == ST_TeacherID) orderby vw_LeaveList.ID descending select vw_LeaveList;
                 }
                 //List 转换为 DataTable
                 if (sortDirection == "ASC")
@@ -965,9 +1005,10 @@ namespace qingjia_MVC.Areas.Leave.Controllers
         /// <param name="ST_NUM"></param>
         /// <param name="type"></param>
         /// <returns></returns>
-        public DataTable Get_LL_DataTable_BY_ST_Num(string ST_NUM, string type)
+        public DataTable Get_LL_DataTable_BY_ST_Num(string type, string ST_NUM)
         {
             string grade = Session["Grade"].ToString();
+            string ST_TeacherID = Session["UserID"].ToString();
 
             if (Session["AuditState"].ToString() == "leave")
             {
@@ -976,27 +1017,27 @@ namespace qingjia_MVC.Areas.Leave.Controllers
 
                 #region 获取LeaveList、转换为DataTable格式
                 DataTable dtSource = new DataTable();
-                var leavelist = from vw_LeaveList in db.vw_LeaveList where ((vw_LeaveList.StudentID == ST_NUM) && (vw_LeaveList.StateLeave == "0") && (vw_LeaveList.StateBack == "0") && (vw_LeaveList.ST_Grade == grade)) orderby vw_LeaveList.ID descending select vw_LeaveList;
+                var leavelist = from vw_LeaveList in db.vw_LeaveList where ((vw_LeaveList.StudentID == ST_NUM) && (vw_LeaveList.StateLeave == "0") && (vw_LeaveList.StateBack == "0") && (vw_LeaveList.ST_Grade == grade) && vw_LeaveList.ST_TeacherID == ST_TeacherID) orderby vw_LeaveList.ID descending select vw_LeaveList;
 
                 if (type == "btnShort")
                 {
-                    leavelist = from vw_LeaveList in db.vw_LeaveList where ((vw_LeaveList.StudentID == ST_NUM) && (vw_LeaveList.LeaveType == "短期请假") && (vw_LeaveList.StateLeave == "0") && (vw_LeaveList.StateBack == "0") && (vw_LeaveList.ST_Grade == grade)) orderby vw_LeaveList.ID descending select vw_LeaveList;
+                    leavelist = from vw_LeaveList in db.vw_LeaveList where ((vw_LeaveList.StudentID == ST_NUM) && (vw_LeaveList.LeaveType == "短期请假") && (vw_LeaveList.StateLeave == "0") && (vw_LeaveList.StateBack == "0") && (vw_LeaveList.ST_Grade == grade) && vw_LeaveList.ST_TeacherID == ST_TeacherID) orderby vw_LeaveList.ID descending select vw_LeaveList;
                 }
                 if (type == "btnLong")
                 {
-                    leavelist = from vw_LeaveList in db.vw_LeaveList where ((vw_LeaveList.StudentID == ST_NUM) && (vw_LeaveList.LeaveType == "长期请假") && (vw_LeaveList.StateLeave == "0") && (vw_LeaveList.StateBack == "0") && (vw_LeaveList.ST_Grade == grade)) orderby vw_LeaveList.ID descending select vw_LeaveList;
+                    leavelist = from vw_LeaveList in db.vw_LeaveList where ((vw_LeaveList.StudentID == ST_NUM) && (vw_LeaveList.LeaveType == "长期请假") && (vw_LeaveList.StateLeave == "0") && (vw_LeaveList.StateBack == "0") && (vw_LeaveList.ST_Grade == grade) && vw_LeaveList.ST_TeacherID == ST_TeacherID) orderby vw_LeaveList.ID descending select vw_LeaveList;
                 }
                 if (type == "btnHoliday")
                 {
-                    leavelist = from vw_LeaveList in db.vw_LeaveList where ((vw_LeaveList.StudentID == ST_NUM) && (vw_LeaveList.LeaveType == "节假日请假") && (vw_LeaveList.StateLeave == "0") && (vw_LeaveList.StateBack == "0") && (vw_LeaveList.ST_Grade == grade)) orderby vw_LeaveList.ID descending select vw_LeaveList;
+                    leavelist = from vw_LeaveList in db.vw_LeaveList where ((vw_LeaveList.StudentID == ST_NUM) && (vw_LeaveList.LeaveType == "节假日请假") && (vw_LeaveList.StateLeave == "0") && (vw_LeaveList.StateBack == "0") && (vw_LeaveList.ST_Grade == grade) && vw_LeaveList.ST_TeacherID == ST_TeacherID) orderby vw_LeaveList.ID descending select vw_LeaveList;
                 }
                 if (type == "btnCall")
                 {
-                    leavelist = from vw_LeaveList in db.vw_LeaveList where ((vw_LeaveList.StudentID == ST_NUM) && (vw_LeaveList.LeaveType.StartsWith("晚点名请假")) && (vw_LeaveList.StateLeave == "0") && (vw_LeaveList.StateBack == "0") && (vw_LeaveList.ST_Grade == grade)) orderby vw_LeaveList.ID descending select vw_LeaveList;
+                    leavelist = from vw_LeaveList in db.vw_LeaveList where ((vw_LeaveList.StudentID == ST_NUM) && (vw_LeaveList.LeaveType.StartsWith("晚点名请假")) && (vw_LeaveList.StateLeave == "0") && (vw_LeaveList.StateBack == "0") && (vw_LeaveList.ST_Grade == grade) && vw_LeaveList.ST_TeacherID == ST_TeacherID) orderby vw_LeaveList.ID descending select vw_LeaveList;
                 }
                 if (type == "btnClass")
                 {
-                    leavelist = from vw_LeaveList in db.vw_LeaveList where ((vw_LeaveList.StudentID == ST_NUM) && (vw_LeaveList.LeaveType.StartsWith("上课请假")) && (vw_LeaveList.StateLeave == "0") && (vw_LeaveList.StateBack == "0") && (vw_LeaveList.ST_Grade == grade)) orderby vw_LeaveList.ID descending select vw_LeaveList;
+                    leavelist = from vw_LeaveList in db.vw_LeaveList where ((vw_LeaveList.StudentID == ST_NUM) && (vw_LeaveList.LeaveType.StartsWith("上课请假")) && (vw_LeaveList.StateLeave == "0") && (vw_LeaveList.StateBack == "0") && (vw_LeaveList.ST_Grade == grade) && vw_LeaveList.ST_TeacherID == ST_TeacherID) orderby vw_LeaveList.ID descending select vw_LeaveList;
                 }
                 //List 转换为 DataTable
                 dtSource = leavelist.ToDataTable(rec => new object[] { leavelist });
@@ -1108,27 +1149,27 @@ namespace qingjia_MVC.Areas.Leave.Controllers
 
                 #region 获取LeaveList、转换为DataTable格式
                 DataTable dtSource = new DataTable();
-                var leavelist = from vw_LeaveList in db.vw_LeaveList where ((vw_LeaveList.StudentID == ST_NUM) && (vw_LeaveList.StateLeave == "1") && (vw_LeaveList.StateBack == "0") && (vw_LeaveList.ST_Grade == grade) && (vw_LeaveList.ST_Grade == grade)) orderby vw_LeaveList.ID descending select vw_LeaveList;
+                var leavelist = from vw_LeaveList in db.vw_LeaveList where ((vw_LeaveList.StudentID == ST_NUM) && (vw_LeaveList.StateLeave == "1") && (vw_LeaveList.StateBack == "0") && (vw_LeaveList.ST_Grade == grade) && (vw_LeaveList.ST_Grade == grade) && vw_LeaveList.ST_TeacherID == ST_TeacherID) orderby vw_LeaveList.ID descending select vw_LeaveList;
 
                 if (type == "btnShort")
                 {
-                    leavelist = from vw_LeaveList in db.vw_LeaveList where ((vw_LeaveList.StudentID == ST_NUM) && (vw_LeaveList.LeaveType == "短期请假") && (vw_LeaveList.StateLeave == "1") && (vw_LeaveList.StateBack == "0") && (vw_LeaveList.ST_Grade == grade)) orderby vw_LeaveList.ID descending select vw_LeaveList;
+                    leavelist = from vw_LeaveList in db.vw_LeaveList where ((vw_LeaveList.StudentID == ST_NUM) && (vw_LeaveList.LeaveType == "短期请假") && (vw_LeaveList.StateLeave == "1") && (vw_LeaveList.StateBack == "0") && (vw_LeaveList.ST_Grade == grade) && vw_LeaveList.ST_TeacherID == ST_TeacherID) orderby vw_LeaveList.ID descending select vw_LeaveList;
                 }
                 if (type == "btnLong")
                 {
-                    leavelist = from vw_LeaveList in db.vw_LeaveList where ((vw_LeaveList.StudentID == ST_NUM) && (vw_LeaveList.LeaveType == "长期请假") && (vw_LeaveList.StateLeave == "1") && (vw_LeaveList.StateBack == "0") && (vw_LeaveList.ST_Grade == grade)) orderby vw_LeaveList.ID descending select vw_LeaveList;
+                    leavelist = from vw_LeaveList in db.vw_LeaveList where ((vw_LeaveList.StudentID == ST_NUM) && (vw_LeaveList.LeaveType == "长期请假") && (vw_LeaveList.StateLeave == "1") && (vw_LeaveList.StateBack == "0") && (vw_LeaveList.ST_Grade == grade) && vw_LeaveList.ST_TeacherID == ST_TeacherID) orderby vw_LeaveList.ID descending select vw_LeaveList;
                 }
                 if (type == "btnHoliday")
                 {
-                    leavelist = from vw_LeaveList in db.vw_LeaveList where ((vw_LeaveList.StudentID == ST_NUM) && (vw_LeaveList.LeaveType == "节假日请假") && (vw_LeaveList.StateLeave == "1") && (vw_LeaveList.StateBack == "0") && (vw_LeaveList.ST_Grade == grade)) orderby vw_LeaveList.ID descending select vw_LeaveList;
+                    leavelist = from vw_LeaveList in db.vw_LeaveList where ((vw_LeaveList.StudentID == ST_NUM) && (vw_LeaveList.LeaveType == "节假日请假") && (vw_LeaveList.StateLeave == "1") && (vw_LeaveList.StateBack == "0") && (vw_LeaveList.ST_Grade == grade) && vw_LeaveList.ST_TeacherID == ST_TeacherID) orderby vw_LeaveList.ID descending select vw_LeaveList;
                 }
                 if (type == "btnCall")
                 {
-                    leavelist = from vw_LeaveList in db.vw_LeaveList where ((vw_LeaveList.StudentID == ST_NUM) && (vw_LeaveList.LeaveType.StartsWith("晚点名请假")) && (vw_LeaveList.StateLeave == "1") && (vw_LeaveList.StateBack == "0") && (vw_LeaveList.ST_Grade == grade)) orderby vw_LeaveList.ID descending select vw_LeaveList;
+                    leavelist = from vw_LeaveList in db.vw_LeaveList where ((vw_LeaveList.StudentID == ST_NUM) && (vw_LeaveList.LeaveType.StartsWith("晚点名请假")) && (vw_LeaveList.StateLeave == "1") && (vw_LeaveList.StateBack == "0") && (vw_LeaveList.ST_Grade == grade) && vw_LeaveList.ST_TeacherID == ST_TeacherID) orderby vw_LeaveList.ID descending select vw_LeaveList;
                 }
                 if (type == "btnClass")
                 {
-                    leavelist = from vw_LeaveList in db.vw_LeaveList where ((vw_LeaveList.StudentID == ST_NUM) && (vw_LeaveList.LeaveType.StartsWith("上课请假")) && (vw_LeaveList.StateLeave == "1") && (vw_LeaveList.StateBack == "0") && (vw_LeaveList.ST_Grade == grade)) orderby vw_LeaveList.ID descending select vw_LeaveList;
+                    leavelist = from vw_LeaveList in db.vw_LeaveList where ((vw_LeaveList.StudentID == ST_NUM) && (vw_LeaveList.LeaveType.StartsWith("上课请假")) && (vw_LeaveList.StateLeave == "1") && (vw_LeaveList.StateBack == "0") && (vw_LeaveList.ST_Grade == grade) && vw_LeaveList.ST_TeacherID == ST_TeacherID) orderby vw_LeaveList.ID descending select vw_LeaveList;
                 }
                 //List 转换为 DataTable
                 dtSource = leavelist.ToDataTable(rec => new object[] { leavelist });
@@ -1239,6 +1280,287 @@ namespace qingjia_MVC.Areas.Leave.Controllers
                 return null;
             }
         }
+
+        /// <summary>
+        /// 根据班级名称查找请假记录  DataTable格式
+        /// </summary>
+        /// <param name="type"></param>
+        /// <param name="className"></param>
+        /// <returns></returns>
+        public DataTable Get_LL_DataTable_BY_ClassName(string type, string className)
+        {
+            string grade = Session["Grade"].ToString();
+            string ST_TeacherID = Session["UserID"].ToString();
+
+            if (Session["AuditState"].ToString() == "leave")
+            {
+                //此处将list转为DataTable FineUI的Grid绑定时间类型数据时会发生错误，尚未找到原因。
+                //解决办法：将list转为DataTable绑定到Grid，并且将DataTable中值类型为DateTime的列转为字符串类型
+
+                #region 获取LeaveList、转换为DataTable格式
+                DataTable dtSource = new DataTable();
+                var leavelist = from vw_LeaveList in db.vw_LeaveList where ((vw_LeaveList.ST_Class == className) && (vw_LeaveList.StateLeave == "0") && (vw_LeaveList.StateBack == "0") && (vw_LeaveList.ST_Grade == grade) && vw_LeaveList.ST_TeacherID == ST_TeacherID) orderby vw_LeaveList.ID descending select vw_LeaveList;
+
+                if (type == "btnShort")
+                {
+                    leavelist = from vw_LeaveList in db.vw_LeaveList where ((vw_LeaveList.ST_Class == className) && (vw_LeaveList.LeaveType == "短期请假") && (vw_LeaveList.StateLeave == "0") && (vw_LeaveList.StateBack == "0") && (vw_LeaveList.ST_Grade == grade) && vw_LeaveList.ST_TeacherID == ST_TeacherID) orderby vw_LeaveList.ID descending select vw_LeaveList;
+                }
+                if (type == "btnLong")
+                {
+                    leavelist = from vw_LeaveList in db.vw_LeaveList where ((vw_LeaveList.ST_Class == className) && (vw_LeaveList.LeaveType == "长期请假") && (vw_LeaveList.StateLeave == "0") && (vw_LeaveList.StateBack == "0") && (vw_LeaveList.ST_Grade == grade) && vw_LeaveList.ST_TeacherID == ST_TeacherID) orderby vw_LeaveList.ID descending select vw_LeaveList;
+                }
+                if (type == "btnHoliday")
+                {
+                    leavelist = from vw_LeaveList in db.vw_LeaveList where ((vw_LeaveList.ST_Class == className) && (vw_LeaveList.LeaveType == "节假日请假") && (vw_LeaveList.StateLeave == "0") && (vw_LeaveList.StateBack == "0") && (vw_LeaveList.ST_Grade == grade) && vw_LeaveList.ST_TeacherID == ST_TeacherID) orderby vw_LeaveList.ID descending select vw_LeaveList;
+                }
+                if (type == "btnCall")
+                {
+                    leavelist = from vw_LeaveList in db.vw_LeaveList where ((vw_LeaveList.ST_Class == className) && (vw_LeaveList.LeaveType.StartsWith("晚点名请假")) && (vw_LeaveList.StateLeave == "0") && (vw_LeaveList.StateBack == "0") && (vw_LeaveList.ST_Grade == grade) && vw_LeaveList.ST_TeacherID == ST_TeacherID) orderby vw_LeaveList.ID descending select vw_LeaveList;
+                }
+                if (type == "btnClass")
+                {
+                    leavelist = from vw_LeaveList in db.vw_LeaveList where ((vw_LeaveList.ST_Class == className) && (vw_LeaveList.LeaveType.StartsWith("上课请假")) && (vw_LeaveList.StateLeave == "0") && (vw_LeaveList.StateBack == "0") && (vw_LeaveList.ST_Grade == grade) && vw_LeaveList.ST_TeacherID == ST_TeacherID) orderby vw_LeaveList.ID descending select vw_LeaveList;
+                }
+                dtSource = leavelist.ToDataTable(rec => new object[] { leavelist });
+                #endregion
+
+                #region 更改DataTable中某一列的属性
+                DataTable dtClone = new DataTable();
+                dtClone = dtSource.Clone();
+                foreach (DataColumn col in dtClone.Columns)
+                {
+                    if (col.ColumnName == "SubmitTime" || col.ColumnName == "TimeLeave" || col.ColumnName == "TimeBack")
+                    {
+                        col.DataType = typeof(string);
+                    }
+                    if (col.ColumnName == "Lesson")
+                    {
+                        col.DataType = typeof(string);
+                    }
+                }
+
+                DataColumn newCol = new DataColumn();
+                newCol.ColumnName = "auditState";
+                newCol.DataType = typeof(string);
+                dtClone.Columns.Add(newCol);
+
+                foreach (DataRow row in dtSource.Rows)
+                {
+                    DataRow rowNew = dtClone.NewRow();
+                    rowNew["ID"] = row["ID"];
+                    rowNew["Reason"] = row["Reason"];
+                    rowNew["StateLeave"] = row["StateLeave"];
+                    rowNew["StateBack"] = row["StateBack"];
+                    rowNew["Notes"] = row["Notes"];
+                    rowNew["TypeID"] = row["TypeID"];
+                    rowNew["SubmitTime"] = ((DateTime)row["SubmitTime"]).ToString("yyyy-MM-dd HH:mm:ss");//按指定格式输出
+                    rowNew["TimeLeave"] = ((DateTime)row["TimeLeave"]).ToString("yyyy-MM-dd HH:mm:ss");
+                    rowNew["TimeBack"] = ((DateTime)row["TimeBack"]).ToString("yyyy-MM-dd HH:mm:ss");
+                    rowNew["LeaveWay"] = row["LeaveWay"];
+                    rowNew["BackWay"] = row["BackWay"];
+                    rowNew["Address"] = row["Address"];
+                    rowNew["TypeChildID"] = row["TypeChildID"];
+                    rowNew["Teacher"] = row["Teacher"];
+                    rowNew["ST_Name"] = row["ST_Name"];
+                    rowNew["ST_Tel"] = row["ST_Tel"];
+                    rowNew["ST_Grade"] = row["ST_Grade"];
+                    rowNew["ST_Class"] = row["ST_Class"];
+                    rowNew["ST_Teacher"] = row["ST_Teacher"];
+                    rowNew["StudentID"] = row["StudentID"];
+                    rowNew["LeaveType"] = row["LeaveType"];
+                    rowNew["AuditName"] = row["AuditName"];
+                    rowNew["ContactOne"] = row["ContactOne"];
+                    rowNew["OneTel"] = row["OneTel"];
+
+                    //审核状态属性
+                    rowNew["auditState"] = "Error";
+                    if (row["StateLeave"].ToString() == "0" && row["StateBack"].ToString() == "0")
+                    {
+                        rowNew["auditState"] = "待审核";
+                    }
+                    if (row["StateLeave"].ToString() == "1" && row["StateBack"].ToString() == "0")
+                    {
+                        rowNew["auditState"] = "待销假";
+                    }
+                    if (row["StateLeave"].ToString() == "1" && row["StateBack"].ToString() == "1")
+                    {
+                        rowNew["auditState"] = "已销假";
+                    }
+                    if (row["StateLeave"].ToString() == "2" && row["StateBack"].ToString() == "1")
+                    {
+                        rowNew["auditState"] = "已驳回";
+                    }
+
+                    //请假课段属性
+                    rowNew["Lesson"] = "";
+                    if (row["Lesson"].ToString() == "1")
+                    {
+                        rowNew["Lesson"] = "第一大节（08:00~09:40）";
+                    }
+                    if (row["Lesson"].ToString() == "2")
+                    {
+                        rowNew["Lesson"] = "第二大节（10:10~11:50）";
+                    }
+                    if (row["Lesson"].ToString() == "3")
+                    {
+                        rowNew["Lesson"] = "第三大节（14:00~15:30）";
+                    }
+                    if (row["Lesson"].ToString() == "4")
+                    {
+                        rowNew["Lesson"] = "第四大节（16:00~17:40）";
+                    }
+                    if (row["Lesson"].ToString() == "5")
+                    {
+                        rowNew["Lesson"] = "第五大节（18:30~21:40）";
+                    }
+
+                    dtClone.Rows.Add(rowNew);
+                }
+                #endregion
+
+                //绑定数据源
+                ViewBag.leavetable = dtClone;
+
+                return dtClone;
+            }
+            else if (Session["AuditState"].ToString() == "back")
+            {
+                //此处将list转为DataTable FineUI的Grid绑定时间类型数据时会发生错误，尚未找到原因。
+                //解决办法：将list转为DataTable绑定到Grid，并且将DataTable中值类型为DateTime的列转为字符串类型
+
+                #region 获取LeaveList、转换为DataTable格式
+                DataTable dtSource = new DataTable();
+                var leavelist = from vw_LeaveList in db.vw_LeaveList where ((vw_LeaveList.ST_Class == className) && (vw_LeaveList.StateLeave == "1") && (vw_LeaveList.StateBack == "0") && (vw_LeaveList.ST_Grade == grade) && (vw_LeaveList.ST_Grade == grade) && vw_LeaveList.ST_TeacherID == ST_TeacherID) orderby vw_LeaveList.ID descending select vw_LeaveList;
+
+                if (type == "btnShort")
+                {
+                    leavelist = from vw_LeaveList in db.vw_LeaveList where ((vw_LeaveList.ST_Class == className) && (vw_LeaveList.LeaveType == "短期请假") && (vw_LeaveList.StateLeave == "1") && (vw_LeaveList.StateBack == "0") && (vw_LeaveList.ST_Grade == grade) && vw_LeaveList.ST_TeacherID == ST_TeacherID) orderby vw_LeaveList.ID descending select vw_LeaveList;
+                }
+                if (type == "btnLong")
+                {
+                    leavelist = from vw_LeaveList in db.vw_LeaveList where ((vw_LeaveList.ST_Class == className) && (vw_LeaveList.LeaveType == "长期请假") && (vw_LeaveList.StateLeave == "1") && (vw_LeaveList.StateBack == "0") && (vw_LeaveList.ST_Grade == grade) && vw_LeaveList.ST_TeacherID == ST_TeacherID) orderby vw_LeaveList.ID descending select vw_LeaveList;
+                }
+                if (type == "btnHoliday")
+                {
+                    leavelist = from vw_LeaveList in db.vw_LeaveList where ((vw_LeaveList.ST_Class == className) && (vw_LeaveList.LeaveType == "节假日请假") && (vw_LeaveList.StateLeave == "1") && (vw_LeaveList.StateBack == "0") && (vw_LeaveList.ST_Grade == grade) && vw_LeaveList.ST_TeacherID == ST_TeacherID) orderby vw_LeaveList.ID descending select vw_LeaveList;
+                }
+                if (type == "btnCall")
+                {
+                    leavelist = from vw_LeaveList in db.vw_LeaveList where ((vw_LeaveList.ST_Class == className) && (vw_LeaveList.LeaveType.StartsWith("晚点名请假")) && (vw_LeaveList.StateLeave == "1") && (vw_LeaveList.StateBack == "0") && (vw_LeaveList.ST_Grade == grade) && vw_LeaveList.ST_TeacherID == ST_TeacherID) orderby vw_LeaveList.ID descending select vw_LeaveList;
+                }
+                if (type == "btnClass")
+                {
+                    leavelist = from vw_LeaveList in db.vw_LeaveList where ((vw_LeaveList.ST_Class == className) && (vw_LeaveList.LeaveType.StartsWith("上课请假")) && (vw_LeaveList.StateLeave == "1") && (vw_LeaveList.StateBack == "0") && (vw_LeaveList.ST_Grade == grade) && vw_LeaveList.ST_TeacherID == ST_TeacherID) orderby vw_LeaveList.ID descending select vw_LeaveList;
+                }
+                dtSource = leavelist.ToDataTable(rec => new object[] { leavelist });
+                #endregion
+
+                #region 更改DataTable中某一列的属性
+                DataTable dtClone = new DataTable();
+                dtClone = dtSource.Clone();
+                foreach (DataColumn col in dtClone.Columns)
+                {
+                    if (col.ColumnName == "SubmitTime" || col.ColumnName == "TimeLeave" || col.ColumnName == "TimeBack")
+                    {
+                        col.DataType = typeof(string);
+                    }
+                    if (col.ColumnName == "Lesson")
+                    {
+                        col.DataType = typeof(string);
+                    }
+                }
+
+                DataColumn newCol = new DataColumn();
+                newCol.ColumnName = "auditState";
+                newCol.DataType = typeof(string);
+                dtClone.Columns.Add(newCol);
+
+                foreach (DataRow row in dtSource.Rows)
+                {
+                    DataRow rowNew = dtClone.NewRow();
+                    rowNew["ID"] = row["ID"];
+                    rowNew["Reason"] = row["Reason"];
+                    rowNew["StateLeave"] = row["StateLeave"];
+                    rowNew["StateBack"] = row["StateBack"];
+                    rowNew["Notes"] = row["Notes"];
+                    rowNew["TypeID"] = row["TypeID"];
+                    rowNew["SubmitTime"] = ((DateTime)row["SubmitTime"]).ToString("yyyy-MM-dd HH:mm:ss");//按指定格式输出
+                    rowNew["TimeLeave"] = ((DateTime)row["TimeLeave"]).ToString("yyyy-MM-dd HH:mm:ss");
+                    rowNew["TimeBack"] = ((DateTime)row["TimeBack"]).ToString("yyyy-MM-dd HH:mm:ss");
+                    rowNew["LeaveWay"] = row["LeaveWay"];
+                    rowNew["BackWay"] = row["BackWay"];
+                    rowNew["Address"] = row["Address"];
+                    rowNew["TypeChildID"] = row["TypeChildID"];
+                    rowNew["Teacher"] = row["Teacher"];
+                    rowNew["ST_Name"] = row["ST_Name"];
+                    rowNew["ST_Tel"] = row["ST_Tel"];
+                    rowNew["ST_Grade"] = row["ST_Grade"];
+                    rowNew["ST_Class"] = row["ST_Class"];
+                    rowNew["ST_Teacher"] = row["ST_Teacher"];
+                    rowNew["StudentID"] = row["StudentID"];
+                    rowNew["LeaveType"] = row["LeaveType"];
+                    rowNew["AuditName"] = row["AuditName"];
+                    rowNew["ContactOne"] = row["ContactOne"];
+                    rowNew["OneTel"] = row["OneTel"];
+
+                    //审核状态属性
+                    rowNew["auditState"] = "Error";
+                    if (row["StateLeave"].ToString() == "0" && row["StateBack"].ToString() == "0")
+                    {
+                        rowNew["auditState"] = "待审核";
+                    }
+                    if (row["StateLeave"].ToString() == "1" && row["StateBack"].ToString() == "0")
+                    {
+                        rowNew["auditState"] = "待销假";
+                    }
+                    if (row["StateLeave"].ToString() == "1" && row["StateBack"].ToString() == "1")
+                    {
+                        rowNew["auditState"] = "已销假";
+                    }
+                    if (row["StateLeave"].ToString() == "2" && row["StateBack"].ToString() == "1")
+                    {
+                        rowNew["auditState"] = "已驳回";
+                    }
+
+                    //请假课段属性
+                    rowNew["Lesson"] = "";
+                    if (row["Lesson"].ToString() == "1")
+                    {
+                        rowNew["Lesson"] = "第一大节（08:00~09:40）";
+                    }
+                    if (row["Lesson"].ToString() == "2")
+                    {
+                        rowNew["Lesson"] = "第二大节（10:10~11:50）";
+                    }
+                    if (row["Lesson"].ToString() == "3")
+                    {
+                        rowNew["Lesson"] = "第三大节（14:00~15:30）";
+                    }
+                    if (row["Lesson"].ToString() == "4")
+                    {
+                        rowNew["Lesson"] = "第四大节（16:00~17:40）";
+                    }
+                    if (row["Lesson"].ToString() == "5")
+                    {
+                        rowNew["Lesson"] = "第五大节（18:30~21:40）";
+                    }
+
+                    dtClone.Rows.Add(rowNew);
+                }
+                #endregion
+
+                //绑定数据源
+                ViewBag.leavetable = dtClone;
+
+                return dtClone;
+            }
+            else
+            {
+                //未知错误、此处代码退出到登录界面
+                return null;
+            }
+        }
+        #endregion
 
         /// <summary>
         /// 根据请假单号查找
@@ -1828,7 +2150,7 @@ namespace qingjia_MVC.Areas.Leave.Controllers
             var TwinTriggerBox1 = UIHelper.TwinTriggerBox("TwinTriggerBox1");
             string ST_NUM = "";
 
-            if (!String.IsNullOrEmpty(text))
+            if (!string.IsNullOrEmpty(text))
             {
                 // 执行搜索动作
                 var ST_Num_List = from vw_Student in db.vw_Student where (vw_Student.ST_Name == text) select vw_Student.ST_Num;
@@ -1837,17 +2159,17 @@ namespace qingjia_MVC.Areas.Leave.Controllers
                     if (ST_Num_List.ToList().Count == 1)
                     {
                         ST_NUM = ST_Num_List.ToList().First().ToString();
-                        ShowNotify(String.Format("检索完成！", text));
+                        ShowNotify(string.Format("检索完成！", text));
                         UIHelper.Grid("gridLeaveList_Leave").DataSource(Get_LL_DataTable_BY_ST_Num(ST_NUM, staticLeaveType), fields);
                     }
                     else
                     {
-                        ShowNotify(String.Format("姓名为{0}的学生不唯一，请根据其他信息检索！", text));
+                        ShowNotify(string.Format("姓名为{0}的学生不唯一，请根据其他信息检索！", text));
                     }
                 }
                 else
                 {
-                    ShowNotify(String.Format("姓名为{0}的学生不存在，请重新输入！", text));
+                    ShowNotify(string.Format("姓名为{0}的学生不存在，请重新输入！", text));
                 }
 
                 TwinTriggerBox1.ShowTrigger1(true);
@@ -1861,7 +2183,7 @@ namespace qingjia_MVC.Areas.Leave.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult TwinTriggerBox1_Trigger1Click_Leave(string content)
+        public ActionResult TwinTriggerBox1_Trigger1Click_Leave(JArray fields)
         {
             Session["AuditState"] = "leave";
 
@@ -1873,6 +2195,10 @@ namespace qingjia_MVC.Areas.Leave.Controllers
             // 执行清空动作
             TwinTriggerBox1.Text("");
             TwinTriggerBox1.ShowTrigger1(false);
+
+            //初始化Grid数据
+            DataTable dtSource = Get_LL_DataTable("total");
+            UIHelper.Grid("gridLeaveList_Leave").DataSource(dtSource, fields);
 
             return UIHelper.Result();
         }
@@ -1912,19 +2238,22 @@ namespace qingjia_MVC.Areas.Leave.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult TwinTriggerBox2_Trigger1Click_Leave(string content)
+        public ActionResult TwinTriggerBox2_Trigger1Click_Leave(JArray fields)
         {
             Session["AuditState"] = "leave";
 
             // 点击 TwinTriggerBox 的取消按钮
             var TwinTriggerBox2 = UIHelper.TwinTriggerBox("TwinTriggerBox2");
 
-
             ShowNotify("取消搜索！");
 
             // 执行清空动作
             TwinTriggerBox2.Text("");
             TwinTriggerBox2.ShowTrigger1(false);
+
+            //初始化Grid数据
+            DataTable dtSource = Get_LL_DataTable("total");
+            UIHelper.Grid("gridLeaveList_Leave").DataSource(dtSource, fields);
 
             return UIHelper.Result();
         }
@@ -1964,7 +2293,7 @@ namespace qingjia_MVC.Areas.Leave.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult TwinTriggerBox3_Trigger1Click_Leave(string content)
+        public ActionResult TwinTriggerBox3_Trigger1Click_Leave(JArray fields)
         {
             Session["AuditState"] = "leave";
 
@@ -1977,6 +2306,10 @@ namespace qingjia_MVC.Areas.Leave.Controllers
             // 执行清空动作
             TwinTriggerBox3.Text("");
             TwinTriggerBox3.ShowTrigger1(false);
+
+            //初始化Grid数据
+            DataTable dtSource = Get_LL_DataTable("total");
+            UIHelper.Grid("gridLeaveList_Leave").DataSource(dtSource, fields);
 
             return UIHelper.Result();
         }
@@ -2025,7 +2358,7 @@ namespace qingjia_MVC.Areas.Leave.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult TwinTriggerBox1_Trigger1Click_Back(string content)
+        public ActionResult TwinTriggerBox1_Trigger1Click_Back(JArray fields)
         {
             Session["AuditState"] = "back";
 
@@ -2037,6 +2370,10 @@ namespace qingjia_MVC.Areas.Leave.Controllers
             // 执行清空动作
             TwinTriggerBox1.Text("");
             TwinTriggerBox1.ShowTrigger1(false);
+
+            //初始化Grid数据
+            DataTable dtSource = Get_LL_DataTable("total");
+            UIHelper.Grid("gridLeaveList_Back").DataSource(dtSource, fields);
 
             return UIHelper.Result();
         }
@@ -2076,7 +2413,7 @@ namespace qingjia_MVC.Areas.Leave.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult TwinTriggerBox2_Trigger1Click_Back(string content)
+        public ActionResult TwinTriggerBox2_Trigger1Click_Back(JArray fields)
         {
             Session["AuditState"] = "back";
 
@@ -2089,6 +2426,10 @@ namespace qingjia_MVC.Areas.Leave.Controllers
             // 执行清空动作
             TwinTriggerBox2.Text("");
             TwinTriggerBox2.ShowTrigger1(false);
+
+            //初始化Grid数据
+            DataTable dtSource = Get_LL_DataTable("total");
+            UIHelper.Grid("gridLeaveList_Back").DataSource(dtSource, fields);
 
             return UIHelper.Result();
         }
@@ -2128,7 +2469,7 @@ namespace qingjia_MVC.Areas.Leave.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult TwinTriggerBox3_Trigger1Click_Back(string content)
+        public ActionResult TwinTriggerBox3_Trigger1Click_Back(JArray fields)
         {
             Session["AuditState"] = "back";
 
@@ -2142,6 +2483,10 @@ namespace qingjia_MVC.Areas.Leave.Controllers
             TwinTriggerBox3.Text("");
             TwinTriggerBox3.ShowTrigger1(false);
 
+            //初始化Grid数据
+            DataTable dtSource = Get_LL_DataTable("total");
+            UIHelper.Grid("gridLeaveList_Back").DataSource(dtSource, fields);
+
             return UIHelper.Result();
         }
         #endregion
@@ -2152,6 +2497,7 @@ namespace qingjia_MVC.Areas.Leave.Controllers
         public ActionResult ddlST_Class_SelectedIndexChanged(string ddlST_Class, string ddlST_ClassDropDownList1_text, JArray fields)
         {
             //按班级、请假类型查找
+            //记录页面班级状态、、、按条件搜索
             //尚未完成
 
             return UIHelper.Result();
@@ -2331,7 +2677,7 @@ namespace qingjia_MVC.Areas.Leave.Controllers
             ShowNotify(String.Format("驳回操作成功！"));
             return UIHelper.Result();
         }
-        
+
         /// <summary>
         /// ajax获取学生请假记录详情
         /// </summary>
@@ -2358,5 +2704,3 @@ namespace qingjia_MVC.Areas.Leave.Controllers
 
     }
 }
-
-

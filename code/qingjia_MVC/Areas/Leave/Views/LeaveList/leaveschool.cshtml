@@ -97,6 +97,7 @@
                         .Required(true)
                         .OnSelectedIndexChanged("LL_TypeOnSelectedIndexChanged_LeaveSchool", "LL_Type")
                         .Label("请假类型")
+                        .ShowRedStar(true)
                         .DataSource(ViewBag.LeaveType)
                         
                 ),
@@ -194,6 +195,7 @@
                         .EmptyText("请输入请假原因。（30字以内）")
                         .Required(true)
                         .Label("请假原因")
+                        .ShowRedStar(true)
                         .AutoGrowHeight(true)
                         .AutoGrowHeightMin(100)
                         .AutoGrowHeightMax(200)
