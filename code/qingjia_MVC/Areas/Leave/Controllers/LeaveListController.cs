@@ -258,7 +258,11 @@ namespace qingjia_MVC.Areas.Leave.Controllers
                 vw_Student modelStudent = student.ToList().First();
 
                 //此处为需要晚自习的年级
-                if (modelStudent.ST_Grade != "2016")
+
+                //获取具有早晚自习请假的年级
+                string FreshmanYear = System.Configuration.ConfigurationManager.AppSettings["FreshmanYear"].ToString().Trim();
+
+                if (modelStudent.ST_Grade.Trim() != FreshmanYear)
                 {
                     ShowNotify("您没有早晚自习！");
                     UIHelper.DropDownList("LL_Type").Reset();
@@ -814,7 +818,7 @@ namespace qingjia_MVC.Areas.Leave.Controllers
                     fileName = fileName.Substring(fileName.LastIndexOf(".") + 1, (fileName.Length - fileName.LastIndexOf(".") - 1)); //扩展名
                     fileName = DateTime.Now.ToString() + "_" + Session["UserID"].ToString() + "_" + "pic1." + fileName;
                     fileName = fileName.Replace(":", "").Replace(" ", "").Replace("\\", "_").Replace("/", "_");
-                    
+
                     filePhoto1.SaveAs(Server.MapPath(@"~\media\upload\internship\" + fileName));//此处的路径为保存在磁盘的路径，要用双反斜杠（避免转义,或者把@放在双引号前）
 
                     //生成缩略图并保存

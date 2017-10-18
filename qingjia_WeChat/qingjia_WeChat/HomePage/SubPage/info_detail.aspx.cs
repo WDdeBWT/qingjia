@@ -1,13 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Web;
-using System.Web.UI;
-using System.Web.UI.WebControls;
 using System.Web.UI.HtmlControls;
 using qingjia_YiBan.HomePage.Class;
-using System.Data;
-using System.Data.SqlClient;
 using qingjia_YiBan.HomePage.Model.API;
 
 namespace qingjia_YiBan.SubPage
@@ -43,6 +37,7 @@ namespace qingjia_YiBan.SubPage
             Label_Class.InnerText = userInfo.UserClass;
             txtTel.Value = userInfo.UserTel;
             txtQQ.Value = userInfo.UserQQ;
+            txtEmail.Value = userInfo.UserEmail;
             if (userInfo.ContactName != "" && userInfo.ContactTel != "" && userInfo.UserTel != "" && userInfo.UserQQ != "")
             {
                 txtGuardianName.Value = userInfo.ContactName;
