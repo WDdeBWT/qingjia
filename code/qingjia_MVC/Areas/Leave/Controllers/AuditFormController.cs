@@ -1,16 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Web.Mvc;
-using FineUIMvc;
-using qingjia_MVC;
+﻿using FineUIMvc;
+using Newtonsoft.Json.Linq;
+using qingjia_MVC.Content;
 using qingjia_MVC.Controllers;
 using qingjia_MVC.Models;
-using qingjia_MVC.Content;
-using System.Data.Entity.Validation;
+using System;
+using System.Collections.Generic;
 using System.Data;
-using Newtonsoft.Json.Linq;
+using System.Linq;
+using System.Web.Mvc;
 using System.Web.Script.Serialization;
 
 namespace qingjia_MVC.Areas.Leave.Controllers
@@ -20,6 +17,10 @@ namespace qingjia_MVC.Areas.Leave.Controllers
         //实例化数据库
         private imaw_qingjiaEntities db = new imaw_qingjiaEntities();
         private string staticLeaveType = "total";
+        //Session["AuditLeaveType"]     请假审批当前请假类型
+        //Session["AuditBackType"]      销假审批当前请假类型
+        //Session["AuditState"]         请销假状态
+        //Session["AuditClassName"]     当前班级状态
 
         // GET: Leave/AuditForm/AuditLeave
         public ActionResult AuditLeave()
@@ -68,37 +69,7 @@ namespace qingjia_MVC.Areas.Leave.Controllers
             return View(modelLL);
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        public void LoadClassDDL()
-        {
-            string grade = Session["Grade"].ToString();
-            string ST_TeacherID = Session["UserID"].ToString();
 
-            var classList = from T_Class in db.T_Class where (T_Class.Grade == grade && T_Class.TeacherID == ST_TeacherID) select T_Class;
-            if (classList.Any())
-            {
-                DataTable dtSource = new DataTable();
-                dtSource.Columns.Add("ClassID");
-                dtSource.Columns.Add("ClassName");
-
-                DataRow firstRow = dtSource.NewRow();
-                firstRow["ClassID"] = "-1";
-                firstRow["ClassName"] = "全部班级";
-                dtSource.Rows.Add(firstRow);
-
-                foreach (T_Class item in classList.ToList())
-                {
-                    DataRow row = dtSource.NewRow();
-                    row["ClassID"] = item.ID;
-                    row["ClassName"] = item.ClassName;
-
-                    dtSource.Rows.Add(row);
-                }
-                ViewBag.ddlST_Class = dtSource;
-            }
-        }
 
         #region 统计数据
 
@@ -1836,11 +1807,27 @@ namespace qingjia_MVC.Areas.Leave.Controllers
                     T_LL.StateBack = "1";
                 }
             }
-            db.SaveChanges();
-            ShowNotify(String.Format("已同意请假！"));
+            try
+            {
+                db.SaveChanges();
+                ShowNotify(String.Format("已同意请假！"));
+            }
+            catch
+            {
+                ShowNotify(String.Format("操作失败！"));
+            }
 
             //绑定Grid数据
-            UIHelper.Grid("gridLeaveList_Leave").DataSource(Get_LL_DataTable(type, sortField, sortDirection), gridLeaveList_fields);
+            if (Session["AuditClassName"] == null || Session["AuditClassName"].ToString() == "-1")
+            {
+                UIHelper.Grid("gridLeaveList_Leave").DataSource(Get_LL_DataTable(type, sortField, sortDirection), gridLeaveList_fields);
+            }
+            else
+            {
+                string AuditClassName = Session["AuditClassName"].ToString();
+                UIHelper.Grid("gridLeaveList_Leave").DataSource(Get_LL_DataTable_BY_ClassName(type, AuditClassName), gridLeaveList_fields);
+            }
+
             //绑定Button数据
             LL_Count_Leave();
 
@@ -1887,8 +1874,17 @@ namespace qingjia_MVC.Areas.Leave.Controllers
 
 
             ShowNotify(String.Format("已同意销假！"));
+
             //绑定Grid数据
-            UIHelper.Grid("gridLeaveList_Back").DataSource(Get_LL_DataTable(type, sortField, sortDirection), gridLeaveList_fields);
+            if (Session["AuditClassName"] == null || Session["AuditClassName"].ToString() == "-1")
+            {
+                UIHelper.Grid("gridLeaveList_Back").DataSource(Get_LL_DataTable(type, sortField, sortDirection), gridLeaveList_fields);
+            }
+            else
+            {
+                string AuditClassName = Session["AuditClassName"].ToString();
+                UIHelper.Grid("gridLeaveList_Back").DataSource(Get_LL_DataTable_BY_ClassName(type, AuditClassName), gridLeaveList_fields);
+            }
             //绑定Button数据
             LL_Count_Back();
 
@@ -2492,15 +2488,98 @@ namespace qingjia_MVC.Areas.Leave.Controllers
         #endregion
 
         #region 按班级查找  尚未完成
+        /// <summary>
+        /// 请假审批界面  班级下拉框事件
+        /// </summary>
+        /// <param name="ddlST_Class_Leave"></param>
+        /// <param name="ddlST_Class_Leave_text"></param>
+        /// <param name="fields"></param>
+        /// <returns></returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult ddlST_Class_SelectedIndexChanged(string ddlST_Class, string ddlST_ClassDropDownList1_text, JArray fields)
+        public ActionResult ddlST_Class_Leave_SelectedIndexChanged(string ddlST_Class_Leave, string ddlST_Class_Leave_text, JArray fields)
         {
-            //按班级、请假类型查找
-            //记录页面班级状态、、、按条件搜索
-            //尚未完成
+            Session["AuditState"] = "leave";
 
+            string type = Session["AuditLeaveType"].ToString();
+            DataTable dtSource = new DataTable();
+
+            if (ddlST_Class_Leave == "-1")//-1代表选取全部班级
+            {
+                Session["AuditClassName"] = "-1";
+                dtSource = Get_LL_DataTable(type);
+            }
+            else
+            {
+                Session["AuditClassName"] = ddlST_Class_Leave_text;
+                dtSource = Get_LL_DataTable_BY_ClassName(type, ddlST_Class_Leave_text);
+            }
+            ShowNotify("检索完成！");
+            UIHelper.Grid("gridLeaveList_Leave").DataSource(dtSource, fields);
             return UIHelper.Result();
+        }
+
+        /// <summary>
+        /// 销假审批界面  班级下拉框事件
+        /// </summary>
+        /// <param name="ddlST_Class_Back"></param>
+        /// <param name="ddlST_Class_Back_text"></param>
+        /// <param name="fields"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult ddlST_Class_Back_SelectedIndexChanged(string ddlST_Class_Back, string ddlST_Class_Back_text, JArray fields)
+        {
+            Session["AuditState"] = "back";
+
+            string type = Session["AuditBackType"].ToString();
+            DataTable dtSource = new DataTable();
+
+            if (ddlST_Class_Back == "-1")//-1代表选取全部班级
+            {
+                Session["AuditClassName"] = "-1";
+                dtSource = Get_LL_DataTable(type);
+            }
+            else
+            {
+                Session["AuditClassName"] = ddlST_Class_Back_text;
+                dtSource = Get_LL_DataTable_BY_ClassName(type, ddlST_Class_Back_text);
+            }
+            ShowNotify("检索完成！");
+            UIHelper.Grid("gridLeaveList_Back").DataSource(dtSource, fields);
+            return UIHelper.Result();
+        }
+
+        /// <summary>
+        /// 班级下拉框 数据绑定
+        /// </summary>
+        public void LoadClassDDL()
+        {
+            string grade = Session["Grade"].ToString();
+            string ST_TeacherID = Session["UserID"].ToString();
+
+            var classList = from T_Class in db.T_Class where (T_Class.Grade == grade && T_Class.TeacherID == ST_TeacherID) select T_Class;
+            if (classList.Any())
+            {
+                DataTable dtSource = new DataTable();
+                dtSource.Columns.Add("ClassID");
+                dtSource.Columns.Add("ClassName");
+
+                DataRow firstRow = dtSource.NewRow();
+                firstRow["ClassID"] = "-1";
+                firstRow["ClassName"] = "全部班级";
+                dtSource.Rows.Add(firstRow);
+
+                foreach (T_Class item in classList.ToList())
+                {
+                    DataRow row = dtSource.NewRow();
+                    row["ClassID"] = item.ID;
+                    row["ClassName"] = item.ClassName;
+
+                    dtSource.Rows.Add(row);
+                }
+                ViewBag.ddlST_Class = dtSource;
+            }
         }
         #endregion
 
