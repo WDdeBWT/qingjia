@@ -373,7 +373,7 @@
                             .MarginRight(10),
                         F.DropDownList()
                             .ID("ddlST_Class_Leave")
-                                .OnSelectedIndexChanged(Url.Action("ddlST_Class_SelectedIndexChanged"), "ddlST_Class", new Parameter("fields", "F.ui.gridLeaveList_Leave.fields"))
+                                .OnSelectedIndexChanged(Url.Action("ddlST_Class_Leave_SelectedIndexChanged"), "ddlST_Class_Leave", new Parameter("fields", "F.ui.gridLeaveList_Leave.fields"))
                             .MarginLeft(30)
                             .MarginRight(30)
                             .DataTextField("ClassName")
