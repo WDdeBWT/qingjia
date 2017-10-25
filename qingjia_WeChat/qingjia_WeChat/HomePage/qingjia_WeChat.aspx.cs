@@ -1,8 +1,7 @@
-﻿using System;
-using System.Web;
-using qingjia_YiBan.HomePage.Class;
+﻿using qingjia_YiBan.HomePage.Class;
 using qingjia_YiBan.HomePage.Model.API;
-using System.Text;
+using System;
+using System.Web;
 
 namespace qingjia_YiBan.HomePage
 {
@@ -105,7 +104,7 @@ namespace qingjia_YiBan.HomePage
             {
                 HttpCookie _cookie = HttpContext.Current.Request.Cookies["NightInfo"];
                 //晚点名请假截止时间
-                if (_cookie["DeadLine"] != null)
+                if (_cookie["DeadLine"] != null && _cookie["DeadLine"].ToString() != "")
                 {
                     DateTime end_time_night = Convert.ToDateTime(_cookie["DeadLine"].ToString());
 
@@ -124,7 +123,7 @@ namespace qingjia_YiBan.HomePage
                 }
 
                 //晚点名时间
-                if (_cookie["BatchTime"] != null)
+                if (_cookie["BatchTime"] != null && _cookie["BatchTime"].ToString() != "")
                 {
                     DateTime call_time = Convert.ToDateTime(_cookie["BatchTime"].ToString());
                     label_CallTime.InnerText = call_time.ToString("yyyy/MM/dd HH:mm");
