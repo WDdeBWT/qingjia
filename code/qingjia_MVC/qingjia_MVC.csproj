@@ -40,6 +40,14 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="aliyun-net-sdk-core, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\aliyun-net-sdk-core.dll</HintPath>
+    </Reference>
+    <Reference Include="aliyun-net-sdk-sms, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\aliyun-net-sdk-sms.dll</HintPath>
+    </Reference>
     <Reference Include="FineUIMvc, Version=1.1.0.0, Culture=neutral, PublicKeyToken=2317dd1e500693f3, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>bin\FineUIMvc.dll</HintPath>
@@ -228,6 +236,7 @@
     <Compile Include="Areas\Vacation\VacationAreaRegistration.cs" />
     <Compile Include="Common\ApiBaseResult.cs" />
     <Compile Include="Common\PublicMethod.cs" />
+    <Compile Include="Common\ShortMessageClass.cs" />
     <Compile Include="Content\DataTableHelper.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\API\LeaveListController.cs" />
