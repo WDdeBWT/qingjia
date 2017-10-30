@@ -697,7 +697,7 @@ namespace qingjia_MVC.Controllers.API
                 #region 请假操作
                 string access_token = data.access_token;
                 string ST_Num = access_token.Substring(0, access_token.IndexOf("_"));
-                string LL_Type = data.leave_type + data.leave_child_type;
+                string LL_Type = data.leave_type + "(" + data.leave_child_type + ")";
                 string leaveDate = data.leave_date;
                 string leaveTime = data.leave_time;
                 string backDate = data.back_date;
@@ -707,8 +707,7 @@ namespace qingjia_MVC.Controllers.API
                 string backWay = null;
                 string address = null;
                 string holidayType = null;
-
-
+                
                 if (data.leave_type == "晚点名请假")
                 {
                     string LV_NUM = DateTime.Now.ToString("yyMMdd");//流水号生成
