@@ -1,13 +1,16 @@
-﻿using System;
+﻿using qingjia_MVC.Common;
+using qingjia_MVC.Models;
+using qingjia_MVC.Models.API;
+using System;
 using System.Collections.Generic;
+using System.Data.Entity.Validation;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Web;
 using System.Web.Http;
-using qingjia_MVC.Common;
-using qingjia_MVC.Models;
-using System.Data.Entity.Validation;
-using qingjia_MVC.Models.API;
 
 namespace qingjia_MVC.Controllers.API
 {
@@ -200,7 +203,7 @@ namespace qingjia_MVC.Controllers.API
 
         /// <summary>
         /// GET
-        /// 
+        /// 撤销请假记录
         /// 学生删除待审核请假记录
         /// </summary>
         /// <param name="leavelistID"></param>
@@ -382,6 +385,27 @@ namespace qingjia_MVC.Controllers.API
                 result.messages = "参数错误！";
                 return result;
             }
+        }
+
+        [HttpGet, Route("downloadpic")]
+        public IHttpActionResult DownLoadPic()
+        {
+            var browser = String.Empty;
+            if (HttpContext.Current.Request.UserAgent != null)
+            {
+                browser = HttpContext.Current.Request.UserAgent.ToUpper();
+            }
+            string filePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "res\\images\\qingjia", "测试图片.jpg");
+            HttpResponseMessage httpResponseMessage = new HttpResponseMessage(HttpStatusCode.OK);
+            FileStream fileStream = File.OpenRead(filePath);
+            httpResponseMessage.Content = new StreamContent(fileStream);
+            httpResponseMessage.Content.Headers.ContentType = new MediaTypeHeaderValue("application/octet-stream");
+            httpResponseMessage.Content.Headers.ContentDisposition = new ContentDispositionHeaderValue("attachment")
+            {
+                FileName = browser.Contains("FIREFOX") ? Path.GetFileName(filePath) : HttpUtility.UrlEncode(Path.GetFileName(filePath))
+                //FileName = HttpUtility.UrlEncode(Path.GetFileName(filePath))
+            };
+            return ResponseMessage(httpResponseMessage);
         }
 
         #region 其他方法
@@ -980,6 +1004,10 @@ namespace qingjia_MVC.Controllers.API
                 return 0;
             }
         }
+
+        #endregion
+
+        #region 生成请假条
 
         #endregion
 
