@@ -1,5 +1,6 @@
 ﻿using FineUIMvc;
 using Newtonsoft.Json.Linq;
+using qingjia_MVC.Common;
 using qingjia_MVC.Content;
 using qingjia_MVC.Controllers;
 using qingjia_MVC.Models;
@@ -68,8 +69,6 @@ namespace qingjia_MVC.Areas.Leave.Controllers
             vw_LeaveList modelLL = (from vw_LeaveList in db.vw_LeaveList where (vw_LeaveList.ID == LL_ID) select vw_LeaveList).ToList().First();
             return View(modelLL);
         }
-
-
 
         #region 统计数据
 
@@ -1782,6 +1781,7 @@ namespace qingjia_MVC.Areas.Leave.Controllers
         public ActionResult btnAgreeClick_Leave(JArray selectedRows, JArray gridLeaveList_fields, string sortField, string sortDirection)
         {
             string type = Session["AuditLeaveType"].ToString();
+            MessageModel model = new MessageModel();
 
             #region 同意请假操作
             foreach (string rowId in selectedRows)
@@ -1806,15 +1806,24 @@ namespace qingjia_MVC.Areas.Leave.Controllers
                     T_LL.StateLeave = "1";
                     T_LL.StateBack = "1";
                 }
+
+                model.LV_Num = vw_LL.ID;
+                model.ST_Name = vw_LL.ST_Name;
+                model.ST_Tel = vw_LL.ST_Tel;
+                model.MessageType = "go";
             }
             try
             {
                 db.SaveChanges();
-                ShowNotify(String.Format("已同意请假！"));
+
+                //发送短信
+                ShortMessageClass.SendShortMessage(model);
+
+                ShowNotify(string.Format("已同意请假！"));
             }
             catch
             {
-                ShowNotify(String.Format("操作失败！"));
+                ShowNotify(string.Format("操作失败！"));
             }
 
             //绑定Grid数据
@@ -1846,6 +1855,7 @@ namespace qingjia_MVC.Areas.Leave.Controllers
         public ActionResult btnAgreeClick_Back(JArray selectedRows, JArray gridLeaveList_fields, string sortField, string sortDirection)
         {
             string type = Session["AuditBackType"].ToString();
+            MessageModel model = new MessageModel();
 
             #region 同意销假操作
             foreach (string rowId in selectedRows)
@@ -1869,9 +1879,15 @@ namespace qingjia_MVC.Areas.Leave.Controllers
                     T_LL.StateLeave = "1";
                     T_LL.StateBack = "1";
                 }
+
+                model.LV_Num = vw_LL.ID;
+                model.ST_Name = vw_LL.ST_Name;
+                model.ST_Tel = vw_LL.ST_Tel;
+                model.MessageType = "back";
             }
             db.SaveChanges();
-
+            //发送短信
+            ShortMessageClass.SendShortMessage(model);
 
             ShowNotify(String.Format("已同意销假！"));
 
@@ -1903,15 +1919,26 @@ namespace qingjia_MVC.Areas.Leave.Controllers
         public ActionResult btnCancelClick(FormCollection formInfo, JArray fields, string sortField, string sortDirection)
         {
             string type = Session["AuditLeaveType"].ToString();
+            string LL_NUM = Session["LL_NUM"].ToString();
+            MessageModel model = new MessageModel();
 
             string reason = formInfo["Reason"].ToString();
-            T_LeaveList LL = db.T_LeaveList.Find(Session["LL_NUM"].ToString());
+            T_LeaveList LL = db.T_LeaveList.Find(LL_NUM);
             LL.Notes = reason;
             LL.StateLeave = "2";
             LL.StateBack = "1";
+
             db.SaveChanges();
+
+            vw_LeaveList vw_LL = (from vw_LeaveList in db.vw_LeaveList where (vw_LeaveList.ID == LL_NUM) select vw_LeaveList).ToList().First();
+
+            model.LV_Num = vw_LL.ID;
+            model.ST_Name = vw_LL.ST_Name;
+            model.ST_Tel = vw_LL.ST_Tel;
+            model.MessageType = "failed";
+
             UIHelper.Window("cancelWindow").Close();
-            ShowNotify(String.Format("驳回请假成功！"));
+            ShowNotify(string.Format("驳回请假成功！"));
             //绑定Grid数据
             UIHelper.Grid("gridLeaveList_Leave").DataSource(Get_LL_DataTable(type, sortField, sortDirection), fields);
             //绑定Button数据
