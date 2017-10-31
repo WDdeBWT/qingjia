@@ -112,7 +112,7 @@ namespace qingjia_MVC.Common
             {
                 conn.Open();
 
-                string cmdString = "INSERT INTO SendList VALUES (' " + LV_Num + "','" + ST_NUM + "','" + MessageType + "','" + ST_Tel + "','" + timeString + "')";
+                string cmdString = "INSERT INTO T_SendList VALUES (' " + LV_Num + "','" + ST_NUM + "','" + MessageType + "','" + ST_Tel + "','" + timeString + "')";
                 int flag = 0;
 
                 using (SqlCommand cmd = new SqlCommand(cmdString, conn))
@@ -132,36 +132,36 @@ namespace qingjia_MVC.Common
         }
 
         /// <summary>
-        /// 发送短信
+        /// 发送通知短信-停用
         /// </summary>
         /// <param name="teacherName">教室姓名</param>
         /// <param name="text">短信内容</param>
         /// <param name="ST_Tel">学生电话</param>
         /// <returns></returns>
-        public static bool SendShortMessage(string teacherName, string text, string ST_Tel)
-        {
-            //AccessKey 和 AccessKeyCode
-            IClientProfile profile = DefaultProfile.GetProfile("cn-hangzhou", "LTAI7W5SRT92SGZD", "F7Gv1zZvwHYHLbkSIXnn1Dx9HUIi0K");
-            IAcsClient client = new DefaultAcsClient(profile);
-            SingleSendSmsRequest request = new SingleSendSmsRequest();
-            try
-            {
+        //public static bool SendShortMessage(string teacherName, string text, string ST_Tel)
+        //{
+        //    //AccessKey 和 AccessKeyCode
+        //    IClientProfile profile = DefaultProfile.GetProfile("cn-hangzhou", "LTAI7W5SRT92SGZD", "F7Gv1zZvwHYHLbkSIXnn1Dx9HUIi0K");
+        //    IAcsClient client = new DefaultAcsClient(profile);
+        //    SingleSendSmsRequest request = new SingleSendSmsRequest();
+        //    try
+        //    {
 
-                //短信签名  【请假系统】
-                request.SignName = "请假系统";
-                request.TemplateCode = "SMS_63430002";
+        //        //短信签名  【请假系统】
+        //        request.SignName = "请假系统";
+        //        request.TemplateCode = "SMS_63430002";
 
-                request.RecNum = ST_Tel;
-                request.ParamString = "{\"name\":\"" + teacherName + "\",\"text\":\"" + text + "\"}";
-                SingleSendSmsResponse httpResponse = client.GetAcsResponse(request);
+        //        request.RecNum = ST_Tel;
+        //        request.ParamString = "{\"name\":\"" + teacherName + "\",\"text\":\"" + text + "\"}";
+        //        SingleSendSmsResponse httpResponse = client.GetAcsResponse(request);
 
-                return true;
-            }
-            catch (ServerException e)
-            {
-                return false;
-            }
-        }
+        //        return true;
+        //    }
+        //    catch (ServerException e)
+        //    {
+        //        return false;
+        //    }
+        //}
     }
 
     public class MessageModel

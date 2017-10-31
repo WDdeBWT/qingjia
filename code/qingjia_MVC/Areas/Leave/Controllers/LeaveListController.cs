@@ -201,8 +201,10 @@ namespace qingjia_MVC.Areas.Leave.Controllers
                 var student = from vw_Student in db.vw_Student where vw_Student.ST_Num == ST_Num select vw_Student;
                 vw_Student modelStudent = student.ToList().First();
 
-                //此处为需要晚自习的年级
-                if (modelStudent.ST_Grade != "2016")
+                //获取具有早晚自习请假的年级
+                string FreshmanYear = System.Configuration.ConfigurationManager.AppSettings["FreshmanYear"].ToString().Trim();
+
+                if (modelStudent.ST_Grade.Trim() != FreshmanYear)
                 {
                     ShowNotify("您没有早晚自习！");
                     UIHelper.DropDownList("LL_Type").Reset();
@@ -264,9 +266,7 @@ namespace qingjia_MVC.Areas.Leave.Controllers
                 string ST_Num = Session["UserID"].ToString();
                 var student = from vw_Student in db.vw_Student where vw_Student.ST_Num == ST_Num select vw_Student;
                 vw_Student modelStudent = student.ToList().First();
-
-                //此处为需要晚自习的年级
-
+                
                 //获取具有早晚自习请假的年级
                 string FreshmanYear = System.Configuration.ConfigurationManager.AppSettings["FreshmanYear"].ToString().Trim();
 

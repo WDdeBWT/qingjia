@@ -324,7 +324,13 @@
                             .MarginLeft(10)
                             .MarginRight(10)
                                     .OnClick(Url.Action("btnClass_ReloadData_Leave"), new Parameter("fields", "F.ui.gridLeaveList_Leave.fields"))
-                            .Text(ViewBag.classNumLeave)
+                            .Text(ViewBag.classNumLeave),
+                        F.Button()
+                            .ID("btnZixi")
+                            .MarginLeft(10)
+                            .MarginRight(10)
+                                    .OnClick(Url.Action("btnZixi_ReloadData_Leave"), new Parameter("fields", "F.ui.gridLeaveList_Leave.fields"))
+                            .Text(ViewBag.zixiNumLeave)
                     ),
                 F.Toolbar()
                     .ID("selectGroup")

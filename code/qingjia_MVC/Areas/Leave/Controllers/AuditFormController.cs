@@ -87,6 +87,7 @@ namespace qingjia_MVC.Areas.Leave.Controllers
             int holidayNum = 0;
             int nightNum = 0;
             int classNum = 0;
+            int zixiNum = 0;
 
             //提取待审核请假记录
             DataTable dtSource = new DataTable();
@@ -211,14 +212,19 @@ namespace qingjia_MVC.Areas.Leave.Controllers
                 {
                     classNum++;
                 }
+                if (row["LeaveType"].ToString().Substring(0, 4) == "早晚自习")
+                {
+                    zixiNum++;
+                }
             }
-            totalNum = shortNum + longNum + holidayNum + nightNum + classNum;
+            totalNum = shortNum + longNum + holidayNum + nightNum + classNum + zixiNum;
             ViewBag.totalNumLeave = (totalNum == 0) ? "全部请假" : "全部请假<span class='badge badge-danger'>" + totalNum + "</span>";
             ViewBag.shortNumLeave = (shortNum == 0) ? "短期请假" : "短期请假<span class='badge badge-danger'>" + shortNum + "</span>";
             ViewBag.longNumLeave = (longNum == 0) ? "长期请假" : "长期请假<span class='badge badge-danger'>" + longNum + "</span>";
             ViewBag.holidayNumLeave = (holidayNum == 0) ? "节假日请假" : "节假日请假<span class='badge badge-danger'>" + holidayNum + "</span>";
             ViewBag.nightNumLeave = (nightNum == 0) ? "晚点名请假" : "晚点名请假<span class='badge badge-danger'>" + nightNum + "</span>";
             ViewBag.classNumLeave = (classNum == 0) ? "上课请假备案" : "上课请假备案<span class='badge badge-danger'>" + classNum + "</span>";
+            ViewBag.zixiNumLeave = (zixiNum == 0) ? "早晚自习请假" : "早晚自习请假<span class='badge badge-danger'>" + zixiNum + "</span>";
 
             UIHelper.Button("btnTotal").Text(ViewBag.totalNumLeave);
             UIHelper.Button("btnShort").Text(ViewBag.shortNumLeave);
@@ -226,6 +232,7 @@ namespace qingjia_MVC.Areas.Leave.Controllers
             UIHelper.Button("btnHoliday").Text(ViewBag.holidayNumLeave);
             UIHelper.Button("btnCall").Text(ViewBag.nightNumLeave);
             UIHelper.Button("btnClass").Text(ViewBag.classNumLeave);
+            UIHelper.Button("btnZixi").Text(ViewBag.zixiNumLeave);
         }
 
         /// <summary>
@@ -427,6 +434,10 @@ namespace qingjia_MVC.Areas.Leave.Controllers
                 if (type == "btnClass")
                 {
                     leavelist = from vw_LeaveList in db.vw_LeaveList where ((vw_LeaveList.LeaveType.StartsWith("上课请假")) && (vw_LeaveList.StateLeave == "0") && (vw_LeaveList.StateBack == "0") && (vw_LeaveList.ST_Grade == grade) && vw_LeaveList.ST_TeacherID == ST_TeacherID) orderby vw_LeaveList.ID descending select vw_LeaveList;
+                }
+                if (type == "btnZixi")
+                {
+                    leavelist = from vw_LeaveList in db.vw_LeaveList where ((vw_LeaveList.LeaveType.StartsWith("早晚自习")) && (vw_LeaveList.StateLeave == "0") && (vw_LeaveList.StateBack == "0") && (vw_LeaveList.ST_Grade == grade) && vw_LeaveList.ST_TeacherID == ST_TeacherID) orderby vw_LeaveList.ID descending select vw_LeaveList;
                 }
                 //List 转换为 DataTable
                 dtSource = leavelist.ToDataTable(rec => new object[] { leavelist });
@@ -710,6 +721,10 @@ namespace qingjia_MVC.Areas.Leave.Controllers
                 if (type == "btnClass")
                 {
                     leavelist = from vw_LeaveList in db.vw_LeaveList where ((vw_LeaveList.LeaveType.StartsWith("上课请假")) && (vw_LeaveList.StateLeave == "0") && (vw_LeaveList.StateBack == "0") && (vw_LeaveList.ST_Grade == grade) && vw_LeaveList.ST_TeacherID == ST_TeacherID) orderby vw_LeaveList.ID descending select vw_LeaveList;
+                }
+                if (type == "btnZixi")
+                {
+                    leavelist = from vw_LeaveList in db.vw_LeaveList where ((vw_LeaveList.LeaveType.StartsWith("早晚自习")) && (vw_LeaveList.StateLeave == "0") && (vw_LeaveList.StateBack == "0") && (vw_LeaveList.ST_Grade == grade) && vw_LeaveList.ST_TeacherID == ST_TeacherID) orderby vw_LeaveList.ID descending select vw_LeaveList;
                 }
                 //List 转换为 DataTable
                 if (sortDirection == "ASC")
@@ -1009,6 +1024,10 @@ namespace qingjia_MVC.Areas.Leave.Controllers
                 {
                     leavelist = from vw_LeaveList in db.vw_LeaveList where ((vw_LeaveList.StudentID == ST_NUM) && (vw_LeaveList.LeaveType.StartsWith("上课请假")) && (vw_LeaveList.StateLeave == "0") && (vw_LeaveList.StateBack == "0") && (vw_LeaveList.ST_Grade == grade) && vw_LeaveList.ST_TeacherID == ST_TeacherID) orderby vw_LeaveList.ID descending select vw_LeaveList;
                 }
+                if (type == "btnZixi")
+                {
+                    leavelist = from vw_LeaveList in db.vw_LeaveList where ((vw_LeaveList.StudentID == ST_NUM) && (vw_LeaveList.LeaveType.StartsWith("早晚自习")) && (vw_LeaveList.StateLeave == "0") && (vw_LeaveList.StateBack == "0") && (vw_LeaveList.ST_Grade == grade) && vw_LeaveList.ST_TeacherID == ST_TeacherID) orderby vw_LeaveList.ID descending select vw_LeaveList;
+                }
                 //List 转换为 DataTable
                 dtSource = leavelist.ToDataTable(rec => new object[] { leavelist });
                 #endregion
@@ -1290,6 +1309,10 @@ namespace qingjia_MVC.Areas.Leave.Controllers
                 if (type == "btnClass")
                 {
                     leavelist = from vw_LeaveList in db.vw_LeaveList where ((vw_LeaveList.ST_Class == className) && (vw_LeaveList.LeaveType.StartsWith("上课请假")) && (vw_LeaveList.StateLeave == "0") && (vw_LeaveList.StateBack == "0") && (vw_LeaveList.ST_Grade == grade) && vw_LeaveList.ST_TeacherID == ST_TeacherID) orderby vw_LeaveList.ID descending select vw_LeaveList;
+                }
+                if (type == "btnZixi")
+                {
+                    leavelist = from vw_LeaveList in db.vw_LeaveList where ((vw_LeaveList.ST_Class == className) && (vw_LeaveList.LeaveType.StartsWith("早晚自习")) && (vw_LeaveList.StateLeave == "0") && (vw_LeaveList.StateBack == "0") && (vw_LeaveList.ST_Grade == grade) && vw_LeaveList.ST_TeacherID == ST_TeacherID) orderby vw_LeaveList.ID descending select vw_LeaveList;
                 }
                 dtSource = leavelist.ToDataTable(rec => new object[] { leavelist });
                 #endregion
@@ -2070,6 +2093,19 @@ namespace qingjia_MVC.Areas.Leave.Controllers
             LL_Count_Leave();
             return UIHelper.Result();
         }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult btnZixi_ReloadData_Leave(JArray fields)
+        {
+            UIHelper.Grid("gridLeaveList_Leave").Title("早晚自习请假");
+            Session["AuditState"] = "leave";
+            Session["AuditLeaveType"] = "btnZixi";
+            UIHelper.Grid("gridLeaveList_Leave").DataSource(Get_LL_DataTable(Session["AuditLeaveType"].ToString()), fields);
+            //绑定Button数据
+            LL_Count_Leave();
+            return UIHelper.Result();
+        }
         #endregion
 
         #region 销假审批界面 请假类型按钮
@@ -2807,6 +2843,21 @@ namespace qingjia_MVC.Areas.Leave.Controllers
         }
 
         #endregion
+
+        /// <summary>
+        /// 调用短信模块发送短信
+        /// </summary>
+        /// <param name="sendSMessage"></param>
+        /// <returns></returns>
+        //public void sendSMessage(string Num, string Name, string Tel, string Type)
+        //{
+        //    MessageModel model = new MessageModel();
+        //    model.LV_Num = Num;
+        //    model.ST_Name = Name;
+        //    model.ST_Tel = Tel;
+        //    model.MessageType = Type;
+        //    ShortMessageClass.SendShortMessage(model);
+        //}
 
     }
 }

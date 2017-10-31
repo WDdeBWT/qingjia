@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Web.Mvc;
-using FineUIMvc;
-using System.Web.Mvc;
-using qingjia_MVC.Models;
+﻿using FineUIMvc;
 using qingjia_MVC.Controllers;
+using qingjia_MVC.Models;
+using System.Linq;
+using System.Web.Mvc;
 
 namespace qingjia_MVC.Areas.Password.Controllers
 {
