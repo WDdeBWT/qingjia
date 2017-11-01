@@ -463,5 +463,20 @@
     <FunctionImport Name="sp_getNightNameList" ReturnType="Collection(String)">
       <Parameter Name="TeacherID" Mode="In" Type="String" />
     </FunctionImport>
+    <EntitySet Name="T_SendList" EntityType="imaw_qingjiaModel.T_SendList" />
   </EntityContainer>
+  <EntityType Name="T_SendList">
+    <Key>
+      <PropertyRef Name="LV_Num" />
+      <PropertyRef Name="ST_Num" />
+      <PropertyRef Name="MessageType" />
+      <PropertyRef Name="ST_Tel" />
+      <PropertyRef Name="timeString" />
+    </Key>
+    <Property Name="LV_Num" Type="String" Nullable="false" MaxLength="64" FixedLength="false" Unicode="false" />
+    <Property Name="ST_Num" Type="String" Nullable="false" MaxLength="64" FixedLength="false" Unicode="false" />
+    <Property Name="MessageType" Type="String" Nullable="false" MaxLength="64" FixedLength="false" Unicode="false" />
+    <Property Name="ST_Tel" Type="String" Nullable="false" MaxLength="64" FixedLength="false" Unicode="false" />
+    <Property Name="timeString" Type="DateTime" Nullable="false" Precision="3" />
+  </EntityType>
 </Schema>

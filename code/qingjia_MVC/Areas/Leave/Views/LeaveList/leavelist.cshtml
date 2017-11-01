@@ -220,7 +220,13 @@
                             .MarginLeft(10)
                             .MarginRight(10)
                             .OnClick(Url.Action("btnClass_ReloadData"), new Parameter("fields", "F.ui.gridLeaveList.fields"))
-                            .Text("上课请假备案")
+                            .Text("上课请假备案"),
+                        F.Button()
+                            .ID("btnZixi")
+                            .MarginLeft(10)
+                            .MarginRight(10)
+                            .OnClick(Url.Action("btnZixi_ReloadData"), new Parameter("fields", "F.ui.gridLeaveList.fields"))
+                            .Text("早晚自习请假")
                     ),
                 F.Toolbar()
                     .ID("selectGroup")

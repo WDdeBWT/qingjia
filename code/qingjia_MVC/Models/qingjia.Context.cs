@@ -53,6 +53,7 @@ namespace qingjia_MVC.Models
         public virtual DbSet<vw_NightNameList> vw_NightNameList { get; set; }
         public virtual DbSet<vw_StudenBatch> vw_StudenBatch { get; set; }
         public virtual DbSet<vw_Student> vw_Student { get; set; }
+        public virtual DbSet<T_SendList> T_SendList { get; set; }
     
         public virtual ObjectResult<string> sp_getNightNameList(string teacherID)
         {

@@ -419,5 +419,16 @@
       </EntityTypeMapping>
     </EntitySetMapping>
     <FunctionImportMapping FunctionImportName="sp_getNightNameList" FunctionName="imaw_qingjiaModel.Store.sp_getNightNameList" />
+    <EntitySetMapping Name="T_SendList">
+      <EntityTypeMapping TypeName="imaw_qingjiaModel.T_SendList">
+        <MappingFragment StoreEntitySet="T_SendList">
+          <ScalarProperty Name="timeString" ColumnName="timeString" />
+          <ScalarProperty Name="ST_Tel" ColumnName="ST_Tel" />
+          <ScalarProperty Name="MessageType" ColumnName="MessageType" />
+          <ScalarProperty Name="ST_Num" ColumnName="ST_Num" />
+          <ScalarProperty Name="LV_Num" ColumnName="LV_Num" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
   </EntityContainerMapping>
 </Mapping>

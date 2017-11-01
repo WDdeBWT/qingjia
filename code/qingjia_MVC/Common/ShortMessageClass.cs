@@ -2,6 +2,7 @@
 using Aliyun.Acs.Core.Exceptions;
 using Aliyun.Acs.Core.Profile;
 using Aliyun.Acs.Sms.Model.V20160927;
+using qingjia_MVC.Models;
 using System;
 using System.Configuration;
 using System.Data.SqlClient;
@@ -10,6 +11,8 @@ namespace qingjia_MVC.Common
 {
     public class ShortMessageClass
     {
+        //实例化数据模型
+        private static imaw_qingjiaEntities db = new imaw_qingjiaEntities();
 
         //密码验证：SMS_60140885
         //请假失败：SMS_27620081
@@ -81,7 +84,7 @@ namespace qingjia_MVC.Common
                 request.ParamString = "{\"name\":\"" + model.ST_Name + "\",\"lvnum\":\"" + model.LV_Num + "\"}";
                 SingleSendSmsResponse httpResponse = client.GetAcsResponse(request);
 
-                //SaveMessageList(ST_NUM, LV_Num, ST_Tel, MessageType);
+                SaveMessageList(model.ST_Num, model.LV_Num, model.ST_Tel, model.MessageType);
 
                 return true;
             }
@@ -96,6 +99,42 @@ namespace qingjia_MVC.Common
         }
 
         /// <summary>
+        /// 将发送的短信内容保存至数据库_Old
+        /// </summary>
+        /// <param name="ST_NUM"></param>
+        /// <param name="LV_Num"></param>
+        /// <param name="ST_Tel"></param>
+        /// <param name="MessageType"></param>
+        /// <returns></returns>
+        //private static bool SaveMessageList(string ST_Num, string LV_Num, string ST_Tel, string MessageType)
+        //{
+        //    string connString = ConfigurationManager.AppSettings["ConnectionString"].ToString();
+        //    string timeString = DateTime.Now.ToString();
+
+        //    using (SqlConnection conn = new SqlConnection(connString))
+        //    {
+        //        conn.Open();
+
+        //        string cmdString = "INSERT INTO T_SendList VALUES (' " + LV_Num + "','" + ST_Num + "','" + MessageType + "','" + ST_Tel + "','" + timeString + "')";
+        //        int flag = 0;
+
+        //        using (SqlCommand cmd = new SqlCommand(cmdString, conn))
+        //        {
+        //            flag = (int)cmd.ExecuteNonQuery();
+        //        }
+
+        //        if (flag == 1)
+        //        {
+        //            return true;
+        //        }
+        //        else
+        //        {
+        //            return false;
+        //        }
+        //    }
+        //}
+
+        /// <summary>
         /// 将发送的短信内容保存至数据库
         /// </summary>
         /// <param name="ST_NUM"></param>
@@ -103,31 +142,23 @@ namespace qingjia_MVC.Common
         /// <param name="ST_Tel"></param>
         /// <param name="MessageType"></param>
         /// <returns></returns>
-        private static bool SaveMessageList(string ST_NUM, string LV_Num, string ST_Tel, string MessageType)
+        private static bool SaveMessageList(string ST_Num, string LV_Num, string ST_Tel, string MessageType)
         {
-            string connString = ConfigurationManager.AppSettings["ConnectionString"].ToString();
-            string timeString = DateTime.Now.ToString();
-
-            using (SqlConnection conn = new SqlConnection(connString))
+            T_SendList LL = new T_SendList();
+            LL.LV_Num = LV_Num;
+            LL.ST_Num = ST_Num;
+            LL.MessageType = MessageType;
+            LL.ST_Tel = ST_Tel;
+            LL.timeString = DateTime.Now;
+            db.T_SendList.Add(LL);
+            try
             {
-                conn.Open();
-
-                string cmdString = "INSERT INTO T_SendList VALUES (' " + LV_Num + "','" + ST_NUM + "','" + MessageType + "','" + ST_Tel + "','" + timeString + "')";
-                int flag = 0;
-
-                using (SqlCommand cmd = new SqlCommand(cmdString, conn))
-                {
-                    flag = (int)cmd.ExecuteNonQuery();
-                }
-
-                if (flag == 1)
-                {
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
+                db.SaveChanges();
+                return true;
+            }
+            catch (System.Data.Entity.Validation.DbEntityValidationException dbEx)
+            {
+                return false;
             }
         }
 
@@ -168,6 +199,9 @@ namespace qingjia_MVC.Common
     {
         //学生姓名
         public string ST_Name { get; set; }
+
+        //学生学号
+        public string ST_Num { get; set; }
 
         //请假单号
         public string LV_Num { get; set; }

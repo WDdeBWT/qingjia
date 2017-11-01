@@ -31,6 +31,7 @@
         <EntityTypeShape EntityType="imaw_qingjiaModel.vw_NightNameList" Width="1.5" PointX="14.75" PointY="0.75" IsExpanded="true" />
         <EntityTypeShape EntityType="imaw_qingjiaModel.vw_StudenBatch" Width="1.5" PointX="0.75" PointY="14.75" IsExpanded="true" />
         <EntityTypeShape EntityType="imaw_qingjiaModel.vw_Student" Width="1.5" PointX="2.75" PointY="14.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="imaw_qingjiaModel.T_SendList" Width="1.5" PointX="15.375" PointY="4.75" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

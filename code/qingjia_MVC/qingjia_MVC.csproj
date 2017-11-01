@@ -316,6 +316,9 @@
     <Compile Include="Models\T_RoleMenu.cs">
       <DependentUpon>qingjia.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\T_SendList.cs">
+      <DependentUpon>qingjia.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\T_Statistic.cs">
       <DependentUpon>qingjia.tt</DependentUpon>
     </Compile>

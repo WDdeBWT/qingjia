@@ -1325,6 +1325,10 @@ namespace qingjia_MVC.Areas.Leave.Controllers
                 {
                     leavelist = from vw_LeaveList in db.vw_LeaveList where ((vw_LeaveList.StudentID == UserID) && (vw_LeaveList.LeaveType.StartsWith("上课请假"))) orderby vw_LeaveList.ID descending select vw_LeaveList;
                 }
+                if (type == "btnZixi")
+                {
+                    leavelist = from vw_LeaveList in db.vw_LeaveList where ((vw_LeaveList.StudentID == UserID) && (vw_LeaveList.LeaveType.StartsWith("早晚自习"))) orderby vw_LeaveList.ID descending select vw_LeaveList;
+                }
                 //List 转换为 DataTable
                 dtSource = leavelist.ToDataTable(rec => new object[] { leavelist });
                 #endregion
@@ -1360,6 +1364,10 @@ namespace qingjia_MVC.Areas.Leave.Controllers
                 if (type == "btnClass")
                 {
                     leavelist = from vw_LeaveList in db.vw_LeaveList where ((vw_LeaveList.ST_Teacher == TeacherName) && (vw_LeaveList.LeaveType.StartsWith("上课请假"))) orderby vw_LeaveList.ID descending select vw_LeaveList;
+                }
+                if (type == "btnZixi")
+                {
+                    leavelist = from vw_LeaveList in db.vw_LeaveList where ((vw_LeaveList.ST_Teacher == TeacherName) && (vw_LeaveList.LeaveType.StartsWith("早晚自习"))) orderby vw_LeaveList.ID descending select vw_LeaveList;
                 }
                 //List 转换为 DataTable
                 dtSource = leavelist.ToDataTable(rec => new object[] { leavelist });
@@ -1662,6 +1670,15 @@ namespace qingjia_MVC.Areas.Leave.Controllers
         public ActionResult btnClass_ReloadData(JArray fields)
         {
             staticLeaveType = "btnClass";
+            UIHelper.Grid("gridLeaveList").DataSource(Get_LL_DataTable(Session["UserID"].ToString(), staticLeaveType, Session["RoleID"].ToString()), fields);
+            return UIHelper.Result();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult btnZixi_ReloadData(JArray fields)
+        {
+            staticLeaveType = "btnZixi";
             UIHelper.Grid("gridLeaveList").DataSource(Get_LL_DataTable(Session["UserID"].ToString(), staticLeaveType, Session["RoleID"].ToString()), fields);
             return UIHelper.Result();
         }

@@ -4,7 +4,7 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-      <Schema Namespace="imaw_qingjiaModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+    <Schema Namespace="imaw_qingjiaModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
         <EntityType Name="T_Account">
           <Key>
             <PropertyRef Name="ID" />
@@ -213,6 +213,22 @@
           <Property Name="ID" Type="varchar" MaxLength="64" Nullable="false" />
           <Property Name="RoleID" Type="varchar" MaxLength="64" Nullable="false" />
           <Property Name="MenuID" Type="varchar" MaxLength="64" Nullable="false" />
+        </EntityType>
+        <!--生成过程中发现错误:
+警告 6002: 表/视图“imaw_qingjia.dbo.T_SendList”未定义主键。已推断出该键，并将定义创建为只读的表/视图。-->
+        <EntityType Name="T_SendList">
+          <Key>
+            <PropertyRef Name="LV_Num" />
+            <PropertyRef Name="ST_Num" />
+            <PropertyRef Name="MessageType" />
+            <PropertyRef Name="ST_Tel" />
+            <PropertyRef Name="timeString" />
+          </Key>
+          <Property Name="LV_Num" Type="varchar" MaxLength="64" Nullable="false" />
+          <Property Name="ST_Num" Type="varchar" MaxLength="64" Nullable="false" />
+          <Property Name="MessageType" Type="varchar" MaxLength="64" Nullable="false" />
+          <Property Name="ST_Tel" Type="varchar" MaxLength="64" Nullable="false" />
+          <Property Name="timeString" Type="datetime" Nullable="false" />
         </EntityType>
         <EntityType Name="T_Statistic">
           <Key>
@@ -489,6 +505,15 @@
     [T_Role].[XML] AS [XML]
     FROM [dbo].[T_Role] AS [T_Role]</DefiningQuery>
           </EntitySet>
+          <EntitySet Name="T_SendList" EntityType="Self.T_SendList" store:Type="Tables" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [T_SendList].[LV_Num] AS [LV_Num], 
+    [T_SendList].[ST_Num] AS [ST_Num], 
+    [T_SendList].[MessageType] AS [MessageType], 
+    [T_SendList].[ST_Tel] AS [ST_Tel], 
+    [T_SendList].[timeString] AS [timeString]
+    FROM [dbo].[T_SendList] AS [T_SendList]</DefiningQuery>
+          </EntitySet>
           <EntitySet Name="vw_ClassBatch" EntityType="Self.vw_ClassBatch" store:Type="Views" store:Schema="dbo">
             <DefiningQuery>SELECT 
     [vw_ClassBatch].[ID] AS [ID], 
@@ -608,8 +633,7 @@
     FROM [dbo].[vw_Student] AS [vw_Student]</DefiningQuery>
           </EntitySet>
         </EntityContainer>
-      </Schema>
-    </edmx:StorageModels>
+      </Schema></edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="imaw_qingjiaModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
@@ -1074,9 +1098,24 @@
           <EntitySet Name="vw_StudenBatch" EntityType="Self.vw_StudenBatch" />
           <EntitySet Name="vw_Student" EntityType="Self.vw_Student" />
           <FunctionImport Name="sp_getNightNameList" ReturnType="Collection(String)">
-            <Parameter Name="TeacherID" Mode="In" Type="String" />
+          <Parameter Name="TeacherID" Mode="In" Type="String" />
           </FunctionImport>
+          <EntitySet Name="T_SendList" EntityType="imaw_qingjiaModel.T_SendList" />
         </EntityContainer>
+        <EntityType Name="T_SendList">
+          <Key>
+            <PropertyRef Name="LV_Num" />
+            <PropertyRef Name="ST_Num" />
+            <PropertyRef Name="MessageType" />
+            <PropertyRef Name="ST_Tel" />
+            <PropertyRef Name="timeString" />
+          </Key>
+          <Property Name="LV_Num" Type="String" Nullable="false" MaxLength="64" FixedLength="false" Unicode="false" />
+          <Property Name="ST_Num" Type="String" Nullable="false" MaxLength="64" FixedLength="false" Unicode="false" />
+          <Property Name="MessageType" Type="String" Nullable="false" MaxLength="64" FixedLength="false" Unicode="false" />
+          <Property Name="ST_Tel" Type="String" Nullable="false" MaxLength="64" FixedLength="false" Unicode="false" />
+          <Property Name="timeString" Type="DateTime" Nullable="false" Precision="3" />
+        </EntityType>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -1501,6 +1540,17 @@
             </EntityTypeMapping>
           </EntitySetMapping>
           <FunctionImportMapping FunctionImportName="sp_getNightNameList" FunctionName="imaw_qingjiaModel.Store.sp_getNightNameList" />
+          <EntitySetMapping Name="T_SendList">
+            <EntityTypeMapping TypeName="imaw_qingjiaModel.T_SendList">
+              <MappingFragment StoreEntitySet="T_SendList">
+                <ScalarProperty Name="timeString" ColumnName="timeString" />
+                <ScalarProperty Name="ST_Tel" ColumnName="ST_Tel" />
+                <ScalarProperty Name="MessageType" ColumnName="MessageType" />
+                <ScalarProperty Name="ST_Num" ColumnName="ST_Num" />
+                <ScalarProperty Name="LV_Num" ColumnName="LV_Num" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

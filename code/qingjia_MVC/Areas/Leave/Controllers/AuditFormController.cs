@@ -204,7 +204,7 @@ namespace qingjia_MVC.Areas.Leave.Controllers
                 {
                     holidayNum++;
                 }
-                if (row["LeaveType"].ToString().Substring(0, 3) == "晚点名")
+                if (row["LeaveType"].ToString().Substring(0, 3) == "晚点名") 
                 {
                     nightNum++;
                 }
@@ -1831,6 +1831,7 @@ namespace qingjia_MVC.Areas.Leave.Controllers
                 }
 
                 model.LV_Num = vw_LL.ID;
+                model.ST_Num = vw_LL.StudentID;
                 model.ST_Name = vw_LL.ST_Name;
                 model.ST_Tel = vw_LL.ST_Tel;
                 model.MessageType = "go";
@@ -1904,6 +1905,7 @@ namespace qingjia_MVC.Areas.Leave.Controllers
                 }
 
                 model.LV_Num = vw_LL.ID;
+                model.ST_Num = vw_LL.StudentID;
                 model.ST_Name = vw_LL.ST_Name;
                 model.ST_Tel = vw_LL.ST_Tel;
                 model.MessageType = "back";
@@ -1956,9 +1958,12 @@ namespace qingjia_MVC.Areas.Leave.Controllers
             vw_LeaveList vw_LL = (from vw_LeaveList in db.vw_LeaveList where (vw_LeaveList.ID == LL_NUM) select vw_LeaveList).ToList().First();
 
             model.LV_Num = vw_LL.ID;
+            model.ST_Num = vw_LL.StudentID;
             model.ST_Name = vw_LL.ST_Name;
             model.ST_Tel = vw_LL.ST_Tel;
             model.MessageType = "failed";
+            //发送短信
+            ShortMessageClass.SendShortMessage(model);
 
             UIHelper.Window("cancelWindow").Close();
             ShowNotify(string.Format("驳回请假成功！"));
