@@ -468,10 +468,6 @@
   <EntityType Name="T_SendList">
     <Key>
       <PropertyRef Name="LV_Num" />
-      <PropertyRef Name="ST_Num" />
-      <PropertyRef Name="MessageType" />
-      <PropertyRef Name="ST_Tel" />
-      <PropertyRef Name="timeString" />
     </Key>
     <Property Name="LV_Num" Type="String" Nullable="false" MaxLength="64" FixedLength="false" Unicode="false" />
     <Property Name="ST_Num" Type="String" Nullable="false" MaxLength="64" FixedLength="false" Unicode="false" />

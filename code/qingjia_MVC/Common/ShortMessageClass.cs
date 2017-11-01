@@ -156,7 +156,7 @@ namespace qingjia_MVC.Common
                 db.SaveChanges();
                 return true;
             }
-            catch (System.Data.Entity.Validation.DbEntityValidationException dbEx)
+            catch
             {
                 return false;
             }

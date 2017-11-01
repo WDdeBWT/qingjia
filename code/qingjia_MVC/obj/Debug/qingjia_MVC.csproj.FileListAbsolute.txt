@@ -1580,7 +1580,6 @@ F:\Code\qingjia\qingjia\code\qingjia_MVC\bin\zh-Hans\Microsoft.Owin.Security.Twi
 F:\Code\qingjia\qingjia\code\qingjia_MVC\bin\zh-Hans\Microsoft.Owin.Security.MicrosoftAccount.resources.dll
 F:\Code\qingjia\qingjia\code\qingjia_MVC\obj\Debug\qingjia_MVC.dll
 F:\Code\qingjia\qingjia\code\qingjia_MVC\obj\Debug\qingjia_MVC.pdb
-F:\Code\qingjia\qingjia\code\qingjia_MVC\obj\Debug\qingjia_MVC.csprojResolveAssemblyReference.cache
 C:\Users\Wong Jianming\Desktop\请假系统-白文涛\qingjia\code\qingjia_MVC\bin\qingjia_MVC.dll.config
 C:\Users\Wong Jianming\Desktop\请假系统-白文涛\qingjia\code\qingjia_MVC\bin\qingjia_MVC.dll
 C:\Users\Wong Jianming\Desktop\请假系统-白文涛\qingjia\code\qingjia_MVC\bin\qingjia_MVC.pdb

@@ -1840,15 +1840,14 @@ namespace qingjia_MVC.Areas.Leave.Controllers
             {
                 db.SaveChanges();
 
-                //发送短信
-                ShortMessageClass.SendShortMessage(model);
-
                 ShowNotify(string.Format("已同意请假！"));
             }
             catch
             {
                 ShowNotify(string.Format("操作失败！"));
             }
+            //发送短信
+            ShortMessageClass.SendShortMessage(model);
 
             //绑定Grid数据
             if (Session["AuditClassName"] == null || Session["AuditClassName"].ToString() == "-1")
