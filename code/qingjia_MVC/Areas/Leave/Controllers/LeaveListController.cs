@@ -57,15 +57,29 @@ namespace qingjia_MVC.Areas.Leave.Controllers
                 if (leaveList.Count() == 0)
                 {
                     ViewBag.LeaveListExist = false;
+                    ViewData["allCount"] = 0;
+                    ViewData["waitBackCount"] = 0;
                 }
                 else
                 {
+                    //取出前五条记录展示
                     ViewBag.LeaveListExist = true;
                     foreach (var ll in leaveList.Take(5).ToList())
                     {
                         ll.StateLeave = getKey("leavetype", ll.StateLeave + ll.StateBack);
                     }
                     ViewData["leaveList"] = leaveList.Take(5).ToList();
+                    //计算销假情况及请假次数
+                    int wait_back_count = 0;
+                    foreach (vw_LeaveList li in leaveList)
+                    {
+                        if (li.StateLeave == "1" && li.StateBack == "0")
+                        {
+                            wait_back_count++;
+                        }
+                    }
+                    ViewData["allCount"] = leaveList.Count();
+                    ViewData["waitBackCount"] = wait_back_count;
                 }
             }
             catch

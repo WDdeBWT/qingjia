@@ -1,7 +1,9 @@
 ﻿@{
     ViewBag.Title = "请假";
     var F = @Html.F();
-    var studentInfo =(qingjia_MVC.Models.vw_Student) ViewData["studentInfo"] ;
+    var studentInfo =(qingjia_MVC.Models.vw_Student) ViewData["studentInfo"];
+    var allCount = ViewData["allCount"];
+    var waitBackCount = ViewData["waitBackCount"];
     var LeaveListExist = ViewBag.LeaveListExist;
         }
 
@@ -238,14 +240,14 @@
             <div class="leave-info-table">
                 <!--表格展示请假相关信息-->
                 <!--包含姓名年级、-->
-                <h1 style="font-size:20px; margin-top:0px;">个人详情-尚未实现</h1>
+                <h1 style="font-size:20px; margin-top:0px;">个人请假详情</h1>
                 <table class="table table-hover">
                     <tr>
                         <td style="text-align:right;">
                             累计请假次数：
                         </td>
                         <td style="text-align:left;">
-                            2次
+                            @allCount.ToString().Trim()
                         </td>
 
                     </tr>
@@ -254,7 +256,7 @@
                             待销假情况：
                         </td>
                         <td style="text-align:left;">
-                            您有1条待销假需处理
+                            您有@(waitBackCount.ToString().Trim())条待销假需处理
                         </td>
                     </tr>
                 </table>
