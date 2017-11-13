@@ -388,21 +388,23 @@ namespace qingjia_MVC.Controllers.API
         }
 
         [HttpGet, Route("downloadpic")]
-        public IHttpActionResult DownLoadPic()
+        public IHttpActionResult DownLoadPic(string LV_NUM)
         {
-            var browser = String.Empty;
+            var browser = string.Empty;
             if (HttpContext.Current.Request.UserAgent != null)
             {
                 browser = HttpContext.Current.Request.UserAgent.ToUpper();
             }
-            string filePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "res\\images\\qingjia", "测试图片.jpg");
+            //string filePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "res\\images\\qingjia", "测试图片.jpg");
             HttpResponseMessage httpResponseMessage = new HttpResponseMessage(HttpStatusCode.OK);
-            FileStream fileStream = File.OpenRead(filePath);
+            //FileStream fileStream = File.OpenRead(filePath);
+            FileStream fileStream = Print.Print_Form(LV_NUM);
             httpResponseMessage.Content = new StreamContent(fileStream);
             httpResponseMessage.Content.Headers.ContentType = new MediaTypeHeaderValue("application/octet-stream");
             httpResponseMessage.Content.Headers.ContentDisposition = new ContentDispositionHeaderValue("attachment")
             {
-                FileName = browser.Contains("FIREFOX") ? Path.GetFileName(filePath) : HttpUtility.UrlEncode(Path.GetFileName(filePath))
+                FileName = LV_NUM + ".jpg"
+                //FileName = browser.Contains("FIREFOX") ? Path.GetFileName(filePath) : HttpUtility.UrlEncode(Path.GetFileName(filePath))
                 //FileName = HttpUtility.UrlEncode(Path.GetFileName(filePath))
             };
             return ResponseMessage(httpResponseMessage);
@@ -707,7 +709,7 @@ namespace qingjia_MVC.Controllers.API
                 string backWay = null;
                 string address = null;
                 string holidayType = null;
-                
+
                 if (data.leave_type == "晚点名请假")
                 {
                     string LV_NUM = DateTime.Now.ToString("yyMMdd");//流水号生成

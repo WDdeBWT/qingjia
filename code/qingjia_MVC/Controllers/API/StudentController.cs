@@ -1,9 +1,9 @@
-﻿using System.Linq;
-using System.Web.Http;
+﻿using qingjia_MVC.Common;
 using qingjia_MVC.Models;
-using qingjia_MVC.Common;
 using qingjia_MVC.Models.API;
 using System.Configuration;
+using System.Linq;
+using System.Web.Http;
 
 namespace qingjia_MVC.Controllers.API
 {

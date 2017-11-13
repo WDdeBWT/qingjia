@@ -5,7 +5,6 @@ using Aliyun.Acs.Sms.Model.V20160927;
 using qingjia_MVC.Models;
 using System;
 using System.Configuration;
-using System.Data.SqlClient;
 
 namespace qingjia_MVC.Common
 {

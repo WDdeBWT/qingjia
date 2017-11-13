@@ -1,15 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
-using System.Web.Http;
+﻿using qingjia_MVC.Common;
 using qingjia_MVC.Models;
-using qingjia_MVC.Common;
 using qingjia_MVC.Models.API;
+using System;
 using System.IO;
-using System.Configuration;
-using System.Web.Http.Controllers;
+using System.Linq;
+using System.Web.Http;
 
 namespace qingjia_MVC.Controllers
 {
@@ -396,7 +391,7 @@ namespace qingjia_MVC.Controllers
         {
             try
             {
-                string logPath = ConfigurationManager.AppSettings["logPath"].ToString();
+                string logPath = System.Web.HttpContext.Current.Server.MapPath("~/");
                 string path = logPath + @"\log.txt";
 
                 FileStream fs = new FileStream(path, FileMode.Append);

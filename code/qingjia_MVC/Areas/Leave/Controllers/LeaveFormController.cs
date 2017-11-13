@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+﻿using FineUIMvc;
 using System.Web.Mvc;
-using FineUIMvc;
 
 namespace qingjia_MVC.Areas.Leave.Controllers
 {

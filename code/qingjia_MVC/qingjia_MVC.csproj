@@ -235,6 +235,7 @@
     <Compile Include="Areas\Vacation\Controllers\VacationController.cs" />
     <Compile Include="Areas\Vacation\VacationAreaRegistration.cs" />
     <Compile Include="Common\ApiBaseResult.cs" />
+    <Compile Include="Common\Print.cs" />
     <Compile Include="Common\PublicMethod.cs" />
     <Compile Include="Common\ShortMessageClass.cs" />
     <Compile Include="Content\DataTableHelper.cs" />
