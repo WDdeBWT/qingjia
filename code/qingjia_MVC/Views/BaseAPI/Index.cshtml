@@ -117,6 +117,12 @@
                 //此处的数据格式，只要有一个参数对应后台API接口可接受的数据模型的一个属性，即可接收到参数，否则，接受参数为空
                 AjaxRequestGet('api/leavelist/downloadpic?LV_NUM=1710300002');
             });
+
+            $('#btnPathTest').click(function (e) {
+                //var data = { "UserID": "0121403490106", "UserPsd": "490106", "YiBanID": "123" };
+                //此处的数据格式，只要有一个参数对应后台API接口可接受的数据模型的一个属性，即可接收到参数，否则，接受参数为空
+                AjaxRequestGet('api/leavelist/pathtest');
+            });
         });
 
         //Get请求
@@ -202,6 +208,9 @@
         <br />
         <br />
         <input type="button" value="printform" id="btnLeavelistPrintForm" />
+        <br />
+        <br />
+        <input type="button" value="PathTest" id="btnPathTest" />
         <br />
         <br />
     </div>

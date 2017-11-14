@@ -410,6 +410,14 @@ namespace qingjia_MVC.Controllers.API
             return ResponseMessage(httpResponseMessage);
         }
 
+        [HttpGet, Route("pathtest")]
+        public ApiBaseResult PathTest()
+        {
+            ApiBaseResult result = new ApiBaseResult();
+            result.data = HttpContext.Current.Server.MapPath("~/");
+            return result;
+        }
+
         #region 其他方法
 
         /// <summary>

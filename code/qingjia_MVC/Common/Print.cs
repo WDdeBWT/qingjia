@@ -332,6 +332,7 @@ namespace qingjia_MVC.Common
                         {
                             g.DrawImage(bitmap, new Rectangle(0, 0, ToWidth, ToHeight), new Rectangle(0, 0, bitmap.Width, bitmap.Height), GraphicsUnit.Pixel);
                             g.Dispose();
+                            string _path = System.Web.HttpContext.Current.Server.MapPath(@"~\res\images\qingjia\stu_Leaveform_l.jpg");
                             b.Save(System.Web.HttpContext.Current.Server.MapPath(@"~\res\images\qingjia\stu_Leaveform_l.jpg"));
                             string filename = System.Web.HttpContext.Current.Server.MapPath(@"~\res\images\qingjia\stu_Leaveform_l.jpg");
 
@@ -359,7 +360,26 @@ namespace qingjia_MVC.Common
 
         private static FileStream picSaveReturn(string filepath)
         {
-            FileStream file = new FileStream(filepath, FileMode.Open, FileAccess.Read);
+            FileStream file = null;
+            int flag = 0;
+            do
+            {
+                if (flag != 0)
+                {
+                    System.Threading.Thread.Sleep(500);
+                }
+
+                try
+                {
+                    flag++;
+                    file = new FileStream(filepath, FileMode.Open, FileAccess.Read);
+                }
+                catch
+                {
+
+                }
+            } while (file == null);
+
             return file;
         }
     }

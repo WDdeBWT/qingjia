@@ -1803,9 +1803,13 @@ namespace qingjia_MVC.Areas.Leave.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult btnAgreeClick_Leave(JArray selectedRows, JArray gridLeaveList_fields, string sortField, string sortDirection)
         {
+            //请假类型
             string type = Session["AuditLeaveType"].ToString();
+            //短信模板
             MessageModel model = new MessageModel();
-
+            //是否需要打印假条
+            bool isPrint = false;
+            
             #region 同意请假操作
             foreach (string rowId in selectedRows)
             {
@@ -1846,8 +1850,10 @@ namespace qingjia_MVC.Areas.Leave.Controllers
             {
                 ShowNotify(string.Format("操作失败！"));
             }
+            
             //发送短信
             ShortMessageClass.SendShortMessage(model);
+            
 
             //绑定Grid数据
             if (Session["AuditClassName"] == null || Session["AuditClassName"].ToString() == "-1")
