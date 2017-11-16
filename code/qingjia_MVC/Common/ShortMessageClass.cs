@@ -5,7 +5,6 @@ using Aliyun.Acs.Sms.Model.V20160927;
 using qingjia_MVC.Models;
 using System;
 using System.Configuration;
-using System.Data.SqlClient;
 
 namespace qingjia_MVC.Common
 {
@@ -47,6 +46,7 @@ namespace qingjia_MVC.Common
             {
                 return false;
             }
+            
 
             //AccessKey 和 AccessKeyCode
             IClientProfile profile = DefaultProfile.GetProfile("cn-hangzhou", "LTAI7W5SRT92SGZD", "F7Gv1zZvwHYHLbkSIXnn1Dx9HUIi0K");
@@ -56,32 +56,48 @@ namespace qingjia_MVC.Common
             {
                 //短信签名  【请假系统】
                 request.SignName = "请假系统";
-                if (model.MessageType == "go")
+
+                //短信模板尚未申请下来 model.picurl赋值为空  2017.11.14修改
+                model.picurl = "";
+
+                if (model.MessageType == "go" && model.picurl != "")
                 {
-                    //请假成功模板
+                    //需要打印请假条  附带请假系统域名地址（短信模板尚未申请成功）
+                    request.TemplateCode = "SMS_110095016";
+                    request.ParamString = "{\"name\":\"" + model.ST_Name + "\",\"lvnum\":\"" + model.LV_Num + "\",\"picurl\":\"" + model.picurl + "\"}";
+                    //{\"  \":\"  \",\"  \":\"  \",\"  \":\"  \"}
+                }
+                else if (model.MessageType == "go" && model.picurl == "")
+                {
+                    //请假成功模板 无需打印假条
                     request.TemplateCode = "SMS_107115105";
+                    request.ParamString = "{\"name\":\"" + model.ST_Name + "\",\"lvnum\":\"" + model.LV_Num + "\"}";
                 }
                 else if (model.MessageType == "back")
                 {
                     //销假成功模板
                     request.TemplateCode = "SMS_27495348";
+                    request.ParamString = "{\"name\":\"" + model.ST_Name + "\",\"lvnum\":\"" + model.LV_Num + "\"}";
                 }
                 else if (model.MessageType == "failed")
                 {
                     //驳回请假模板
                     request.TemplateCode = "SMS_27620081";
+                    request.ParamString = "{\"name\":\"" + model.ST_Name + "\",\"lvnum\":\"" + model.LV_Num + "\"}";
                 }
                 else if (model.MessageType == "FindPsd")
                 {
                     //短信验证找回密码
                     request.TemplateCode = "SMS_60140885";
+                    request.ParamString = "{\"name\":\"" + model.ST_Name + "\",\"lvnum\":\"" + model.LV_Num + "\"}";
                 }
                 else
                 {
                     return false;
                 }
+
                 request.RecNum = model.ST_Tel;
-                request.ParamString = "{\"name\":\"" + model.ST_Name + "\",\"lvnum\":\"" + model.LV_Num + "\"}";
+
                 SingleSendSmsResponse httpResponse = client.GetAcsResponse(request);
 
                 SaveMessageList(model.ST_Num, model.LV_Num, model.ST_Tel, model.MessageType);
@@ -208,6 +224,9 @@ namespace qingjia_MVC.Common
 
         //电话号码
         public string ST_Tel { get; set; }
+
+        //链接网址
+        public string picurl { get; set; }
 
         //短信类型  go/back/failed
         public string MessageType { get; set; }
