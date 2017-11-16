@@ -1,19 +1,18 @@
-﻿using System;
+﻿using FineUIMvc;
+using Newtonsoft.Json.Linq;
+using qingjia_MVC.Content;
+using qingjia_MVC.Controllers;
+using qingjia_MVC.Models;
+using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Data.Entity.Validation;
+using System.Drawing;
+using System.Drawing.Drawing2D;
+using System.Drawing.Imaging;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
-using FineUIMvc;
-using qingjia_MVC;
-using qingjia_MVC.Controllers;
-using qingjia_MVC.Models;
-using qingjia_MVC.Content;
-using System.Data.Entity.Validation;
-using System.Data;
-using Newtonsoft.Json.Linq;
-using System.Drawing.Imaging;
-using System.Drawing;
-using System.Drawing.Drawing2D;
 
 namespace qingjia_MVC.Areas.Leave.Controllers
 {
